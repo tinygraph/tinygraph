@@ -1,0 +1,4 @@
+*.o
+*.so*
+tinygraph-example
+tinygraph-tests
