@@ -6,10 +6,12 @@ LDLIBS=-lm
 
 all: libtinygraph.so tinygraph-example tinygraph-tests
 
-tinygraph.o: tinygraph.h tinygraph-utils.h
+tinygraph.o: tinygraph.h tinygraph-utils.h tinygraph-impl.h
 tinygraph-impl.o: tinygraph-impl.h tinygraph-utils.h
 tinygraph-array.o: tinygraph-array.h tinygraph-utils.h
 tinygraph-bitset.o: tinygraph-bitset.h tinygraph-utils.h
+tinygraph-example.o: tinygraph.h
+tinygraph-tests.o: tinygraph.h tinygraph-impl.h tinygraph-array.h tinygraph-bitset.h tinygraph-utils.h
 
 libtinygraph.so: LDFLAGS=-shared -Wl,-soname,libtinygraph.so.0
 libtinygraph.so: tinygraph.o tinygraph-impl.o tinygraph-array.o tinygraph-bitset.o
