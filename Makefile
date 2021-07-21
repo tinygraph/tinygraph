@@ -26,8 +26,8 @@ watch: all
 	@while ! inotifywait -e modify -qq *.c *.h Makefile; do clear; make --no-print-directory; done
 
 dev:
-	@docker build -t daniel-j-h/tinygraph .
-	@docker run -it --rm -v $(CURDIR):/app daniel-j-h/tinygraph
+	@docker build -t tinygraph/tinygraph .
+	@docker run -it --rm --pull never --read-only -v $(CURDIR):/app tinygraph/tinygraph
 
 clean:
 	@rm -f tinygraph*.o libtinygraph.so libtinygraph.so.0 tinygraph-example tinygraph-tests

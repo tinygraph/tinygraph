@@ -1,0 +1,25 @@
+name: Integration
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 5
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build
+        run: docker build -t tinygraph/tinygraph .
+
+      - name: Compile
+        run: docker run -t --rm --pull never --read-only -v $(pwd):/app tinygraph/tinygraph make
+
+      - name: Test
+        run: docker run -t --rm --pull never --read-only -v $(pwd):/app tinygraph/tinygraph ./tinygraph-tests
+
+      - name: Example
+        run: docker run -t --rm --pull never --read-only -v $(pwd):/app tinygraph/tinygraph ./tinygraph-example
