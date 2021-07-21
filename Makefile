@@ -1,6 +1,6 @@
 .POSIX:
 
-CFLAGS=-std=c99 -O3 -Wall -Wextra -pedantic -fvisibility=hidden -ffunction-sections -fPIC -flto
+CFLAGS=-std=c99 -O3 -Wall -Wextra -pedantic -fvisibility=hidden -ffunction-sections -fPIC -flto -pipe
 LDFLAGS=-Wl,--gc-sections
 LDLIBS=-lm
 
