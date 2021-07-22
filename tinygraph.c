@@ -28,27 +28,27 @@ tinygraph_s tinygraph_construct_from_sorted_edges(
   TINYGRAPH_ASSERT(sources);
   TINYGRAPH_ASSERT(targets);
 
-  uint32_t min_sources_vert;
-  uint32_t max_sources_vert;
+  uint32_t min_sources_node;
+  uint32_t max_sources_node;
 
-  tinygraph_minmax_u32(sources, n, &min_sources_vert, &max_sources_vert);
+  tinygraph_minmax_u32(sources, n, &min_sources_node, &max_sources_node);
 
-  uint32_t min_targets_vert;
-  uint32_t max_targets_vert;
+  uint32_t min_targets_node;
+  uint32_t max_targets_node;
 
-  tinygraph_minmax_u32(targets, n, &min_targets_vert, &max_targets_vert);
+  tinygraph_minmax_u32(targets, n, &min_targets_node, &max_targets_node);
 
-  const uint32_t min_vert = tinygraph_min_u32(min_sources_vert, min_targets_vert);
-  const uint32_t max_vert = tinygraph_max_u32(max_sources_vert, max_targets_vert);
+  const uint32_t min_node = tinygraph_min_u32(min_sources_node, min_targets_node);
+  const uint32_t max_node = tinygraph_max_u32(max_sources_node, max_targets_node);
 
-  TINYGRAPH_ASSERT(min_vert == 0);
-  TINYGRAPH_ASSERT(max_vert >= min_vert);
-  TINYGRAPH_ASSERT(max_vert != UINT32_MAX);
+  TINYGRAPH_ASSERT(min_node == 0);
+  TINYGRAPH_ASSERT(max_node >= min_node);
+  TINYGRAPH_ASSERT(max_node != UINT32_MAX);
 
-  const uint32_t num_verts = max_vert + 1;
+  const uint32_t num_nodes = max_node + 1;
   const uint32_t num_edges = n;
 
-  bool ok = tinygraph_reserve(graph, num_verts, num_edges);
+  bool ok = tinygraph_reserve(graph, num_nodes, num_edges);
 
   if (!ok) {
     tinygraph_destruct(graph);
@@ -68,7 +68,7 @@ tinygraph_s tinygraph_construct_from_sorted_edges(
 
   graph->offsets[0] = 0;
 
-  for (uint32_t v = 0; v < max_sources_vert + 1; ++v) {
+  for (uint32_t v = 0; v < max_sources_node + 1; ++v) {
     it = tinygraph_find_if_not_u32(it, last, v);
 
     const uint32_t offset = it - sources;
@@ -76,7 +76,7 @@ tinygraph_s tinygraph_construct_from_sorted_edges(
     graph->offsets[v + 1] = offset;
   }
 
-  for (uint32_t v = max_sources_vert + 1; v < num_verts; ++v) {
+  for (uint32_t v = max_sources_node + 1; v < num_nodes; ++v) {
     const uint32_t offset = graph->targets_len;
 
     graph->offsets[v + 1] = offset;
@@ -102,7 +102,7 @@ tinygraph_s tinygraph_copy(tinygraph *graph) {
   }
 
   bool ok = tinygraph_reserve(copy,
-      tinygraph_get_num_vertices(graph),
+      tinygraph_get_num_nodes(graph),
       tinygraph_get_num_edges(graph));
 
   if (!ok) {
@@ -154,11 +154,11 @@ void tinygraph_destruct(tinygraph *graph) {
 bool tinygraph_is_empty(tinygraph_s graph) {
   TINYGRAPH_ASSERT(graph);
 
-  return tinygraph_get_num_vertices(graph) == 0;
+  return tinygraph_get_num_nodes(graph) == 0;
 }
 
 
-uint32_t tinygraph_get_num_vertices(tinygraph *graph) {
+uint32_t tinygraph_get_num_nodes(tinygraph *graph) {
   TINYGRAPH_ASSERT(graph);
 
   return graph->offsets_len > 1 ? graph->offsets_len - 1 : 0;  // tombstone
@@ -179,7 +179,7 @@ void tinygraph_get_out_edges(
     uint32_t* last)
 {
   TINYGRAPH_ASSERT(graph);
-  TINYGRAPH_ASSERT(tinygraph_has_vertex(graph, source));
+  TINYGRAPH_ASSERT(tinygraph_has_node(graph, source));
   TINYGRAPH_ASSERT(first);
   TINYGRAPH_ASSERT(last);
 
@@ -200,12 +200,12 @@ uint32_t tinygraph_get_edge_target(tinygraph *graph, uint32_t e) {
 
 uint32_t tinygraph_get_out_degree(tinygraph *graph, uint32_t v) {
   TINYGRAPH_ASSERT(graph);
-  TINYGRAPH_ASSERT(tinygraph_has_vertex(graph, v));
+  TINYGRAPH_ASSERT(tinygraph_has_node(graph, v));
 
   const uint32_t *first = NULL;
   const uint32_t *last = NULL;
 
-  tinygraph_get_targets(graph, &first, &last, v);
+  tinygraph_get_neighbors(graph, &first, &last, v);
 
   TINYGRAPH_ASSERT(first);
   TINYGRAPH_ASSERT(last);
@@ -216,7 +216,7 @@ uint32_t tinygraph_get_out_degree(tinygraph *graph, uint32_t v) {
 }
 
 
-void tinygraph_get_targets(
+void tinygraph_get_neighbors(
     tinygraph *graph,
     const uint32_t **first,
     const uint32_t **last,
@@ -225,7 +225,7 @@ void tinygraph_get_targets(
   TINYGRAPH_ASSERT(graph);
   TINYGRAPH_ASSERT(first);
   TINYGRAPH_ASSERT(last);
-  TINYGRAPH_ASSERT(tinygraph_has_vertex(graph, v));
+  TINYGRAPH_ASSERT(tinygraph_has_node(graph, v));
 
   uint32_t efirst;
   uint32_t elast;
@@ -237,10 +237,10 @@ void tinygraph_get_targets(
 }
 
 
-bool tinygraph_has_vertex(tinygraph *graph, uint32_t v) {
+bool tinygraph_has_node(tinygraph *graph, uint32_t v) {
   TINYGRAPH_ASSERT(graph);
 
-  return v < tinygraph_get_num_vertices(graph);
+  return v < tinygraph_get_num_nodes(graph);
 }
 
 
@@ -256,12 +256,12 @@ bool tinygraph_has_edge_from_to(
     uint32_t source,
     uint32_t target)
 {
-  TINYGRAPH_ASSERT(tinygraph_has_vertex(graph, source));
-  TINYGRAPH_ASSERT(tinygraph_has_vertex(graph, target));
+  TINYGRAPH_ASSERT(tinygraph_has_node(graph, source));
+  TINYGRAPH_ASSERT(tinygraph_has_node(graph, target));
 
   const uint32_t *it, *last;
 
-  tinygraph_get_targets(graph, &it, &last, source);
+  tinygraph_get_neighbors(graph, &it, &last, source);
 
   return tinygraph_find_if_u32(it, last, target) != last;
 }
@@ -272,15 +272,15 @@ void tinygraph_apsp(tinygraph *graph, const uint8_t* weights, uint8_t* results) 
   TINYGRAPH_ASSERT(weights);
   TINYGRAPH_ASSERT(results);
 
-  const uint64_t num_verts = tinygraph_get_num_vertices(graph);
+  const uint64_t num_nodes = tinygraph_get_num_nodes(graph);
 
-  for (uint32_t i = 0; i < num_verts; ++i) {
-    for (uint32_t j = 0; j < num_verts; ++j) {
-      results[i * num_verts + j] = -1;
+  for (uint32_t i = 0; i < num_nodes; ++i) {
+    for (uint32_t j = 0; j < num_nodes; ++j) {
+      results[i * num_nodes + j] = -1;
     }
   }
 
-  TINYGRAPH_FOR_EACH_VERTEX(source, graph) {
+  TINYGRAPH_FOR_EACH_NODE(source, graph) {
     uint32_t efirst, elast;
 
     tinygraph_get_out_edges(graph, source, &efirst, &elast);
@@ -290,30 +290,30 @@ void tinygraph_apsp(tinygraph *graph, const uint8_t* weights, uint8_t* results) 
 
       const uint32_t target = tinygraph_get_edge_target(graph, edge);
 
-      uint8_t *out = &results[source * num_verts + target];
+      uint8_t *out = &results[source * num_nodes + target];
 
       *out = tinygraph_min_u32(weights[edge], *out);
     }
   }
 
-  TINYGRAPH_FOR_EACH_VERTEX(v, graph) {
+  TINYGRAPH_FOR_EACH_NODE(v, graph) {
     const uint32_t source = v;
     const uint32_t target = v;
 
-    results[source * num_verts + target] = 0;
+    results[source * num_nodes + target] = 0;
   }
 
-  TINYGRAPH_FOR_EACH_VERTEX(k, graph) {
-    TINYGRAPH_FOR_EACH_VERTEX(i, graph) {
-      TINYGRAPH_FOR_EACH_VERTEX(j, graph) {
-        const uint8_t ij = results[i * num_verts + j];
-        const uint8_t ik = results[i * num_verts + k];
-        const uint8_t kj = results[k * num_verts + j];
+  TINYGRAPH_FOR_EACH_NODE(k, graph) {
+    TINYGRAPH_FOR_EACH_NODE(i, graph) {
+      TINYGRAPH_FOR_EACH_NODE(j, graph) {
+        const uint8_t ij = results[i * num_nodes + j];
+        const uint8_t ik = results[i * num_nodes + k];
+        const uint8_t kj = results[k * num_nodes + j];
 
         const uint8_t sum = tinygraph_saturated_add_u8(ik, kj);
 
         if (ij > sum) {
-          results[i * num_verts + j] = sum;
+          results[i * num_nodes + j] = sum;
         }
       }
     }
@@ -324,16 +324,16 @@ void tinygraph_apsp(tinygraph *graph, const uint8_t* weights, uint8_t* results) 
 void tinygraph_print(tinygraph *graph) {
   TINYGRAPH_ASSERT(graph);
 
-  fprintf(stderr, "graph %p with vertices=%ju, edges=%ju of %ju bytes total\n",
+  fprintf(stderr, "graph %p with nodes=%ju, edges=%ju of %ju bytes total\n",
       (const void *)graph,
-      (uintmax_t)tinygraph_get_num_vertices(graph),
+      (uintmax_t)tinygraph_get_num_nodes(graph),
       (uintmax_t)tinygraph_get_num_edges(graph),
       (uintmax_t)tinygraph_size_in_bytes(graph));
 
-  TINYGRAPH_FOR_EACH_VERTEX(s, graph) {
+  TINYGRAPH_FOR_EACH_NODE(s, graph) {
     const uint32_t *it, *last;
 
-    tinygraph_get_targets(graph, &it, &last, s);
+    tinygraph_get_neighbors(graph, &it, &last, s);
 
     fprintf(stderr, "%ju:", (uintmax_t)s);
 

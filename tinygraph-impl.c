@@ -237,12 +237,12 @@ tinygraph* tinygraph_construct_empty() {
 
 bool tinygraph_reserve(
     tinygraph *graph,
-    uint32_t num_vertices,
+    uint32_t num_nodes,
     uint32_t num_edges)
 {
   TINYGRAPH_ASSERT(graph);
 
-  TINYGRAPH_ASSERT(num_vertices != UINT32_MAX);
+  TINYGRAPH_ASSERT(num_nodes != UINT32_MAX);
 
   TINYGRAPH_ASSERT(!graph->offsets);
   TINYGRAPH_ASSERT(!graph->targets);
@@ -250,7 +250,7 @@ bool tinygraph_reserve(
   TINYGRAPH_ASSERT(graph->offsets_len == 0);
   TINYGRAPH_ASSERT(graph->targets_len == 0);
 
-  uint32_t *offsets = calloc(num_vertices + 1, sizeof(uint32_t));
+  uint32_t *offsets = calloc(num_nodes + 1, sizeof(uint32_t));
   uint32_t *targets = calloc(num_edges, sizeof(uint32_t));
 
   if (!offsets || !targets) {
@@ -263,7 +263,7 @@ bool tinygraph_reserve(
   *graph = (tinygraph){
     .offsets = offsets,
     .targets = targets,
-    .offsets_len = num_vertices + 1,  // tombstone for: E[V[v]], E[V[v+1]]
+    .offsets_len = num_nodes + 1,  // tombstone for: E[V[v]], E[V[v+1]]
     .targets_len = num_edges,
   };
 

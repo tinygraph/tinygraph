@@ -17,18 +17,18 @@ extern "C" {
 #endif
 
 /**
- * The tiny graph: stores vertices and directed edges in a
+ * The tiny graph: stores nodes and directed edges in a
  * compressed and efficient format making the graph tiny.
  */
 typedef struct tinygraph* tinygraph_s;
 
 /**
- * Creates a tiny graph from `n` source vertices in
- * `sources` and `n` target vertices in `edges`.
+ * Creates a tiny graph from `n` source nodes in
+ * `sources` and `n` target nodes in `targets`.
  *
  * Edges are required to be sorted by `sources`
  * first, and then by `targets`, with consecutive
- * vertex ids starting at zero.
+ * node ids starting at zero.
  *
  * The caller is responsible to destruct the
  * returned object with `tinygraph_destruct`.
@@ -41,7 +41,8 @@ tinygraph_s tinygraph_construct_from_sorted_edges(
     uint32_t n);
 
 /**
- * Copies `graph` into a new one.
+ * Copies `graph` and returns a new graph with
+ * the same nodes and edges as `graph`.
  *
  * The caller is responsible to destruct the
  * returned object with `tinygraph_destruct`.
@@ -64,11 +65,11 @@ TINYGRAPH_WARN_UNUSED
 bool tinygraph_is_empty(tinygraph_s graph);
 
 /**
- * Returns the number of vertices in `graph`.
+ * Returns the number of nodes in `graph`.
  */
 TINYGRAPH_API
 TINYGRAPH_WARN_UNUSED
-uint32_t tinygraph_get_num_vertices(tinygraph_s graph);
+uint32_t tinygraph_get_num_nodes(tinygraph_s graph);
 
 /**
  * Returns the number of edges in `graph`.
@@ -79,7 +80,7 @@ uint32_t tinygraph_get_num_edges(tinygraph_s graph);
 
 /**
  * Writes the edge range [first, last) for all out
- * edges of vertex `source` into `first` and `last`.
+ * edges of node `source` into `first` and `last`.
  */
 TINYGRAPH_API
 void tinygraph_get_edges(
@@ -89,40 +90,40 @@ void tinygraph_get_edges(
     uint32_t* last);
 
 /**
- * Returns the edge `e`'s target vertex.
+ * Returns the edge `e`'s target node.
  */
 TINYGRAPH_API
 TINYGRAPH_WARN_UNUSED
 uint32_t tinygraph_get_edge_target(tinygraph_s graph, uint32_t e);
 
 /**
- * Returns the number of outgoing edges at vertex `v`.
+ * Returns the number of outgoing edges at node `v`.
  */
 TINYGRAPH_API
 TINYGRAPH_WARN_UNUSED
 uint32_t tinygraph_get_out_degree(tinygraph_s graph, uint32_t v);
 
 /**
- * Writes the vertex `v`'s out edge targets delimited by
+ * Writes the node `v`'s neighbors delimited by
  * [first, last) into `first` and `last`.
  *
  * This function is a shortcut for the common use case of
- * - retrieving a vertex' edge `e` with `tinygraph_get_edges()`,
+ * - retrieving a node' edge `e` with `tinygraph_get_edges()`,
  * - iterating over all targets for `e` with `tinygraph_get_edge_target()`
  */
 TINYGRAPH_API
-void tinygraph_get_targets(
+void tinygraph_get_neighbors(
     tinygraph_s graph,
     const uint32_t **first,
     const uint32_t **last,
     uint32_t v);
 
 /**
- * Returns true if `graph` contains vertex `v`.
+ * Returns true if `graph` contains node `v`.
  */
 TINYGRAPH_API
 TINYGRAPH_WARN_UNUSED
-bool tinygraph_has_vertex(tinygraph_s graph, uint32_t v);
+bool tinygraph_has_node(tinygraph_s graph, uint32_t v);
 
 /**
  * Returns true if `graph` contains edge `e`.
@@ -146,8 +147,7 @@ bool tinygraph_has_edge_from_to(tinygraph_s graph, uint32_t s, uint32_t t);
  * - providing the n^2 sized `results` matrix
  *
  * The `results` matrix will contain saturated distances for
- * pairs (i,j) at `results[i * tinygraph_num_vertices + j]`.
- *
+ * pairs (i,j) at `results[i * num_nodes + j]`.
  */
 TINYGRAPH_API
 void tinygraph_apsp(tinygraph_s graph, const uint8_t* weights, uint8_t* results);
@@ -167,10 +167,10 @@ uint32_t tinygraph_size_in_bytes(tinygraph_s graph);
 
 
 /**
- * Iterates over all vertices in `graph`.
+ * Iterates over all nodes in `graph`.
  */
-#define TINYGRAPH_FOR_EACH_VERTEX(item, graph) \
-  for (uint32_t item = 0; item < tinygraph_get_num_vertices(graph); ++item)
+#define TINYGRAPH_FOR_EACH_NODE(item, graph) \
+  for (uint32_t item = 0; item < tinygraph_get_num_nodes(graph); ++item)
 
 /**
  * Iterates over all edges in `graph`.

@@ -62,7 +62,7 @@ tinygraph* tinygraph_construct_empty();
 
 bool tinygraph_reserve(
     tinygraph *graph,
-    uint32_t num_vertices,
+    uint32_t num_nodes,
     uint32_t num_edges);
 
 void tinygraph_print_internal(tinygraph *graph);

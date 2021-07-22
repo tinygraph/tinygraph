@@ -16,7 +16,7 @@ void test1() {
       sources, targets, 0);
 
   assert(tinygraph_is_empty(graph));
-  assert(tinygraph_get_num_vertices(graph) == 0);
+  assert(tinygraph_get_num_nodes(graph) == 0);
   assert(tinygraph_get_num_edges(graph) == 0);
 }
 
@@ -29,7 +29,7 @@ void test2() {
       sources, targets, 2);
 
   assert(!tinygraph_is_empty(graph));
-  assert(tinygraph_get_num_vertices(graph) == 3);
+  assert(tinygraph_get_num_nodes(graph) == 3);
   assert(tinygraph_get_num_edges(graph) == 2);
 }
 
@@ -66,7 +66,7 @@ void test4() {
       sources, targets, 5);
 
   assert(tinygraph_get_num_edges(graph) == 5);
-  assert(tinygraph_get_num_vertices(graph) == 10);
+  assert(tinygraph_get_num_nodes(graph) == 10);
 }
 
 
