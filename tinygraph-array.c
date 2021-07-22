@@ -34,6 +34,8 @@ tinygraph_array* tinygraph_array_construct(uint32_t size) {
   uint32_t *items = calloc(size, sizeof(uint32_t));
 
   if (!items) {
+    free(out);
+
     return NULL;
   }
 
@@ -58,6 +60,9 @@ tinygraph_array* tinygraph_array_copy(tinygraph_array *array) {
   TINYGRAPH_ASSERT(copy->size == array->size);
 
   if (array->size > 0) {
+    TINYGRAPH_ASSERT(copy->items);
+    TINYGRAPH_ASSERT(array->items);
+
     memcpy(copy->items, array->items, array->size * sizeof(uint32_t));
   }
 
@@ -144,6 +149,9 @@ bool tinygraph_array_reserve(tinygraph_array *array, uint32_t capacity) {
   TINYGRAPH_ASSERT(array->items_len >= array->size);
 
   if (array->size > 0) {
+    TINYGRAPH_ASSERT(items);
+    TINYGRAPH_ASSERT(array->items);
+
     memcpy(items, array->items, array->size * sizeof(uint32_t));
   }
 

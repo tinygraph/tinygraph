@@ -34,6 +34,8 @@ tinygraph_bitset* tinygraph_bitset_construct(uint32_t size) {
   uint64_t *blocks = calloc(num_blocks, sizeof(uint64_t));
 
   if (!blocks) {
+    free(out);
+
     return NULL;
   }
 
@@ -58,6 +60,9 @@ tinygraph_bitset* tinygraph_bitset_copy(tinygraph_bitset_s bitset) {
   TINYGRAPH_ASSERT(copy->blocks_len == bitset->blocks_len);
 
   if (bitset->blocks_len > 0) {
+    TINYGRAPH_ASSERT(copy->blocks);
+    TINYGRAPH_ASSERT(bitset->blocks);
+
     memcpy(copy->blocks, bitset->blocks, bitset->blocks_len * sizeof(uint32_t));
   }
 

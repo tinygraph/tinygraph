@@ -51,10 +51,15 @@ tinygraph_s tinygraph_construct_from_sorted_edges(
   bool ok = tinygraph_reserve(graph, num_verts, num_edges);
 
   if (!ok) {
+    tinygraph_destruct(graph);
+
     return NULL;
   }
 
   TINYGRAPH_ASSERT(num_edges > 0);
+
+  TINYGRAPH_ASSERT(graph->targets);
+  TINYGRAPH_ASSERT(targets);
 
   memcpy(graph->targets, targets, num_edges * sizeof(uint32_t));
 
@@ -101,11 +106,19 @@ tinygraph_s tinygraph_copy(tinygraph *graph) {
       tinygraph_get_num_edges(graph));
 
   if (!ok) {
+    tinygraph_destruct(copy);
+
     return NULL;
   }
 
   TINYGRAPH_ASSERT(graph->offsets_len > 0);
   TINYGRAPH_ASSERT(graph->targets_len > 0);
+
+  TINYGRAPH_ASSERT(copy->offsets);
+  TINYGRAPH_ASSERT(graph->offsets);
+
+  TINYGRAPH_ASSERT(copy->targets);
+  TINYGRAPH_ASSERT(graph->targets);
 
   memcpy(copy->offsets, graph->offsets, graph->offsets_len * sizeof(uint32_t));
   memcpy(copy->targets, graph->targets, graph->targets_len * sizeof(uint32_t));
