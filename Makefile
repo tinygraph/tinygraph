@@ -1,5 +1,3 @@
-.POSIX:
-
 CFLAGS=-std=c99 -O3 -Wall -Wextra -pedantic -fvisibility=hidden -ffunction-sections -fPIC -flto -pipe
 LDFLAGS=-Wl,--gc-sections
 LDLIBS=-lm
@@ -24,12 +22,15 @@ tinygraph-tests: tinygraph.o tinygraph-impl.o tinygraph-array.o tinygraph-bitset
 tinygraph-example: LDFLAGS+=-Wl,-rpath=.
 tinygraph-example: libtinygraph.so
 
-watch: all
-	@while ! inotifywait -e modify -qq *.c *.h Makefile; do clear; make --no-print-directory; done
+watch:
+	@while true; do \
+		inotifywait -q -e modify -e create -e delete -e move *.c *.h Makefile; \
+		clear; make --no-print-directory; \
+	done
 
-dev:
+dev: clean
 	@docker build -t tinygraph/tinygraph .
-	@docker run -it --rm --pull never --read-only -v $(CURDIR):/app tinygraph/tinygraph
+	@docker run -it --rm --pull never --read-only -v $(CURDIR):/app tinygraph/tinygraph make watch
 
 clean:
 	@rm -f tinygraph*.o libtinygraph.so libtinygraph.so.0 tinygraph-example tinygraph-tests
