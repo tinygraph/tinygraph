@@ -87,56 +87,17 @@ void tinygraph_array_destruct(tinygraph_array *array) {
 }
 
 
-uint32_t tinygraph_array_get_at(tinygraph_array *array, uint32_t i) {
-  TINYGRAPH_ASSERT(array);
-  TINYGRAPH_ASSERT(i < array->size);
-
-  return array->items[i];
-}
-
-
-void tinygraph_array_set_at(tinygraph_array *array, uint32_t i, uint32_t value) {
-  TINYGRAPH_ASSERT(array);
-  TINYGRAPH_ASSERT(i < array->size);
-
-  array->items[i] = value;
-}
-
-
-uint32_t tinygraph_array_get_size(tinygraph_array *array) {
-  TINYGRAPH_ASSERT(array);
-
-  return array->size;
-}
-
-
-uint32_t tinygraph_array_get_capacity(tinygraph_array *array) {
-  TINYGRAPH_ASSERT(array);
-
-  return array->items_len;
-}
-
-
-bool tinygraph_array_is_empty(tinygraph_array *array) {
-  TINYGRAPH_ASSERT(array);
-
-  return array->size == 0;
-}
-
-
-void tinygraph_array_clear(tinygraph_array *array) {
-  TINYGRAPH_ASSERT(array);
-
-  array->size = 0;
-}
-
-
 bool tinygraph_array_reserve(tinygraph_array *array, uint32_t capacity) {
   TINYGRAPH_ASSERT(array);
 
   if (capacity <= array->items_len) {
     return true;
   }
+
+  TINYGRAPH_ASSERT(capacity > 0);
+
+  uint32_t growth = ceil(array->items_len * 1.5);
+  capacity = capacity < growth ? growth : capacity;
 
   TINYGRAPH_ASSERT(capacity > 0);
 
@@ -198,6 +159,50 @@ bool tinygraph_array_resize(tinygraph_array *array, uint32_t size) {
   array->size = size;
 
   return true;
+}
+
+
+uint32_t tinygraph_array_get_at(tinygraph_array *array, uint32_t i) {
+  TINYGRAPH_ASSERT(array);
+  TINYGRAPH_ASSERT(i < array->size);
+
+  return array->items[i];
+}
+
+
+void tinygraph_array_set_at(tinygraph_array *array, uint32_t i, uint32_t value) {
+  TINYGRAPH_ASSERT(array);
+  TINYGRAPH_ASSERT(i < array->size);
+
+  array->items[i] = value;
+}
+
+
+uint32_t tinygraph_array_get_size(tinygraph_array *array) {
+  TINYGRAPH_ASSERT(array);
+
+  return array->size;
+}
+
+
+uint32_t tinygraph_array_get_capacity(tinygraph_array *array) {
+  TINYGRAPH_ASSERT(array);
+
+  return array->items_len;
+}
+
+
+bool tinygraph_array_is_empty(tinygraph_array *array) {
+  TINYGRAPH_ASSERT(array);
+
+  return array->size == 0;
+}
+
+
+void tinygraph_array_clear(tinygraph_array *array) {
+  TINYGRAPH_ASSERT(array);
+
+  array->size = 0;
 }
 
 
