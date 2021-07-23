@@ -83,7 +83,7 @@ uint32_t tinygraph_get_num_edges(tinygraph_s graph);
  * edges of node `source` into `first` and `last`.
  */
 TINYGRAPH_API
-void tinygraph_get_edges(
+void tinygraph_get_out_edges(
     tinygraph_s graph,
     uint32_t source,
     uint32_t* first,
