@@ -22,6 +22,8 @@ void tinygraph_bitset_set_at(tinygraph_bitset_s bitset, uint32_t i);
 TINYGRAPH_WARN_UNUSED
 bool tinygraph_bitset_get_at(tinygraph_bitset_s bitset, uint32_t i);
 
+void tinygraph_bitset_clear(tinygraph_bitset_s bitset);
+
 void tinygraph_bitset_not(tinygraph_bitset_s bitset);
 void tinygraph_bitset_and(tinygraph_bitset_s bitset, tinygraph_bitset_s other);
 void tinygraph_bitset_or(tinygraph_bitset_s bitset, tinygraph_bitset_s other);

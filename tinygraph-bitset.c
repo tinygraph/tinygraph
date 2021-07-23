@@ -104,6 +104,17 @@ bool tinygraph_bitset_get_at(tinygraph_bitset *bitset, uint32_t i) {
 }
 
 
+void tinygraph_bitset_clear(tinygraph_bitset_s bitset) {
+  TINYGRAPH_ASSERT(bitset);
+
+  if (bitset->blocks_len < 1) {
+    return;
+  }
+
+  memset(bitset->blocks, 0, bitset->blocks_len * sizeof(uint32_t));
+}
+
+
 void tinygraph_bitset_not(tinygraph_bitset_s bitset) {
   TINYGRAPH_ASSERT(bitset);
 
