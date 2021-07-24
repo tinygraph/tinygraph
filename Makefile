@@ -9,8 +9,8 @@ tinygraph-impl.o: tinygraph-impl.h tinygraph-utils.h
 tinygraph-array.o: tinygraph-array.h tinygraph-utils.h
 tinygraph-bitset.o: tinygraph-bitset.h tinygraph-utils.h
 tinygraph-delta.o: tinygraph-delta.h tinygraph-utils.h
-tinygraph-zigzag.o: tinygraph-zigzag.h
-tinygraph-vbyte.o: tinygraph-vbyte.h
+tinygraph-zigzag.o: tinygraph-zigzag.h tinygraph-utils.h
+tinygraph-vbyte.o: tinygraph-vbyte.h tinygraph-utils.h
 tinygraph-stack.o: tinygraph-stack.h tinygraph-utils.h tinygraph-array.h tinygraph-array.o
 tinygraph-queue.o: tinygraph-queue.h tinygraph-utils.h tinygraph-stack.h tinygraph-stack.o
 tinygraph-example.o: tinygraph.h
