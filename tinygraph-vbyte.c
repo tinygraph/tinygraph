@@ -1,69 +1,48 @@
+#include <stdbool.h>
+
 #include "tinygraph-vbyte.h"
 
 
 static uint32_t tinygraph_vbyte_encode_one(uint8_t *out, uint32_t value) {
   TINYGRAPH_ASSERT(out);
 
-  const uint8_t * const first = out;
+  uint32_t i = 0;
 
-  for (; value >= 128; ++out) {
-    *out = (value & 127) | 128;
+  for (; i < 5; ++i) {
+    if (value < 128) {
+      break;
+    }
+
+    out[i] = (value & 127) | 128;
+
     value = value >> 7;
   }
 
-  *out = (uint8_t)value;
-  out += 1;
+  out[i] = value;
 
-  return out - first;
+  return i + 1;
 }
 
 static uint32_t tinygraph_vbyte_decode_one(const uint8_t *data, uint32_t *out) {
   TINYGRAPH_ASSERT(data);
   TINYGRAPH_ASSERT(out);
 
+  uint32_t i = 0;
   uint32_t value = 0;
 
-  const uint8_t b0 = *(data + 0);
-  value |= (uint32_t)(b0 & 127) << 0;
+  for (; i < 5; ++i) {
+    const uint32_t b = data[i];
 
-  if (!(b0 & 128)) {
-    *out = value;
-    return 1;
+    value |= (uint32_t)(b & 127) << (i * 7);
+
+    if (!(b & 128)) {
+      break;
+    }
   }
 
-  const uint8_t b1 = *(data + 1);
-  value |= (uint32_t)(b1 & 127) << 7;
+  *out = value;
 
-  if (!(b1 & 128)) {
-    *out = value;
-    return 2;
-  }
-
-  const uint8_t b2 = *(data + 2);
-  value |= (uint32_t)(b2 & 127) << 14;
-
-  if (!(b2 & 128)) {
-    *out = value;
-    return 3;
-  }
-
-  const uint8_t b3 = *(data + 3);
-  value |= (uint32_t)(b3 & 127) << 21;
-
-  if (!(b3 & 128)) {
-    *out = value;
-    return 4;
-  }
-
-  const uint8_t b4 = *(data + 4);
-  value |= (uint32_t)(b4 & 127) << 28;
-
-  if (!(b4 & 128)) {
-    *out = value;
-    return 5;
-  }
-
-  return 5;
+  return i + 1;
 }
 
 
