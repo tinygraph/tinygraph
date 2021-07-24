@@ -11,6 +11,7 @@ tinygraph-bitset.o: tinygraph-bitset.h tinygraph-utils.h
 tinygraph-delta.o: tinygraph-delta.h tinygraph-utils.h
 tinygraph-zigzag.o: tinygraph-zigzag.h tinygraph-utils.h
 tinygraph-vbyte.o: tinygraph-vbyte.h tinygraph-utils.h
+tinygraph-zorder.o: tinygraph-zorder.h tinygraph-utils.h
 tinygraph-stack.o: tinygraph-stack.h tinygraph-utils.h tinygraph-array.h tinygraph-array.o
 tinygraph-queue.o: tinygraph-queue.h tinygraph-utils.h tinygraph-stack.h tinygraph-stack.o
 tinygraph-example.o: tinygraph.h
@@ -22,7 +23,7 @@ libtinygraph.so: tinygraph.o tinygraph-impl.o tinygraph-array.o tinygraph-bitset
 	@ln -sf libtinygraph.so libtinygraph.so.0
 
 tinygraph-tests: LDFLAGS+=-Wl,-rpath=.
-tinygraph-tests: tinygraph.o tinygraph-impl.o tinygraph-array.o tinygraph-bitset.o tinygraph-stack.o tinygraph-queue.o tinygraph-delta.o tinygraph-zigzag.o tinygraph-vbyte.o
+tinygraph-tests: tinygraph.o tinygraph-impl.o tinygraph-array.o tinygraph-bitset.o tinygraph-stack.o tinygraph-queue.o tinygraph-delta.o tinygraph-zigzag.o tinygraph-vbyte.o tinygraph-zorder.o
 
 tinygraph-example: LDFLAGS+=-Wl,-rpath=.
 tinygraph-example: libtinygraph.so

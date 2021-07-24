@@ -11,6 +11,7 @@
 #include "tinygraph-vbyte.h"
 #include "tinygraph-delta.h"
 #include "tinygraph-zigzag.h"
+#include "tinygraph-zorder.h"
 
 
 void test1() {
@@ -439,6 +440,19 @@ void test15() {
 }
 
 
+void test16() {
+  const uint16_t xs[5] = {0, 2, 800, 7, 123};
+  const uint16_t ys[5] = {0, 2, 600, 6, 456};
+  const uint32_t zs[5] = {0, 12, 861824, 61, 177605};
+
+  for (uint32_t i = 0; i < 5; ++i) {
+    assert(tinygraph_zorder_encode32(xs[i], ys[i]) == zs[i]);
+  }
+
+  // tinygraph_zorder_decode();
+}
+
+
 int main() {
   test1();
   test2();
@@ -455,4 +469,5 @@ int main() {
   test13();
   test14();
   test15();
+  test16();
 }
