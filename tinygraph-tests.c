@@ -21,6 +21,7 @@ void test1() {
   const tinygraph_s graph = tinygraph_construct_from_sorted_edges(
       sources, targets, 0);
 
+  assert(graph);
   assert(tinygraph_is_empty(graph));
   assert(tinygraph_get_num_nodes(graph) == 0);
   assert(tinygraph_get_num_edges(graph) == 0);
@@ -34,6 +35,7 @@ void test2() {
   const tinygraph_s graph = tinygraph_construct_from_sorted_edges(
       sources, targets, 2);
 
+  assert(graph);
   assert(!tinygraph_is_empty(graph));
   assert(tinygraph_get_num_nodes(graph) == 3);
   assert(tinygraph_get_num_edges(graph) == 2);
@@ -71,6 +73,7 @@ void test4() {
   const tinygraph_s graph = tinygraph_construct_from_sorted_edges(
       sources, targets, 5);
 
+  assert(graph);
   assert(tinygraph_get_num_edges(graph) == 5);
   assert(tinygraph_get_num_nodes(graph) == 10);
 }
@@ -78,14 +81,17 @@ void test4() {
 
 void test5() {
   tinygraph_bitset_s bitset1 = tinygraph_bitset_construct(0);
+  assert(bitset1);
   tinygraph_bitset_destruct(bitset1);
 
   tinygraph_bitset_s bitset2 = tinygraph_bitset_construct(1);
+  assert(bitset2);
   tinygraph_bitset_set_at(bitset2, 0);
   assert(tinygraph_bitset_get_at(bitset2, 0) == true);
   tinygraph_bitset_destruct(bitset2);
 
   tinygraph_bitset_s bitset3 = tinygraph_bitset_construct(9);
+  assert(bitset3);
   tinygraph_bitset_set_at(bitset3, 0);
   tinygraph_bitset_set_at(bitset3, 8);
   assert(tinygraph_bitset_get_at(bitset3, 0) == true);
@@ -103,10 +109,12 @@ void test5() {
 
 void test6() {
   tinygraph_array_s array1 = tinygraph_array_construct(0);
+  assert(array1);
   assert(tinygraph_array_is_empty(array1) == true);
   assert(tinygraph_array_get_size(array1) == 0);
 
   tinygraph_array_s array2 = tinygraph_array_copy(array1);
+  assert(array2);
   tinygraph_array_destruct(array1); // no longer needed
   assert(tinygraph_array_push(array2, 1));
   assert(tinygraph_array_push(array2, 2));
@@ -121,6 +129,7 @@ void test6() {
   tinygraph_array_destruct(array2);
 
   tinygraph_array_s array3 = tinygraph_array_construct(32);
+  assert(array3);
   assert(tinygraph_array_is_empty(array3) == false);
   assert(tinygraph_array_get_size(array3) == 32);
   tinygraph_array_set_at(array3, 0, 3);
@@ -138,11 +147,13 @@ void test6() {
 
 void test7() {
   tinygraph_array_s array1 = tinygraph_array_construct(0);
+  assert(array1);
   assert(tinygraph_array_is_empty(array1) == true);
   assert(tinygraph_array_get_size(array1) == 0);
   assert(tinygraph_array_get_capacity(array1) == 0);
 
   tinygraph_array_s array2 = tinygraph_array_copy(array1);
+  assert(array2);
   tinygraph_array_destruct(array1); // no longer needed
   assert(tinygraph_array_reserve(array2, 8));
   assert(tinygraph_array_get_size(array2) == 0);
@@ -167,6 +178,7 @@ void test7() {
 
 void test8() {
   tinygraph_array_s array = tinygraph_array_construct(32);
+  assert(array);
 
   for (uint32_t i = 0; i < tinygraph_array_get_size(array); ++i) {
     assert(tinygraph_array_get_at(array, i) == 0);
@@ -178,7 +190,9 @@ void test8() {
 
 void test9() {
   tinygraph_bitset_s bitset1 = tinygraph_bitset_construct(9);
+  assert(bitset1);
   tinygraph_bitset_s bitset2 = tinygraph_bitset_copy(bitset1);
+  assert(bitset2);
 
   // 1 0 0 0 0 0 0 0 1
   tinygraph_bitset_set_at(bitset1, 0);
@@ -249,6 +263,7 @@ void test10() {
 
 void test11() {
   tinygraph_stack_s stack1 = tinygraph_stack_construct();
+  assert(stack1);
   assert(tinygraph_stack_is_empty(stack1) == true);
   assert(tinygraph_stack_get_size(stack1) == 0);
   assert(tinygraph_stack_push(stack1, 2));
@@ -262,6 +277,7 @@ void test11() {
   tinygraph_stack_destruct(stack1);
 
   tinygraph_stack_s stack2 = tinygraph_stack_construct();
+  assert(stack2);
   assert(tinygraph_stack_reserve(stack2, 8));
   assert(tinygraph_stack_get_capacity(stack2) >= 8);
   assert(tinygraph_stack_is_empty(stack2) == true);
@@ -272,6 +288,7 @@ void test11() {
 
 void test12() {
   tinygraph_queue_s queue1 = tinygraph_queue_construct();
+  assert(queue1);
 
   assert(tinygraph_queue_is_empty(queue1) == true);
   assert(tinygraph_queue_get_size(queue1) == 0);
@@ -286,6 +303,7 @@ void test12() {
   tinygraph_queue_destruct(queue1);
 
   tinygraph_queue_s queue2 = tinygraph_queue_construct();
+  assert(queue2);
   assert(tinygraph_queue_push(queue2, 2));
   assert(tinygraph_queue_push(queue2, 3));
   assert(tinygraph_queue_get_front(queue2) == 2);
@@ -294,6 +312,7 @@ void test12() {
   tinygraph_queue_destruct(queue2);
 
   tinygraph_queue_s queue3 = tinygraph_queue_construct();
+  assert(queue3);
   assert(tinygraph_queue_push(queue3, 2));
   assert(tinygraph_queue_push(queue3, 3));
   assert(tinygraph_queue_get_front(queue3) == 2);
@@ -306,15 +325,31 @@ void test12() {
 }
 
 
-void bfs(tinygraph_s graph, uint32_t *out, uint32_t init) {
+bool bfs(tinygraph_s graph, uint32_t *out, uint32_t init) {
   const uint32_t n = tinygraph_get_num_nodes(graph);
 
   tinygraph_bitset_s seen = tinygraph_bitset_construct(n);
+
+  if (!seen) {
+    return false;
+  }
+
   tinygraph_bitset_set_at(seen, init);
 
   tinygraph_queue_s queue = tinygraph_queue_construct();
+
+  if (!queue) {
+    tinygraph_bitset_destruct(seen);
+    return false;
+  }
+
   const bool ok = tinygraph_queue_push(queue, init);
-  (void)ok;
+
+  if (!ok) {
+    tinygraph_queue_destruct(queue);
+    tinygraph_bitset_destruct(seen);
+    return false;
+  }
 
   while (!tinygraph_queue_is_empty(queue)) {
     const uint32_t s = tinygraph_queue_pop(queue);
@@ -331,7 +366,12 @@ void bfs(tinygraph_s graph, uint32_t *out, uint32_t init) {
 
       if (!tinygraph_bitset_get_at(seen, t)) {
         const bool ok = tinygraph_queue_push(queue, t);
-        (void)ok;
+
+        if (!ok) {
+          tinygraph_queue_destruct(queue);
+          tinygraph_bitset_destruct(seen);
+          return false;
+        }
 
         tinygraph_bitset_set_at(seen, t);
       }
@@ -340,18 +380,36 @@ void bfs(tinygraph_s graph, uint32_t *out, uint32_t init) {
 
   tinygraph_queue_destruct(queue);
   tinygraph_bitset_destruct(seen);
+
+  return true;
 }
 
 
-void dfs(tinygraph_s graph, uint32_t *out, uint32_t init) {
+bool dfs(tinygraph_s graph, uint32_t *out, uint32_t init) {
   const uint32_t n = tinygraph_get_num_nodes(graph);
 
   tinygraph_bitset_s seen = tinygraph_bitset_construct(n);
+
+  if (!seen) {
+    return false;
+  }
+
   tinygraph_bitset_set_at(seen, init);
 
   tinygraph_stack_s stack = tinygraph_stack_construct();
+
+  if (!stack) {
+    tinygraph_bitset_destruct(seen);
+    return false;
+  }
+
   const bool ok = tinygraph_stack_push(stack, init);
-  (void)ok;
+
+  if (!ok) {
+    tinygraph_stack_destruct(stack);
+    tinygraph_bitset_destruct(seen);
+    return false;
+  }
 
   while (!tinygraph_stack_is_empty(stack)) {
     const uint32_t s = tinygraph_stack_pop(stack);
@@ -368,7 +426,12 @@ void dfs(tinygraph_s graph, uint32_t *out, uint32_t init) {
 
       if (!tinygraph_bitset_get_at(seen, t)) {
         const bool ok = tinygraph_stack_push(stack, t);
-        (void)ok;
+
+        if (!ok) {
+          tinygraph_stack_destruct(stack);
+          tinygraph_bitset_destruct(seen);
+          return false;
+        }
 
         tinygraph_bitset_set_at(seen, t);
       }
@@ -377,6 +440,8 @@ void dfs(tinygraph_s graph, uint32_t *out, uint32_t init) {
 
   tinygraph_stack_destruct(stack);
   tinygraph_bitset_destruct(seen);
+
+  return true;
 }
 
 void test13() {
@@ -386,11 +451,13 @@ void test13() {
   const tinygraph_s graph = tinygraph_construct_from_sorted_edges(
       sources, targets, 5);
 
+  assert(graph);
+
   uint32_t bfsout[4]; // four nodes in total
   uint32_t dfsout[4]; // four nodes in total
 
-  bfs(graph, bfsout, 0);
-  dfs(graph, dfsout, 0);
+  assert(bfs(graph, bfsout, 0));
+  assert(dfs(graph, dfsout, 0));
 
   assert(bfsout[0] == 0);
   assert(bfsout[1] == 1);
