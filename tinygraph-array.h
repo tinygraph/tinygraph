@@ -6,6 +6,21 @@
 
 #include "tinygraph-utils.h"
 
+/*
+ * Simple dynamically growing array; if you know its
+ * required size in advance, make sure to reserve().
+ *
+ * The array grows on demand with a factor of 1.5 to
+ * allow for memory reuse after four reallocations.
+ *
+ * See
+ * - https://github.com/facebook/folly/blob/ff841baa23/folly/docs/FBVector.md
+ * - https://github.com/facebook/folly/blob/ff841baa23/folly/docs/small_vector.md
+ *
+ * Todo: benchmark and experiment a hybrid design
+ * where the first n items are stored on the stack.
+ */
+
 typedef struct tinygraph_array* tinygraph_array_s;
 
 

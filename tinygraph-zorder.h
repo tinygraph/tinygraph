@@ -5,6 +5,10 @@
 
 #include "tinygraph-utils.h"
 
+/*
+ * Z-order / Morton Code space filling curve.
+ */
+
 
 TINYGRAPH_WARN_UNUSED
 uint32_t tinygraph_zorder_encode32(uint16_t x, uint16_t y);

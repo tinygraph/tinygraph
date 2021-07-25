@@ -5,8 +5,6 @@
 #include "tinygraph-stack.h"
 #include "tinygraph-queue.h"
 
-// Note: does a ring buffer based queue implementation
-// make more sense for our use case of graph based bfs?
 
 typedef struct tinygraph_queue {
   tinygraph_stack_s lhs;

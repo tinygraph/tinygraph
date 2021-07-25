@@ -6,6 +6,12 @@
 
 #include "tinygraph-utils.h"
 
+/*
+ * Simple stack to push to the top and pop
+ * from the top efficiently. If you know
+ * about its size, make sure to reserve().
+ */
+
 typedef struct tinygraph_stack* tinygraph_stack_s;
 
 

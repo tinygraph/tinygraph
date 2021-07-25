@@ -6,6 +6,17 @@
 
 #include "tinygraph-utils.h"
 
+/*
+ * Simple queue to push to the back and pop
+ * from the front efficiently. If you know
+ * about its size, make sure to reserve().
+ *
+ * Note: we implement a queue with two stacks
+ * at the moment; a ringbuffer based queue
+ * might make more sense for our graph walk
+ * use case.
+ */
+
 typedef struct tinygraph_queue* tinygraph_queue_s;
 
 

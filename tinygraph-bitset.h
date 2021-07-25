@@ -6,6 +6,14 @@
 
 #include "tinygraph-utils.h"
 
+/*
+ * Simple bitset to mask items with true/false.
+ *
+ * Todo: the bitset is static and requires us
+ * knowing about the size upfront; good enough
+ * for now?
+ */
+
 typedef struct tinygraph_bitset* tinygraph_bitset_s;
 
 
