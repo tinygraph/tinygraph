@@ -1,32 +1,25 @@
-CFLAGS=-std=c99 -O3 -Wall -Wextra -pedantic -fvisibility=hidden -ffunction-sections -fPIC -flto -pipe
+CFLAGS=-std=c99 -O3 -Wall -Wextra -pedantic -fvisibility=hidden -ffunction-sections -fPIC -flto -pipe -MMD
 LDFLAGS=-Wl,--gc-sections
 LDLIBS=-lm
 
+SRC=$(wildcard *.c)
+OBJ=$(SRC:.c=.o)
+DEP=$(SRC:.c=.d)
+
 all: libtinygraph.so tinygraph-example tinygraph-tests
 
-tinygraph.o: tinygraph.h tinygraph-utils.h tinygraph-impl.h
-tinygraph-impl.o: tinygraph-impl.h tinygraph-utils.h
-tinygraph-array.o: tinygraph-array.h tinygraph-utils.h
-tinygraph-bitset.o: tinygraph-bitset.h tinygraph-utils.h
-tinygraph-delta.o: tinygraph-delta.h tinygraph-utils.h
-tinygraph-zigzag.o: tinygraph-zigzag.h tinygraph-utils.h
-tinygraph-vbyte.o: tinygraph-vbyte.h tinygraph-utils.h
-tinygraph-zorder.o: tinygraph-zorder.h tinygraph-utils.h
-tinygraph-stack.o: tinygraph-stack.h tinygraph-utils.h tinygraph-array.h tinygraph-array.o
-tinygraph-queue.o: tinygraph-queue.h tinygraph-utils.h tinygraph-stack.h tinygraph-stack.o
-tinygraph-example.o: tinygraph.h
-tinygraph-tests.o: tinygraph.h tinygraph-impl.h tinygraph-array.h tinygraph-stack.h tinygraph-queue.h tinygraph-bitset.h tinygraph-delta.h tinygraph-utils.h
+-include ${DEP}
 
 libtinygraph.so: LDFLAGS=-shared -Wl,-soname,libtinygraph.so.0
-libtinygraph.so: tinygraph.o tinygraph-impl.o tinygraph-array.o tinygraph-bitset.o tinygraph-stack.o tinygraph-queue.o tinygraph-delta.o
+libtinygraph.so: $(filter-out tinygraph-tests.o tinygraph-example.o, $(OBJ))
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 	@ln -sf libtinygraph.so libtinygraph.so.0
 
 tinygraph-tests: LDFLAGS+=-Wl,-rpath=.
-tinygraph-tests: tinygraph.o tinygraph-impl.o tinygraph-array.o tinygraph-bitset.o tinygraph-stack.o tinygraph-queue.o tinygraph-delta.o tinygraph-zigzag.o tinygraph-vbyte.o tinygraph-zorder.o
+tinygraph-tests: $(filter-out tinygraph-example.o, $(OBJ))  # access to internals
 
 tinygraph-example: LDFLAGS+=-Wl,-rpath=.
-tinygraph-example: libtinygraph.so
+tinygraph-example: libtinygraph.so  # example only has access to public interface
 
 watch:
 	@while true; do \
@@ -39,6 +32,6 @@ dev: clean
 	@docker run -it --rm --pull never --read-only -v $(CURDIR):/app tinygraph/tinygraph make watch
 
 clean:
-	@rm -f tinygraph*.o libtinygraph.so libtinygraph.so.0 tinygraph-example tinygraph-tests
+	@rm -f tinygraph*.o tinygraph*.d libtinygraph.so libtinygraph.so.0 tinygraph-example tinygraph-tests
 
 .PHONY: all clean watch dev
