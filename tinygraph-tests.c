@@ -39,6 +39,9 @@ void test2() {
   assert(!tinygraph_is_empty(graph));
   assert(tinygraph_get_num_nodes(graph) == 3);
   assert(tinygraph_get_num_edges(graph) == 2);
+
+  assert(tinygraph_get_edge_target(graph, 0) == 0);
+  assert(tinygraph_get_edge_target(graph, 1) == 2);
 }
 
 

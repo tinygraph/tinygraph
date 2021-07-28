@@ -76,10 +76,10 @@ tinygraph_s tinygraph_construct_from_sorted_edges(
     graph->offsets[v + 1] = offset;
   }
 
-  for (uint32_t v = max_sources_node + 1; v < num_nodes; ++v) {
-    const uint32_t offset = graph->targets_len;
+  const uint32_t tombstone = graph->targets_len;
 
-    graph->offsets[v + 1] = offset;
+  for (uint32_t v = max_sources_node + 1; v < num_nodes; ++v) {
+    graph->offsets[v + 1] = tombstone;
   }
 
   return graph;
