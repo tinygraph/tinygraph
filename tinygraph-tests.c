@@ -12,6 +12,7 @@
 #include "tinygraph-delta.h"
 #include "tinygraph-zigzag.h"
 #include "tinygraph-zorder.h"
+#include "tinygraph-bits.h"
 
 
 void test1() {
@@ -541,6 +542,21 @@ void test16() {
 }
 
 
+void test17() {
+  assert(tinygraph_bits_count(UINT64_C(0)) == 0);
+  assert(tinygraph_bits_count(UINT64_C(1)) == 1);
+  assert(tinygraph_bits_count(UINT64_C(-1)) == 64);
+
+  assert(tinygraph_bits_find(UINT64_C(0xd84c8a0), 0) == 5);
+  assert(tinygraph_bits_find(UINT64_C(0xd84c8a0), 1) == 7);
+  assert(tinygraph_bits_find(UINT64_C(0xd84c8a0), 3) == 14);
+  assert(tinygraph_bits_find(UINT64_C(0xd84c8a0), 9) == 27);
+
+  assert(tinygraph_bits_leading0(UINT64_C(0xd84c8a0)) == 36);
+  assert(tinygraph_bits_trailing0(UINT64_C(0xd84c8a0)) == 5);
+}
+
+
 int main() {
   test1();
   test2();
@@ -558,4 +574,5 @@ int main() {
   test14();
   test15();
   test16();
+  test17();
 }
