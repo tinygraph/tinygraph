@@ -1,5 +1,9 @@
 #include "tinygraph-zorder.h"
 
+#ifdef TINYGRAPH_HAS_BMI2
+#include <x86intrin.h>
+#endif
+
 /*
  * The z-order space filling curve for n dimensions
  * works by bit-interleaving the n different values.
@@ -13,9 +17,37 @@
  * For the 4-to-8 bit-blasting we define a small
  * look up table; bigger data types then build up
  * from the four bit look up table bottom to top.
- *
- * Todo: check BMI2 instruction and use pdep/pext
  */
+
+#ifdef TINYGRAPH_HAS_BMI2
+
+uint32_t tinygraph_zorder_encode32(uint16_t x, uint16_t y) {
+  TINYGRAPH_STATIC_ASSERT(sizeof(uint32_t) == sizeof(unsigned int));
+
+  return _pdep_u32(y, UINT32_C(0xaaaaaaaa)) | _pdep_u32(x, UINT32_C(0x55555555));
+}
+
+uint64_t tinygraph_zorder_encode64(uint32_t x, uint32_t y) {
+  TINYGRAPH_STATIC_ASSERT(sizeof(uint64_t) == sizeof(unsigned long long));
+
+  return _pdep_u64(y, UINT64_C(0xaaaaaaaaaaaaaaaa)) | _pdep_u64(x, UINT64_C(0x5555555555555555));
+}
+
+void tinygraph_zorder_decode32(uint32_t z, uint16_t *x, uint16_t *y) {
+  TINYGRAPH_STATIC_ASSERT(sizeof(uint32_t) == sizeof(unsigned int));
+
+  *y = _pext_u32(z, UINT32_C(0xaaaaaaaa));
+  *x = _pext_u32(z, UINT32_C(0x55555555));
+}
+
+void tinygraph_zorder_decode64(uint64_t z, uint32_t *x, uint32_t *y) {
+  TINYGRAPH_STATIC_ASSERT(sizeof(uint64_t) == sizeof(unsigned long long));
+
+  *y = _pext_u64(z, UINT64_C(0xaaaaaaaaaaaaaaaa));
+  *x = _pext_u64(z, UINT64_C(0x5555555555555555));
+}
+
+#else // TINYGRAPH_HAS_BMI2
 
 static const uint8_t tinygraph_bitblast4[16] = {
    0x0,  0x1,  0x4,  0x5, 0x10, 0x11, 0x14, 0x15,
@@ -111,3 +143,5 @@ void tinygraph_zorder_decode64(uint64_t z, uint32_t *x, uint32_t *y) {
   *x = tinygraph_bitpack64(z & UINT64_C(0x5555555555555555));
   *y = tinygraph_bitpack64((z >> 1) & UINT64_C(0x5555555555555555));
 }
+
+#endif // TINYGRAPH_HAS_BMI2
