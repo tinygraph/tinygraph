@@ -1,6 +1,7 @@
-CFLAGS=-std=c99 -O3 -Wall -Wextra -pedantic -fvisibility=hidden -ffunction-sections -fPIC -flto -pipe -MMD
-LDFLAGS=-Wl,--gc-sections
-LDLIBS=-lm
+CFLAGS+=-std=c99 -O3 -Wall -Wextra -pedantic -fvisibility=hidden -ffunction-sections -fPIC -flto -pipe -MMD
+CFLAGS+=-march=native -mavx2 -mfma -mbmi -mbmi2 -mlzcnt -DTINYGRAPH_HAS_BMI2
+LDFLAGS+=-Wl,--gc-sections
+LDLIBS+=-lm
 
 SRC=$(wildcard *.c)
 OBJ=$(SRC:.c=.o)
