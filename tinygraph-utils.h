@@ -16,4 +16,20 @@
 #define TINYGRAPH_WARN_UNUSED __attribute__((warn_unused_result))
 #endif
 
+#ifndef TINYGRAPH_UNREACHABLE
+#define TINYGRAPH_UNREACHABLE __builtin_unreachable
+#endif
+
+#ifndef TINYGRAPH_LIKELY
+#define TINYGRAPH_LIKELY(expr) __builtin_expect(!!(expr), 1)
+#endif
+
+#ifndef TINYGRAPH_UNLIKELY
+#define TINYGRAPH_UNLIKELY(expr) __builtin_expect(!!(expr), 0)
+#endif
+
+#ifndef TINYGRAPH_PREFETCH
+#define TINYGRAPG_PREFETCH(p, ...) __builtin_prefetch(p, __VA_ARGS__)
+#endif
+
 #endif
