@@ -24,10 +24,10 @@ static bool tinygraph_queue_refill(tinygraph_queue *queue) {
   }
 
 
-  for (uint32_t i = 0; !tinygraph_stack_is_empty(queue->lhs); ++i) {
-    if (!tinygraph_stack_push(queue->rhs,
-          tinygraph_stack_pop(queue->lhs))) {
+  while (!tinygraph_stack_is_empty(queue->lhs)) {
+    const uint32_t tos = tinygraph_stack_pop(queue->lhs);
 
+    if (!tinygraph_stack_push(queue->rhs, tos)) {
       return false;
     }
   }
@@ -126,10 +126,15 @@ bool tinygraph_queue_reserve(tinygraph_queue *queue, uint32_t capacity) {
   TINYGRAPH_ASSERT(queue->lhs);
   TINYGRAPH_ASSERT(queue->rhs);
 
-  const bool lok = tinygraph_stack_reserve(queue->lhs, capacity);
-  const bool rok = tinygraph_stack_reserve(queue->rhs, capacity);
+  if (!tinygraph_stack_reserve(queue->lhs, capacity)) {
+    return false;
+  }
 
-  return lok && rok;
+  if (!tinygraph_stack_reserve(queue->rhs, capacity)) {
+    return false;
+  }
+
+  return true;
 }
 
 
@@ -192,10 +197,15 @@ bool tinygraph_queue_is_empty(tinygraph_queue *queue) {
   TINYGRAPH_ASSERT(queue->lhs);
   TINYGRAPH_ASSERT(queue->rhs);
 
-  const bool lempty = tinygraph_stack_is_empty(queue->lhs);
-  const bool rempty = tinygraph_stack_is_empty(queue->rhs);
+  if (!tinygraph_stack_is_empty(queue->lhs)) {
+    return false;
+  }
 
-  return lempty && rempty;
+  if (!tinygraph_stack_is_empty(queue->rhs)) {
+    return false;
+  }
+
+  return true;
 }
 
 
@@ -227,7 +237,7 @@ uint32_t tinygraph_queue_pop(tinygraph_queue *queue) {
 
   if (tinygraph_stack_is_empty(queue->rhs)) {
     const bool ok = tinygraph_queue_refill(queue);
-    TINYGRAPH_ASSERT(ok);  // stacks corrupted
+    TINYGRAPH_ASSERT(ok);  // stack is corrupted
   }
 
   TINYGRAPH_ASSERT(tinygraph_stack_is_empty(queue->lhs));
