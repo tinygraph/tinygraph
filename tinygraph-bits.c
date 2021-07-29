@@ -29,8 +29,20 @@ uint32_t tinygraph_bits_find(uint64_t v, uint32_t n) {
 
 #else // TINYGRAPH_HAS_BMI2
 
+// TODO: this non-BMI2 fallback is pretty slow; can we do better?
 uint32_t tinygraph_bits_find(uint64_t v, uint32_t n) {
-  TINYGRAPH_STATIC_ASSERT(false); // TODO: implement non BMI2 version
+  uint32_t set = 0;
+
+  for (uint32_t i = 0; i < 64; ++i) {
+    if ((v & (UINT64_C(1) << i)) != 0) {
+      if (set == n) {
+        return i;
+      }
+
+      set += 1;
+    }
+  }
+
   return 64;
 }
 

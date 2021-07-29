@@ -15,6 +15,8 @@ See documentation in [tinygraph.h](./tinygraph.h)
 
 # Building
 
+The tinygraph library requires 64bit Linux (gcc or clang).
+
 ```bash
 make
 ```

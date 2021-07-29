@@ -89,18 +89,18 @@ void tinygraph_bitset_destruct(tinygraph_bitset *bitset) {
 void tinygraph_bitset_set_at(tinygraph_bitset *bitset, uint32_t i) {
   TINYGRAPH_ASSERT(bitset);
   TINYGRAPH_ASSERT(bitset->blocks_len > 0);
-  TINYGRAPH_ASSERT((i >> 6UL) < bitset->blocks_len);
+  TINYGRAPH_ASSERT((i >> 6) < bitset->blocks_len);
 
-  bitset->blocks[i >> 6UL] |= ((uint64_t)1 << (i & 63UL));
+  bitset->blocks[i >> 6] |= (UINT64_C(1) << (i & UINT32_C(63)));
 }
 
 
 bool tinygraph_bitset_get_at(tinygraph_bitset *bitset, uint32_t i) {
   TINYGRAPH_ASSERT(bitset);
   TINYGRAPH_ASSERT(bitset->blocks_len > 0);
-  TINYGRAPH_ASSERT((i >> 6UL) < bitset->blocks_len);
+  TINYGRAPH_ASSERT((i >> 6) < bitset->blocks_len);
 
-  return (bitset->blocks[i >> 6UL] & ((uint64_t)1 << (i & 63UL))) != 0;
+  return (bitset->blocks[i >> 6] & (UINT64_C(1) << (i & UINT32_C(63)))) != 0;
 }
 
 
