@@ -17,16 +17,16 @@ TINYGRAPH_WARN_UNUSED
 uint32_t tinygraph_bits_count(uint64_t v);
 
 TINYGRAPH_WARN_UNUSED
-uint32_t tinygraph_bits_find(uint64_t v, uint32_t n);
+uint32_t tinygraph_bits_rank(uint64_t v, uint32_t n);
+
+TINYGRAPH_WARN_UNUSED
+uint32_t tinygraph_bits_select(uint64_t v, uint32_t n);
 
 TINYGRAPH_WARN_UNUSED
 uint32_t tinygraph_bits_leading0(uint64_t v);
 
 TINYGRAPH_WARN_UNUSED
 uint32_t tinygraph_bits_trailing0(uint64_t v);
-
-TINYGRAPH_WARN_UNUSED
-uint32_t tinygraph_bits_rank(uint64_t v, uint32_t n);
 
 
 #endif

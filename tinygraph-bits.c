@@ -18,9 +18,15 @@ uint32_t tinygraph_bits_count(uint64_t v) {
   return __builtin_popcountll(v);
 }
 
+uint32_t tinygraph_bits_rank(uint64_t v, uint32_t n) {
+  TINYGRAPH_ASSERT(n <= 64);
+
+  return tinygraph_bits_count(v << (64 - n));
+}
+
 #ifdef TINYGRAPH_HAS_BMI2
 
-uint32_t tinygraph_bits_find(uint64_t v, uint32_t n) {
+uint32_t tinygraph_bits_select(uint64_t v, uint32_t n) {
   TINYGRAPH_STATIC_ASSERT(sizeof(uint64_t) == sizeof(unsigned long long));
   TINYGRAPH_ASSERT(n < tinygraph_bits_count(v));
 
@@ -30,7 +36,7 @@ uint32_t tinygraph_bits_find(uint64_t v, uint32_t n) {
 #else // TINYGRAPH_HAS_BMI2
 
 // TODO: this non-BMI2 fallback is pretty slow; can we do better?
-uint32_t tinygraph_bits_find(uint64_t v, uint32_t n) {
+uint32_t tinygraph_bits_select(uint64_t v, uint32_t n) {
   uint32_t set = 0;
 
   for (uint32_t i = 0; i < 64; ++i) {
@@ -67,10 +73,4 @@ uint32_t tinygraph_bits_trailing0(uint64_t v) {
   }
 
   return __builtin_ctzll(v);
-}
-
-uint32_t tinygraph_bits_rank(uint64_t v, uint32_t n) {
-  TINYGRAPH_ASSERT(n <= 64);
-
-  return tinygraph_bits_count(v << (64 - n));
 }
