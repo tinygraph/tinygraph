@@ -25,4 +25,8 @@ uint32_t tinygraph_bits_leading0(uint64_t v);
 TINYGRAPH_WARN_UNUSED
 uint32_t tinygraph_bits_trailing0(uint64_t v);
 
+TINYGRAPH_WARN_UNUSED
+uint32_t tinygraph_bits_rank(uint64_t v, uint32_t n);
+
+
 #endif

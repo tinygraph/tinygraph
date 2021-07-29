@@ -554,6 +554,12 @@ void test17() {
 
   assert(tinygraph_bits_leading0(UINT64_C(0xd84c8a0)) == 36);
   assert(tinygraph_bits_trailing0(UINT64_C(0xd84c8a0)) == 5);
+
+  assert(tinygraph_bits_rank(UINT64_C(0xd84c8a0), 0) == 0);
+  assert(tinygraph_bits_rank(UINT64_C(0xd84c8a0), 64)
+      == tinygraph_bits_count(UINT64_C(0xd84c8a0)));
+  assert(tinygraph_bits_rank(UINT64_C(0xd84c8a0), 6) == 1);
+  assert(tinygraph_bits_rank(UINT64_C(0xd84c8a0), 8) == 2);
 }
 
 

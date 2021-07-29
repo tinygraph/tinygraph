@@ -68,3 +68,9 @@ uint32_t tinygraph_bits_trailing0(uint64_t v) {
 
   return __builtin_ctzll(v);
 }
+
+uint32_t tinygraph_bits_rank(uint64_t v, uint32_t n) {
+  TINYGRAPH_ASSERT(n <= 64);
+
+  return tinygraph_bits_count(v << (64 - n));
+}
