@@ -12,6 +12,7 @@ typedef struct tinygraph_queue {
 } tinygraph_queue;
 
 
+TINYGRAPH_WARN_UNUSED
 static bool tinygraph_queue_refill(tinygraph_queue *queue) {
   TINYGRAPH_ASSERT(queue);
   TINYGRAPH_ASSERT(queue->lhs);

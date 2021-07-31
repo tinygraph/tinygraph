@@ -3,6 +3,7 @@
 #include "tinygraph-vbyte.h"
 
 
+TINYGRAPH_WARN_UNUSED
 static uint32_t tinygraph_vbyte_encode_one(uint8_t *out, uint32_t value) {
   TINYGRAPH_ASSERT(out);
 
@@ -23,6 +24,7 @@ static uint32_t tinygraph_vbyte_encode_one(uint8_t *out, uint32_t value) {
   return i + 1;
 }
 
+TINYGRAPH_WARN_UNUSED
 static uint32_t tinygraph_vbyte_decode_one(const uint8_t *data, uint32_t *out) {
   TINYGRAPH_ASSERT(data);
   TINYGRAPH_ASSERT(out);

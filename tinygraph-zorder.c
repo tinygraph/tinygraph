@@ -54,6 +54,7 @@ static const uint8_t tinygraph_bitblast4[16] = {
   0x40, 0x41, 0x44, 0x45, 0x50, 0x51, 0x54, 0x55
 };
 
+TINYGRAPH_WARN_UNUSED
 static uint16_t tinygraph_bitblast8(uint8_t x) {
   uint16_t v = 0;
 
@@ -63,6 +64,7 @@ static uint16_t tinygraph_bitblast8(uint8_t x) {
   return v;
 }
 
+TINYGRAPH_WARN_UNUSED
 static uint32_t tinygraph_bitblast16(uint16_t x) {
   uint32_t v = 0;
 
@@ -72,6 +74,7 @@ static uint32_t tinygraph_bitblast16(uint16_t x) {
   return v;
 }
 
+TINYGRAPH_WARN_UNUSED
 static uint64_t tinygraph_bitblast32(uint32_t x) {
   uint64_t v = 0;
 
@@ -82,11 +85,13 @@ static uint64_t tinygraph_bitblast32(uint32_t x) {
 }
 
 
+TINYGRAPH_WARN_UNUSED
 uint32_t tinygraph_zorder_encode32(uint16_t x, uint16_t y) {
   return (tinygraph_bitblast16(y) << 1) | tinygraph_bitblast16(x);
 }
 
 
+TINYGRAPH_WARN_UNUSED
 uint64_t tinygraph_zorder_encode64(uint32_t x, uint32_t y) {
   return (tinygraph_bitblast32(y) << 1) | tinygraph_bitblast32(x);
 }
@@ -99,6 +104,7 @@ static const uint8_t tinygraph_bitpack8[] = {
   [0x50] = 12, [0x51] = 13, [0x54] = 14, [0x55] = 15
 };
 
+TINYGRAPH_WARN_UNUSED
 static uint8_t tinygraph_bitpack16(uint16_t x) {
   uint8_t v = 0;
 
@@ -108,6 +114,7 @@ static uint8_t tinygraph_bitpack16(uint16_t x) {
   return v;
 }
 
+TINYGRAPH_WARN_UNUSED
 static uint16_t tinygraph_bitpack32(uint32_t x) {
   uint16_t v = 0;
 
@@ -117,6 +124,7 @@ static uint16_t tinygraph_bitpack32(uint32_t x) {
   return v;
 }
 
+TINYGRAPH_WARN_UNUSED
 static uint32_t tinygraph_bitpack64(uint64_t x) {
   uint32_t v = 0;
 

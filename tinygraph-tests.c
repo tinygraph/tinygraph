@@ -13,6 +13,7 @@
 #include "tinygraph-zigzag.h"
 #include "tinygraph-zorder.h"
 #include "tinygraph-bits.h"
+#include "tinygraph-eliasfano.h"
 
 
 void test1() {
@@ -552,14 +553,25 @@ void test17() {
   assert(tinygraph_bits_select(UINT64_C(0xd84c8a0), 3) == 14);
   assert(tinygraph_bits_select(UINT64_C(0xd84c8a0), 9) == 27);
 
-  assert(tinygraph_bits_leading0(UINT64_C(0xd84c8a0)) == 36);
-  assert(tinygraph_bits_trailing0(UINT64_C(0xd84c8a0)) == 5);
+  assert(tinygraph_bits_leading0_u64(UINT64_C(0xd84c8a0)) == 36);
+  assert(tinygraph_bits_trailing0_u64(UINT64_C(0xd84c8a0)) == 5);
 
   assert(tinygraph_bits_rank(UINT64_C(0xd84c8a0), 0) == 0);
   assert(tinygraph_bits_rank(UINT64_C(0xd84c8a0), 64)
       == tinygraph_bits_count(UINT64_C(0xd84c8a0)));
   assert(tinygraph_bits_rank(UINT64_C(0xd84c8a0), 6) == 1);
   assert(tinygraph_bits_rank(UINT64_C(0xd84c8a0), 8) == 2);
+}
+
+
+void test18() {
+  uint32_t data[] = {1, 2, 10, 19, 147};
+
+  tinygraph_bitset_s bits = tinygraph_eliasfano_encode(data, 5);
+
+  tinygraph_bitset_print_internal(bits);
+
+  tinygraph_bitset_destruct(bits);
 }
 
 
@@ -581,4 +593,5 @@ int main() {
   test15();
   test16();
   test17();
+  test18();
 }

@@ -30,7 +30,7 @@ uint32_t tinygraph_bits_select(uint64_t v, uint32_t n) {
   TINYGRAPH_STATIC_ASSERT(sizeof(uint64_t) == sizeof(unsigned long long));
   TINYGRAPH_ASSERT(n < tinygraph_bits_count(v));
 
-  return tinygraph_bits_trailing0(_pdep_u64(UINT64_C(1) << n, v));
+  return tinygraph_bits_trailing0_u64(_pdep_u64(UINT64_C(1) << n, v));
 }
 
 #else // TINYGRAPH_HAS_BMI2
@@ -55,7 +55,17 @@ uint32_t tinygraph_bits_select(uint64_t v, uint32_t n) {
 #endif // TINYGRAPH_HAS_BMI2
 
 
-uint32_t tinygraph_bits_leading0(uint64_t v) {
+uint32_t tinygraph_bits_leading0_u32(uint32_t v) {
+  TINYGRAPH_STATIC_ASSERT(sizeof(uint32_t) == sizeof(unsigned int));
+
+  if (v == 0) {
+    return 32;
+  }
+
+  return __builtin_clz(v);
+}
+
+uint32_t tinygraph_bits_leading0_u64(uint64_t v) {
   TINYGRAPH_STATIC_ASSERT(sizeof(uint64_t) == sizeof(unsigned long long));
 
   if (v == 0) {
@@ -65,7 +75,17 @@ uint32_t tinygraph_bits_leading0(uint64_t v) {
   return __builtin_clzll(v);
 }
 
-uint32_t tinygraph_bits_trailing0(uint64_t v) {
+uint32_t tinygraph_bits_trailing0_u32(uint32_t v) {
+  TINYGRAPH_STATIC_ASSERT(sizeof(uint32_t) == sizeof(unsigned int));
+
+  if (v == 0) {
+    return 32;
+  }
+
+  return __builtin_ctz(v);
+}
+
+uint32_t tinygraph_bits_trailing0_u64(uint64_t v) {
   TINYGRAPH_STATIC_ASSERT(sizeof(uint64_t) == sizeof(unsigned long long));
 
   if (v == 0) {

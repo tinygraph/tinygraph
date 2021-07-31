@@ -18,17 +18,20 @@ typedef struct tinygraph_bitset* tinygraph_bitset_s;
 
 
 TINYGRAPH_WARN_UNUSED
-tinygraph_bitset_s tinygraph_bitset_construct(uint32_t size);
+tinygraph_bitset_s tinygraph_bitset_construct(uint64_t size);
 
 TINYGRAPH_WARN_UNUSED
 tinygraph_bitset_s tinygraph_bitset_copy(tinygraph_bitset_s bitset);
 
 void tinygraph_bitset_destruct(tinygraph_bitset_s bitset);
 
-void tinygraph_bitset_set_at(tinygraph_bitset_s bitset, uint32_t i);
+void tinygraph_bitset_set_at(tinygraph_bitset_s bitset, uint64_t i);
 
 TINYGRAPH_WARN_UNUSED
-bool tinygraph_bitset_get_at(tinygraph_bitset_s bitset, uint32_t i);
+bool tinygraph_bitset_get_at(tinygraph_bitset_s bitset, uint64_t i);
+
+TINYGRAPH_WARN_UNUSED
+uint64_t tinygraph_bitset_get_size(tinygraph_bitset_s bitset);
 
 void tinygraph_bitset_clear(tinygraph_bitset_s bitset);
 

@@ -9,11 +9,12 @@
 
 typedef struct tinygraph_bitset {
   uint64_t *blocks;
-  uint32_t blocks_len;
+  uint64_t blocks_len;
+  uint64_t size;
 } tinygraph_bitset;
 
 
-tinygraph_bitset* tinygraph_bitset_construct(uint32_t size) {
+tinygraph_bitset* tinygraph_bitset_construct(uint64_t size) {
   tinygraph_bitset *out = malloc(sizeof(tinygraph_bitset));
 
   if (!out) {
@@ -23,13 +24,14 @@ tinygraph_bitset* tinygraph_bitset_construct(uint32_t size) {
   *out = (tinygraph_bitset){
     .blocks = NULL,
     .blocks_len = 0,
+    .size = size,
   };
 
   if (size == 0) {
     return out;
   }
 
-  uint32_t num_blocks = ceil(size / 64.f);
+  uint64_t num_blocks = ceil(size / 64.f);
 
   uint64_t *blocks = calloc(num_blocks, sizeof(uint64_t));
 
@@ -63,7 +65,7 @@ tinygraph_bitset* tinygraph_bitset_copy(tinygraph_bitset_s bitset) {
     TINYGRAPH_ASSERT(copy->blocks);
     TINYGRAPH_ASSERT(bitset->blocks);
 
-    memcpy(copy->blocks, bitset->blocks, bitset->blocks_len * sizeof(uint32_t));
+    memcpy(copy->blocks, bitset->blocks, bitset->blocks_len * sizeof(uint64_t));
   }
 
   return copy;
@@ -86,21 +88,26 @@ void tinygraph_bitset_destruct(tinygraph_bitset *bitset) {
 }
 
 
-void tinygraph_bitset_set_at(tinygraph_bitset *bitset, uint32_t i) {
+void tinygraph_bitset_set_at(tinygraph_bitset *bitset, uint64_t i) {
   TINYGRAPH_ASSERT(bitset);
   TINYGRAPH_ASSERT(bitset->blocks_len > 0);
   TINYGRAPH_ASSERT((i >> 6) < bitset->blocks_len);
 
-  bitset->blocks[i >> 6] |= (UINT64_C(1) << (i & UINT32_C(63)));
+  bitset->blocks[i >> 6] |= (UINT64_C(1) << (i & UINT64_C(63)));
 }
 
 
-bool tinygraph_bitset_get_at(tinygraph_bitset *bitset, uint32_t i) {
+bool tinygraph_bitset_get_at(tinygraph_bitset *bitset, uint64_t i) {
   TINYGRAPH_ASSERT(bitset);
   TINYGRAPH_ASSERT(bitset->blocks_len > 0);
   TINYGRAPH_ASSERT((i >> 6) < bitset->blocks_len);
 
-  return (bitset->blocks[i >> 6] & (UINT64_C(1) << (i & UINT32_C(63)))) != 0;
+  return (bitset->blocks[i >> 6] & (UINT64_C(1) << (i & UINT64_C(63)))) != 0;
+}
+
+
+uint64_t tinygraph_bitset_get_size(tinygraph_bitset_s bitset) {
+  return bitset->size;
 }
 
 
@@ -111,14 +118,14 @@ void tinygraph_bitset_clear(tinygraph_bitset_s bitset) {
     return;
   }
 
-  memset(bitset->blocks, 0, bitset->blocks_len * sizeof(uint32_t));
+  memset(bitset->blocks, 0, bitset->blocks_len * sizeof(uint64_t));
 }
 
 
 void tinygraph_bitset_not(tinygraph_bitset_s bitset) {
   TINYGRAPH_ASSERT(bitset);
 
-  for (uint32_t i = 0; i < bitset->blocks_len; ++i) {
+  for (uint64_t i = 0; i < bitset->blocks_len; ++i) {
     bitset->blocks[i] = ~bitset->blocks[i];
   }
 }
@@ -128,7 +135,7 @@ void tinygraph_bitset_and(tinygraph_bitset_s bitset, const tinygraph_bitset_s ot
   TINYGRAPH_ASSERT(bitset);
   TINYGRAPH_ASSERT(bitset->blocks_len == other->blocks_len);
 
-  for (uint32_t i = 0; i < bitset->blocks_len; ++i) {
+  for (uint64_t i = 0; i < bitset->blocks_len; ++i) {
     bitset->blocks[i] = bitset->blocks[i] & other->blocks[i];
   }
 }
@@ -138,7 +145,7 @@ void tinygraph_bitset_or(tinygraph_bitset_s bitset, const tinygraph_bitset_s oth
   TINYGRAPH_ASSERT(bitset);
   TINYGRAPH_ASSERT(bitset->blocks_len == other->blocks_len);
 
-  for (uint32_t i = 0; i < bitset->blocks_len; ++i) {
+  for (uint64_t i = 0; i < bitset->blocks_len; ++i) {
     bitset->blocks[i] = bitset->blocks[i] | other->blocks[i];
   }
 }
@@ -148,7 +155,7 @@ void tinygraph_bitset_xor(tinygraph_bitset_s bitset, const tinygraph_bitset_s ot
   TINYGRAPH_ASSERT(bitset);
   TINYGRAPH_ASSERT(bitset->blocks_len == other->blocks_len);
 
-  for (uint32_t i = 0; i < bitset->blocks_len; ++i) {
+  for (uint64_t i = 0; i < bitset->blocks_len; ++i) {
     bitset->blocks[i] = bitset->blocks[i] ^ other->blocks[i];
   }
 }
@@ -159,7 +166,7 @@ void tinygraph_bitset_print_internal(tinygraph_bitset *bitset) {
 
   fprintf(stderr, "bitset internals\n");
 
-  for (uint32_t i = 0; i < bitset->blocks_len * 64; ++i) {
+  for (uint64_t i = 0; i < tinygraph_bitset_get_size(bitset); ++i) {
     fprintf(stderr, "%ju ", (uintmax_t)tinygraph_bitset_get_at(bitset, i));
   }
 
