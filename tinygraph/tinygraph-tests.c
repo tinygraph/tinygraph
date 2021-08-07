@@ -13,6 +13,7 @@
 #include "tinygraph-zigzag.h"
 #include "tinygraph-zorder.h"
 #include "tinygraph-bits.h"
+#include "tinygraph-poppy.h"
 #include "tinygraph-eliasfano.h"
 
 
@@ -569,8 +570,6 @@ void test18() {
 
   tinygraph_bitset_s bits = tinygraph_eliasfano_encode(data, 5);
 
-  tinygraph_bitset_print_internal(bits);
-
   tinygraph_bitset_destruct(bits);
 }
 
@@ -647,6 +646,30 @@ void test21() {
 }
 
 
+void test22() {
+  tinygraph_bitset_s bits = tinygraph_bitset_construct(1098);
+
+  tinygraph_bitset_set_at(bits, 0);
+  tinygraph_bitset_set_at(bits, 512);
+  tinygraph_bitset_set_at(bits, 1097);
+
+  tinygraph_bitset_print_internal(bits);
+
+  tinygraph_poppy_rank_s rank = tinygraph_poppy_rank_construct(bits);
+
+  tinygraph_poppy_rank_print_internal(rank);
+
+  fprintf(stderr, "%ju\n", tinygraph_poppy_rank_get(rank, 0));
+  fprintf(stderr, "%ju\n", tinygraph_poppy_rank_get(rank, 1));
+  fprintf(stderr, "%ju\n", tinygraph_poppy_rank_get(rank, 511));
+  fprintf(stderr, "%ju\n", tinygraph_poppy_rank_get(rank, 512));
+  fprintf(stderr, "%ju\n", tinygraph_poppy_rank_get(rank, 513));
+  fprintf(stderr, "%ju\n", tinygraph_poppy_rank_get(rank, 1095));
+  fprintf(stderr, "%ju\n", tinygraph_poppy_rank_get(rank, 1096));
+  fprintf(stderr, "%ju\n", tinygraph_poppy_rank_get(rank, 1097));
+}
+
+
 int main() {
   test1();
   test2();
@@ -669,4 +692,5 @@ int main() {
   test19();
   test20();
   test21();
+  test22();
 }
