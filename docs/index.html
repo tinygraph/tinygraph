@@ -14,7 +14,6 @@
         padding: 0 20px;
       }
       @media (max-width: 640px) {
-        body { font-size: 18px }
         main,footer { width: 99% }
         section,article { flex:none; width:100%; margin-left: 0; }
       }
@@ -34,7 +33,7 @@
 
       <section>
         <article>
-          <h3>Graph Format</h3>
+          <h2>Graph Format</h2>
           <p>
             We use a compressed sparse row format to represent graphs in compact and efficient ways: ideal for large scale and high-performance use-cases.
           </p>
@@ -43,7 +42,7 @@
           </p>
         </article>
         <article>
-          <h3>Graph Compression</h3>
+          <h2>Graph Compression</h2>
           <p>
             For compression we use techniques like: succinct data structures, storing deltas in vbyte format, and permuting graphs based on space filling curves.
           </p>
@@ -55,7 +54,7 @@
 
       <section>
         <article>
-          <h3>Modern Hardware</h3>
+          <h2>Modern Hardware</h2>
           <p>
             Vector instruction sets are widely deployed with AVX2 available for 7+ years by now: we target modern hardware for efficiency gains at no cost.
           </p>
@@ -64,7 +63,7 @@
           </p>
         </article>
         <article>
-          <h3>Stable Library</h3>
+          <h2>Stable Library</h2>
           <p>
             We provide a stable API and ABI using semantic versioning: a stable ABI allows for simple shared library upgrades across minor versions.
           </p>
@@ -73,6 +72,7 @@
           </p>
         </article>
       </section>
+      <hr>
     </main>
 
     <footer>
