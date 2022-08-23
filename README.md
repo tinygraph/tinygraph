@@ -28,19 +28,19 @@ On top of the stable API and ABI we provide bindings to other languages: they co
 
 # Usage
 
-See the example in [tinygraph-example.c](./tinygraph-example.c) for how to use the library.
+See the example in [tinygraph/tinygraph-example.c](./tinygraph/tinygraph-example.c) for how to use the library.
 
 
 # Interface
 
-See the documentation in [tinygraph.h](./tinygraph.h) for the interface the library provides.
+See the documentation in [tinygraph/tinygraph.h](./tinygraph/tinygraph.h) for the interface the library provides.
 
 
 # Building
 
 The tinygraph library requires 64bit Linux (gcc or clang).
 
-To compile the library, its tests, and the example, run
+To compile the library, its tests, and the example, run in the `tinygraph` directory
 
 ```bash
 make
@@ -53,7 +53,7 @@ Then
 
 # Development
 
-Use the self-contained and reproducible docker environment
+Use the self-contained and reproducible docker environment in the `tinygraph` directory
 
 ```bash
 make dev
