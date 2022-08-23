@@ -1,6 +1,6 @@
-[![](tinygraph.png)](https://tinygraph.org)
+# [tinygraph](https://tinygraph.org)
 
-Tiny and efficient graph abstractions.
+Tiny and efficient graph abstractions
 
 
 # Overview
@@ -21,6 +21,7 @@ Vector instruction sets are widely deployed with AVX2 available for 7+ years by 
 We provide scalar fallbacks and base line implementations in case vector instructions are not supported: at the cost of runtime efficiency.
 
 ## Stable Library
+
 We provide a stable API and ABI using semantic versioning: a stable ABI allows for simple shared library upgrades across minor versions.
 On top of the stable API and ABI we provide bindings to other languages: they come with their own stability and support guarantees.
 
