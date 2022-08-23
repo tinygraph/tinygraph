@@ -18,6 +18,9 @@ jobs:
       - name: Compile
         run: docker run -t --rm --pull never --read-only -v $(pwd)/tinygraph:/app tinygraph/tinygraph make
 
+      - name: Install
+        run: docker run -t --rm --pull never --read-only -v $(pwd)/tinygraph:/app tinygraph/tinygraph make install
+
       - name: Test
         run: docker run -t --rm --pull never --read-only -v $(pwd)/tinygraph:/app tinygraph/tinygraph ./tinygraph-tests
 
