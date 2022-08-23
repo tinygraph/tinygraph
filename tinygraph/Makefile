@@ -23,6 +23,7 @@ install: libtinygraph.so
 libtinygraph.so: LDFLAGS=-shared -Wl,-soname,libtinygraph.so.0
 libtinygraph.so: $(filter-out tinygraph-tests.o tinygraph-example.o, $(OBJ))
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LDLIBS)
+	@ln -sf libtinygraph.so libtinygraph.so.0
 
 tinygraph-tests: LDFLAGS+=-Wl,-rpath=.
 tinygraph-tests: $(filter-out tinygraph-example.o, $(OBJ))  # access to internals
