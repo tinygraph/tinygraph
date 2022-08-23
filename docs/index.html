@@ -9,13 +9,14 @@
     <style>
       main,footer {
         margin: 0 auto;
-        width: 60%;
+        width: 99%;
         text-align: left;
         padding: 0 20px;
       }
-      @media (max-width: 640px) {
+      section { max-width: 1024px; }
+      @media (max-width: 1024px) {
         main,footer { width: 99% }
-        section,article { flex:none; width:100%; margin-left: 0; }
+        section,article { flex: none; width: 100%; margin-left: 0; }
       }
       ul {
         list-style-type: "⟳ ";
