@@ -130,6 +130,72 @@ tinygraph_s tinygraph_copy(tinygraph *graph) {
 }
 
 
+typedef struct tinygraph_edge {
+  uint32_t source;
+  uint32_t target;
+} tinygraph_edge;
+
+static inline int tinygraph_edge_comp(const void* lhs, const void *rhs) {
+  const tinygraph_edge elhs = *(const tinygraph_edge *)lhs;
+  const tinygraph_edge erhs = *(const tinygraph_edge *)rhs;
+
+  if (elhs.source < erhs.source) {
+    return -1;
+  } else if (elhs.source > erhs.source) {
+    return 1;
+  } else {
+    if (elhs.target < erhs.target) {
+      return -1;
+    } else if (elhs.target > erhs.target) {
+      return 1;
+    } else {
+      return 0;
+    }
+  }
+}
+
+tinygraph_s tinygraph_construct_from_unsorted_edges(
+    const uint32_t* sources,
+    const uint32_t* targets,
+    uint32_t n)
+{
+  TINYGRAPH_ASSERT(n != UINT32_MAX);
+
+  TINYGRAPH_ASSERT(sources);
+  TINYGRAPH_ASSERT(targets);
+
+  tinygraph_edge *edges = calloc(n, sizeof(tinygraph_edge));
+
+  uint32_t* sorted_sources = calloc(n, sizeof(uint32_t));
+  uint32_t* sorted_targets = calloc(n, sizeof(uint32_t));
+
+  if (!edges || !sorted_sources || !sorted_targets) {
+    free(edges);
+    free(sorted_sources);
+    free(sorted_targets);
+
+    return NULL;
+  }
+
+  for (uint32_t i = 0; i < n; ++i) {
+    edges[i] = (tinygraph_edge) {
+      .source = sources[i],
+      .target = targets[i],
+    };
+  }
+
+  qsort(edges, n, sizeof(tinygraph_edge), tinygraph_edge_comp);
+
+  for (uint32_t i = 0; i < n; ++i) {
+    sorted_sources[i] = edges[i].source;
+    sorted_targets[i] = edges[i].target;
+  }
+
+  return tinygraph_construct_from_sorted_edges(
+      sorted_sources, sorted_targets, n);
+}
+
+
 void tinygraph_destruct(tinygraph *graph) {
   if (!graph) {
     return;

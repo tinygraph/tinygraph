@@ -575,6 +575,44 @@ void test18() {
 }
 
 
+void test19() {
+  const uint32_t sources[4] = {0, 0, 1, 1};
+  const uint32_t targets[4] = {0, 2, 0, 2};
+
+  const tinygraph_s graph = tinygraph_construct_from_sorted_edges(
+      sources, targets, 4);
+
+  assert(graph);
+  assert(!tinygraph_is_empty(graph));
+  assert(tinygraph_get_num_nodes(graph) == 3);
+  assert(tinygraph_get_num_edges(graph) == 4);
+
+  assert(tinygraph_has_edge_from_to(graph, 0, 0));
+  assert(tinygraph_has_edge_from_to(graph, 0, 2));
+  assert(tinygraph_has_edge_from_to(graph, 1, 0));
+  assert(tinygraph_has_edge_from_to(graph, 1, 2));
+}
+
+
+void test20() {
+  const uint32_t sources[4] = {1, 0, 0, 1};
+  const uint32_t targets[4] = {2, 0, 2, 0};
+
+  const tinygraph_s graph = tinygraph_construct_from_unsorted_edges(
+      sources, targets, 4);
+
+  assert(graph);
+  assert(!tinygraph_is_empty(graph));
+  assert(tinygraph_get_num_nodes(graph) == 3);
+  assert(tinygraph_get_num_edges(graph) == 4);
+
+  assert(tinygraph_has_edge_from_to(graph, 1, 2));
+  assert(tinygraph_has_edge_from_to(graph, 0, 0));
+  assert(tinygraph_has_edge_from_to(graph, 0, 2));
+  assert(tinygraph_has_edge_from_to(graph, 1, 0));
+}
+
+
 int main() {
   test1();
   test2();
@@ -594,4 +632,6 @@ int main() {
   test16();
   test17();
   test18();
+  test19();
+  test20();
 }

@@ -41,6 +41,24 @@ tinygraph_s tinygraph_construct_from_sorted_edges(
     uint32_t n);
 
 /**
+ * Creates a tiny graph from `n` source nodes in
+ * `sources` and `n` target nodes in `targets`.
+ *
+ * Edges are not required to be sorted, but
+ * node ids are required to start at zero and
+ * are consecutive.
+ *
+ * The caller is responsible to destruct the
+ * returned object with `tinygraph_destruct`.
+ */
+TINYGRAPH_API
+TINYGRAPH_WARN_UNUSED
+tinygraph_s tinygraph_construct_from_unsorted_edges(
+    const uint32_t* sources,
+    const uint32_t* targets,
+    uint32_t n);
+
+/**
  * Copies `graph` and returns a new graph with
  * the same nodes and edges as `graph`.
  *
