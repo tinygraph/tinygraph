@@ -613,6 +613,40 @@ void test20() {
 }
 
 
+void test21() {
+  const uint32_t sources[4] = {1, 0, 0, 1};
+  const uint32_t targets[4] = {2, 0, 2, 0};
+
+  const tinygraph_s graph = tinygraph_construct_from_unsorted_edges(
+      sources, targets, 4);
+
+  assert(graph);
+  assert(!tinygraph_is_empty(graph));
+  assert(tinygraph_get_num_nodes(graph) == 3);
+  assert(tinygraph_get_num_edges(graph) == 4);
+
+  assert(tinygraph_has_edge_from_to(graph, 1, 2));
+  assert(tinygraph_has_edge_from_to(graph, 0, 0));
+  assert(tinygraph_has_edge_from_to(graph, 0, 2));
+  assert(tinygraph_has_edge_from_to(graph, 1, 0));
+
+  const tinygraph_s rgraph = tinygraph_copy_reversed(graph);
+
+  assert(rgraph);
+  assert(!tinygraph_is_empty(rgraph));
+  assert(tinygraph_get_num_nodes(rgraph) == 3);
+  assert(tinygraph_get_num_edges(rgraph) == 4);
+
+  assert(tinygraph_has_edge_from_to(rgraph, 2, 1));
+  assert(tinygraph_has_edge_from_to(rgraph, 0, 0));
+  assert(tinygraph_has_edge_from_to(rgraph, 2, 0));
+  assert(tinygraph_has_edge_from_to(rgraph, 0, 1));
+
+  tinygraph_print(graph);
+  tinygraph_print(rgraph);
+}
+
+
 int main() {
   test1();
   test2();
@@ -634,4 +668,5 @@ int main() {
   test18();
   test19();
   test20();
+  test21();
 }

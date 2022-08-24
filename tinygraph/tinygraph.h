@@ -70,6 +70,18 @@ TINYGRAPH_WARN_UNUSED
 tinygraph_s tinygraph_copy(tinygraph_s graph);
 
 /**
+ * Copies `graph` and returns a new graph with
+ * the same nodes as `graph` but the edges
+ * are reversed.
+ *
+ * The caller is responsible to destruct the
+ * returned object with `tinygraph_destruct`.
+ */
+TINYGRAPH_API
+TINYGRAPH_WARN_UNUSED
+tinygraph_s tinygraph_copy_reversed(tinygraph_s graph);
+
+/**
  * Destructs `graph` releasing resources.
  */
 TINYGRAPH_API
