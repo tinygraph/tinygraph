@@ -66,9 +66,13 @@ bool tinygraph_is_sorted_sources_targets(
     const uint32_t *targets,
     uint32_t n);
 
+bool tinygraph_sort_sources_targets(
+    uint32_t *sources,
+    uint32_t *targets,
+    uint32_t n);
+
 /* TODO
 void tinygraph_renumber
-void tinygraph_sort_edges
 */
 
 TINYGRAPH_WARN_UNUSED

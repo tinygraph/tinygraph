@@ -7,31 +7,6 @@
 #include "tinygraph-impl.h"
 
 
-typedef struct tinygraph_edge {
-  uint32_t source;
-  uint32_t target;
-} tinygraph_edge;
-
-
-static inline int tinygraph_edge_comp(const void* lhs, const void *rhs) {
-  const tinygraph_edge elhs = *(const tinygraph_edge *)lhs;
-  const tinygraph_edge erhs = *(const tinygraph_edge *)rhs;
-
-  if (elhs.source < erhs.source) {
-    return -1;
-  } else if (elhs.source > erhs.source) {
-    return 1;
-  } else {
-    if (elhs.target < erhs.target) {
-      return -1;
-    } else if (elhs.target > erhs.target) {
-      return 1;
-    } else {
-      return 0;
-    }
-  }
-}
-
 
 tinygraph_s tinygraph_construct_from_sorted_edges(
     const uint32_t* sources,
@@ -215,35 +190,33 @@ tinygraph_s tinygraph_construct_from_unsorted_edges(
   TINYGRAPH_ASSERT(sources);
   TINYGRAPH_ASSERT(targets);
 
-  tinygraph_edge *edges = calloc(n, sizeof(tinygraph_edge));
-
   uint32_t* sorted_sources = calloc(n, sizeof(uint32_t));
   uint32_t* sorted_targets = calloc(n, sizeof(uint32_t));
 
-  if (!edges || !sorted_sources || !sorted_targets) {
-    free(edges);
+  if (!sorted_sources || !sorted_targets) {
     free(sorted_sources);
     free(sorted_targets);
 
     return NULL;
   }
 
-  for (uint32_t i = 0; i < n; ++i) {
-    edges[i] = (tinygraph_edge) {
-      .source = sources[i],
-      .target = targets[i],
-    };
+  memcpy(sorted_sources, sources, n * sizeof(uint32_t));
+  memcpy(sorted_targets, targets, n * sizeof(uint32_t));
+
+  if (!tinygraph_sort_sources_targets(sorted_sources, sorted_targets, n)) {
+    free(sorted_sources);
+    free(sorted_targets);
+
+    return NULL;
   }
 
-  qsort(edges, n, sizeof(tinygraph_edge), tinygraph_edge_comp);
-
-  for (uint32_t i = 0; i < n; ++i) {
-    sorted_sources[i] = edges[i].source;
-    sorted_targets[i] = edges[i].target;
-  }
-
-  return tinygraph_construct_from_sorted_edges(
+  tinygraph *graph = tinygraph_construct_from_sorted_edges(
       sorted_sources, sorted_targets, n);
+
+  free(sorted_sources);
+  free(sorted_targets);
+
+  return graph;
 }
 
 

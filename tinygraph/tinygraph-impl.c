@@ -8,6 +8,31 @@
 #include "tinygraph-impl.h"
 
 
+typedef struct tinygraph_edge {
+  uint32_t source;
+  uint32_t target;
+} tinygraph_edge;
+
+static inline int tinygraph_edge_comp(const void* lhs, const void *rhs) {
+  const tinygraph_edge elhs = *(const tinygraph_edge *)lhs;
+  const tinygraph_edge erhs = *(const tinygraph_edge *)rhs;
+
+  if (elhs.source < erhs.source) {
+    return -1;
+  } else if (elhs.source > erhs.source) {
+    return 1;
+  } else {
+    if (elhs.target < erhs.target) {
+      return -1;
+    } else if (elhs.target > erhs.target) {
+      return 1;
+    } else {
+      return 0;
+    }
+  }
+}
+
+
 uint8_t tinygraph_saturated_add_u8(uint8_t a, uint8_t b) {
   return (uint8_t)(a + b) < a ? -1 : (a + b);
 }
@@ -212,6 +237,44 @@ bool tinygraph_is_sorted_sources_targets(
 
     it = skip;
   }
+
+  return true;
+}
+
+
+bool tinygraph_sort_sources_targets(
+    uint32_t *sources,
+    uint32_t *targets,
+    uint32_t n) {
+
+  if (n < 2) {
+    return true;
+  }
+
+  TINYGRAPH_ASSERT(sources);
+  TINYGRAPH_ASSERT(targets);
+
+  tinygraph_edge *edges = calloc(n, sizeof(tinygraph_edge));
+
+  if (!edges) {
+    return false;
+  }
+
+  for (uint32_t i = 0; i < n; ++i) {
+    edges[i] = (tinygraph_edge) {
+      .source = sources[i],
+      .target = targets[i],
+    };
+  }
+
+  qsort(edges, n, sizeof(tinygraph_edge), tinygraph_edge_comp);
+
+  for (uint32_t i = 0; i < n; ++i) {
+    sources[i] = edges[i].source;
+    targets[i] = edges[i].target;
+  }
+
+  free(edges);
 
   return true;
 }
