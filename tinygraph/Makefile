@@ -4,9 +4,9 @@ LDFLAGS+=-Wl,--gc-sections
 LDLIBS+=-lm
 PREFIX?=/usr
 
-SRC=$(wildcard *.c)
-OBJ=$(SRC:.c=.o)
-DEP=$(SRC:.c=.d)
+SRC:=$(wildcard *.c)
+OBJ:=$(SRC:.c=.o)
+DEP:=$(SRC:.c=.d)
 
 all: libtinygraph.so tinygraph-example tinygraph-tests
 
