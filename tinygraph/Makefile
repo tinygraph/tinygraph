@@ -8,8 +8,10 @@ SRC:=$(wildcard *.c)
 OBJ:=$(SRC:.c=.o)
 DEP:=$(SRC:.c=.d)
 
+.PHONY: all
 all: libtinygraph.so tinygraph-example tinygraph-tests
 
+.PHONY: install
 install: libtinygraph.so
 	mkdir -p $(PREFIX)/include/tinygraph
 	install -m 0644 tinygraph.h $(PREFIX)/include/tinygraph
@@ -31,17 +33,18 @@ tinygraph-tests: $(filter-out tinygraph-example.o, $(OBJ))  # access to internal
 tinygraph-example: LDFLAGS+=-Wl,-rpath=.
 tinygraph-example: libtinygraph.so  # example only has access to public interface
 
+.PHONY: watch
 watch:
 	@while true; do \
 		inotifywait -q -e modify -e create -e delete -e move *.c *.h Makefile; \
-		clear; make --no-print-directory; \
+		make --no-print-directory; \
 	done
 
+.PHONY: dev
 dev: clean
 	@docker build -t tinygraph/tinygraph .
 	@docker run -it --rm --pull never --read-only -v $(CURDIR):/app tinygraph/tinygraph make watch
 
+.PHONY: clean
 clean:
 	@rm -f tinygraph*.o tinygraph*.d libtinygraph.so libtinygraph.so.0 tinygraph-example tinygraph-tests
-
-.PHONY: all install clean watch dev

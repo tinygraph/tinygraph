@@ -1,6 +1,8 @@
-FROM alpine:3.16
+FROM quay.io/almalinuxorg/9-minimal:9
 
-RUN apk add --no-cache make gcc musl-dev inotify-tools
+RUN microdnf install -y --nodocs --noplugins epel-release && \
+    microdnf install -y --nodocs --noplugins make gcc inotify-tools && \
+    microdnf clean all
 
 WORKDIR /app
 COPY . .
