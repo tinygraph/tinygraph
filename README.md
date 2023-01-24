@@ -64,6 +64,6 @@ watching file modification events, re-compiling automatically.
 
 ## License
 
-Copyright © 2021-2022 Daniel J. Hofmann
+Copyright © 2021-2023 Daniel J. Hofmann
 
 Distributed under the MIT License (MIT).
