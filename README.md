@@ -5,33 +5,33 @@ Tiny and efficient graph abstractions
 
 # Overview
 
-## Graph Format
+The tinygraph library is a modern approach for working with compact graphs.
 
-We use a compressed sparse row format to represent graphs in compact and efficient ways: ideal for large scale and high-performance use-cases.
-The trade-off is limited support for modification. The use-cases we support: build a graph, work on the graph, and potentially build new graphs from there.
-
-## Graph Compression
-
-For compression we use techniques like: succinct data structures, storing deltas in vbyte format, and permuting graphs based on space filling curves.
-Compressed graphs not only have a much smaller footprint, but we also keep an eye on viability and practicality: this is not a research project.
-
-## Modern Hardware
-
-Vector instruction sets are widely deployed with AVX2 available for 7+ years by now: we target modern hardware for efficiency gains at no cost.
-We provide scalar fallbacks and base line implementations in case vector instructions are not supported: at the cost of runtime efficiency.
-
-## Stable Library
-
-We provide a stable API and ABI using semantic versioning: a stable ABI allows for simple shared library upgrades across minor versions.
-On top of the stable API and ABI we provide bindings to other languages: they come with their own stability and support guarantees.
+See our website at [tinygraph.org](https://tinygraph.org)
 
 
 # Usage
 
-See the example in [tinygraph/tinygraph-example.c](./tinygraph/tinygraph-example.c) for how to use the library.
+```c
+const uint32_t sources[5] = {0, 0, 1, 1, 2};
+const uint32_t targets[5] = {1, 2, 0, 2, 1};
+
+tinygraph_s graph = tinygraph_construct_from_sorted_edges(sources, targets, 5);
+
+if (!graph) {
+  fprintf(stderr, "error: unable to construct graph\n");
+  return EXIT_FAILURE;
+}
+
+tinygraph_print(graph);
+
+tinygraph_destruct(graph);
+```
+
+See the example in [tinygraph/tinygraph-example.c](./tinygraph/tinygraph-example.c)
 
 
-# Interface
+# API
 
 See the documentation in [tinygraph/tinygraph.h](./tinygraph/tinygraph.h) for the interface the library provides.
 
