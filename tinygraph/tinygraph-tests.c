@@ -44,6 +44,9 @@ void test2() {
 
   assert(tinygraph_get_edge_target(graph, 0) == 0);
   assert(tinygraph_get_edge_target(graph, 1) == 2);
+
+  assert(tinygraph_get_out_degree(graph, 0) == 1);
+  assert(tinygraph_get_out_degree(graph, 1) == 1);
 }
 
 

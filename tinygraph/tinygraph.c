@@ -288,17 +288,14 @@ uint32_t tinygraph_get_out_degree(const tinygraph * const graph, uint32_t v) {
   TINYGRAPH_ASSERT(graph);
   TINYGRAPH_ASSERT(tinygraph_has_node(graph, v));
 
-  const uint32_t *first = NULL;
-  const uint32_t *last = NULL;
+  uint32_t efirst;
+  uint32_t elast;
 
-  tinygraph_get_neighbors(graph, &first, &last, v);
+  tinygraph_get_out_edges(graph, v, &efirst, &elast);
 
-  TINYGRAPH_ASSERT(first);
-  TINYGRAPH_ASSERT(last);
+  TINYGRAPH_ASSERT(efirst <= elast);
 
-  TINYGRAPH_ASSERT(first <= last);
-
-  return last - first;
+  return elast - efirst;
 }
 
 
