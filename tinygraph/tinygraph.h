@@ -21,6 +21,7 @@ extern "C" {
  * compressed and efficient format making the graph tiny.
  */
 typedef struct tinygraph* tinygraph_s;
+typedef const struct tinygraph* tinygraph_const_s;
 
 /**
  * Creates a tiny graph from `n` source nodes in
@@ -67,7 +68,7 @@ tinygraph_s tinygraph_construct_from_unsorted_edges(
  */
 TINYGRAPH_API
 TINYGRAPH_WARN_UNUSED
-tinygraph_s tinygraph_copy(tinygraph_s graph);
+tinygraph_s tinygraph_copy(tinygraph_const_s graph);
 
 /**
  * Copies `graph` and returns a new graph with
@@ -79,7 +80,7 @@ tinygraph_s tinygraph_copy(tinygraph_s graph);
  */
 TINYGRAPH_API
 TINYGRAPH_WARN_UNUSED
-tinygraph_s tinygraph_copy_reversed(tinygraph_s graph);
+tinygraph_s tinygraph_copy_reversed(tinygraph_const_s graph);
 
 /**
  * Destructs `graph` releasing resources.
@@ -92,21 +93,21 @@ void tinygraph_destruct(tinygraph_s graph);
  */
 TINYGRAPH_API
 TINYGRAPH_WARN_UNUSED
-bool tinygraph_is_empty(tinygraph_s graph);
+bool tinygraph_is_empty(tinygraph_const_s graph);
 
 /**
  * Returns the number of nodes in `graph`.
  */
 TINYGRAPH_API
 TINYGRAPH_WARN_UNUSED
-uint32_t tinygraph_get_num_nodes(tinygraph_s graph);
+uint32_t tinygraph_get_num_nodes(tinygraph_const_s graph);
 
 /**
  * Returns the number of edges in `graph`.
  */
 TINYGRAPH_API
 TINYGRAPH_WARN_UNUSED
-uint32_t tinygraph_get_num_edges(tinygraph_s graph);
+uint32_t tinygraph_get_num_edges(tinygraph_const_s graph);
 
 /**
  * Writes the edge range [first, last) for all out
@@ -114,7 +115,7 @@ uint32_t tinygraph_get_num_edges(tinygraph_s graph);
  */
 TINYGRAPH_API
 void tinygraph_get_out_edges(
-    tinygraph_s graph,
+    tinygraph_const_s graph,
     uint32_t source,
     uint32_t* first,
     uint32_t* last);
@@ -124,14 +125,14 @@ void tinygraph_get_out_edges(
  */
 TINYGRAPH_API
 TINYGRAPH_WARN_UNUSED
-uint32_t tinygraph_get_edge_target(tinygraph_s graph, uint32_t e);
+uint32_t tinygraph_get_edge_target(tinygraph_const_s graph, uint32_t e);
 
 /**
  * Returns the number of outgoing edges at node `v`.
  */
 TINYGRAPH_API
 TINYGRAPH_WARN_UNUSED
-uint32_t tinygraph_get_out_degree(tinygraph_s graph, uint32_t v);
+uint32_t tinygraph_get_out_degree(tinygraph_const_s graph, uint32_t v);
 
 /**
  * Writes the node `v`'s neighbors delimited by
@@ -143,7 +144,7 @@ uint32_t tinygraph_get_out_degree(tinygraph_s graph, uint32_t v);
  */
 TINYGRAPH_API
 void tinygraph_get_neighbors(
-    tinygraph_s graph,
+    tinygraph_const_s graph,
     const uint32_t **first,
     const uint32_t **last,
     uint32_t v);
@@ -153,21 +154,21 @@ void tinygraph_get_neighbors(
  */
 TINYGRAPH_API
 TINYGRAPH_WARN_UNUSED
-bool tinygraph_has_node(tinygraph_s graph, uint32_t v);
+bool tinygraph_has_node(tinygraph_const_s graph, uint32_t v);
 
 /**
  * Returns true if `graph` contains edge `e`.
  */
 TINYGRAPH_API
 TINYGRAPH_WARN_UNUSED
-bool tinygraph_has_edge(tinygraph_s graph, uint32_t e);
+bool tinygraph_has_edge(tinygraph_const_s graph, uint32_t e);
 
 /**
  * Returns true if `graph` contains an edge from `s` to `t`.
  */
 TINYGRAPH_API
 TINYGRAPH_WARN_UNUSED
-bool tinygraph_has_edge_from_to(tinygraph_s graph, uint32_t s, uint32_t t);
+bool tinygraph_has_edge_from_to(tinygraph_const_s graph, uint32_t s, uint32_t t);
 
 /**
  * Writes the all-pair shortest paths distances into `result`.
@@ -180,20 +181,20 @@ bool tinygraph_has_edge_from_to(tinygraph_s graph, uint32_t s, uint32_t t);
  * pairs (i,j) at `results[i * num_nodes + j]`.
  */
 TINYGRAPH_API
-void tinygraph_apsp(tinygraph_s graph, const uint8_t* weights, uint8_t* results);
+void tinygraph_apsp(tinygraph_const_s graph, const uint8_t* weights, uint8_t* results);
 
 /**
  * Prints a human readable version of `graph` to stderr.
  */
 TINYGRAPH_API
-void tinygraph_print(tinygraph_s graph);
+void tinygraph_print(tinygraph_const_s graph);
 
 /**
  * Returns the total size in bytes `graph` uses.
  */
 TINYGRAPH_API
 TINYGRAPH_WARN_UNUSED
-uint32_t tinygraph_size_in_bytes(tinygraph_s graph);
+uint32_t tinygraph_size_in_bytes(tinygraph_const_s graph);
 
 
 /**

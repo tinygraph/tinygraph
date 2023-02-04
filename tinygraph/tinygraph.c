@@ -87,10 +87,8 @@ tinygraph_s tinygraph_construct_from_sorted_edges(
 }
 
 
-tinygraph_s tinygraph_copy_reversed(tinygraph *graph) {
-  if (!graph) {
-    return graph;
-  }
+tinygraph_s tinygraph_copy_reversed(const tinygraph * const graph) {
+  TINYGRAPH_ASSERT(graph);
 
   if (tinygraph_is_empty(graph)) {
     return tinygraph_construct_empty();
@@ -136,10 +134,8 @@ tinygraph_s tinygraph_copy_reversed(tinygraph *graph) {
 }
 
 
-tinygraph_s tinygraph_copy(tinygraph *graph) {
-  if (!graph) {
-    return graph;
-  }
+tinygraph_s tinygraph_copy(const tinygraph * const graph) {
+  TINYGRAPH_ASSERT(graph);
 
   tinygraph *copy = tinygraph_construct_empty();
 
@@ -220,7 +216,7 @@ tinygraph_s tinygraph_construct_from_unsorted_edges(
 }
 
 
-void tinygraph_destruct(tinygraph *graph) {
+void tinygraph_destruct(tinygraph * const graph) {
   if (!graph) {
     return;
   }
@@ -241,21 +237,21 @@ void tinygraph_destruct(tinygraph *graph) {
 }
 
 
-bool tinygraph_is_empty(tinygraph_s graph) {
+bool tinygraph_is_empty(const tinygraph * const graph) {
   TINYGRAPH_ASSERT(graph);
 
   return tinygraph_get_num_nodes(graph) == 0;
 }
 
 
-uint32_t tinygraph_get_num_nodes(tinygraph *graph) {
+uint32_t tinygraph_get_num_nodes(const tinygraph * const graph) {
   TINYGRAPH_ASSERT(graph);
 
   return graph->offsets_len > 1 ? graph->offsets_len - 1 : 0;  // tombstone
 }
 
 
-uint32_t tinygraph_get_num_edges(tinygraph *graph) {
+uint32_t tinygraph_get_num_edges(const tinygraph * const graph) {
   TINYGRAPH_ASSERT(graph);
 
   return graph->targets_len;
@@ -263,7 +259,7 @@ uint32_t tinygraph_get_num_edges(tinygraph *graph) {
 
 
 void tinygraph_get_out_edges(
-    tinygraph *graph,
+    const tinygraph * const graph,
     uint32_t source,
     uint32_t* first,
     uint32_t* last)
@@ -280,7 +276,7 @@ void tinygraph_get_out_edges(
 }
 
 
-uint32_t tinygraph_get_edge_target(tinygraph *graph, uint32_t e) {
+uint32_t tinygraph_get_edge_target(const tinygraph * const graph, uint32_t e) {
   TINYGRAPH_ASSERT(graph);
   TINYGRAPH_ASSERT(tinygraph_has_edge(graph, e));
 
@@ -288,7 +284,7 @@ uint32_t tinygraph_get_edge_target(tinygraph *graph, uint32_t e) {
 }
 
 
-uint32_t tinygraph_get_out_degree(tinygraph *graph, uint32_t v) {
+uint32_t tinygraph_get_out_degree(const tinygraph * const graph, uint32_t v) {
   TINYGRAPH_ASSERT(graph);
   TINYGRAPH_ASSERT(tinygraph_has_node(graph, v));
 
@@ -307,7 +303,7 @@ uint32_t tinygraph_get_out_degree(tinygraph *graph, uint32_t v) {
 
 
 void tinygraph_get_neighbors(
-    tinygraph *graph,
+    const tinygraph * const graph,
     const uint32_t **first,
     const uint32_t **last,
     uint32_t v)
@@ -327,14 +323,14 @@ void tinygraph_get_neighbors(
 }
 
 
-bool tinygraph_has_node(tinygraph *graph, uint32_t v) {
+bool tinygraph_has_node(const tinygraph * const graph, uint32_t v) {
   TINYGRAPH_ASSERT(graph);
 
   return v < tinygraph_get_num_nodes(graph);
 }
 
 
-bool tinygraph_has_edge(tinygraph *graph, uint32_t e) {
+bool tinygraph_has_edge(const tinygraph * const graph, uint32_t e) {
   TINYGRAPH_ASSERT(graph);
 
   return e < tinygraph_get_num_edges(graph);
@@ -342,7 +338,7 @@ bool tinygraph_has_edge(tinygraph *graph, uint32_t e) {
 
 
 bool tinygraph_has_edge_from_to(
-    tinygraph *graph,
+    const tinygraph * const graph,
     uint32_t source,
     uint32_t target)
 {
@@ -357,7 +353,7 @@ bool tinygraph_has_edge_from_to(
 }
 
 
-void tinygraph_apsp(tinygraph *graph, const uint8_t* weights, uint8_t* results) {
+void tinygraph_apsp(const tinygraph * const graph, const uint8_t* weights, uint8_t* results) {
   TINYGRAPH_ASSERT(graph);
   TINYGRAPH_ASSERT(weights);
   TINYGRAPH_ASSERT(results);
@@ -411,7 +407,7 @@ void tinygraph_apsp(tinygraph *graph, const uint8_t* weights, uint8_t* results) 
 }
 
 
-void tinygraph_print(tinygraph *graph) {
+void tinygraph_print(const tinygraph * const graph) {
   TINYGRAPH_ASSERT(graph);
 
   fprintf(stderr, "graph %p with nodes=%ju, edges=%ju of %ju bytes total\n",
@@ -440,10 +436,8 @@ void tinygraph_print(tinygraph *graph) {
 }
 
 
-uint32_t tinygraph_size_in_bytes(tinygraph *graph) {
-  if (!graph) {
-    return 0;
-  }
+uint32_t tinygraph_size_in_bytes(const tinygraph * const graph) {
+  TINYGRAPH_ASSERT(graph);
 
   return sizeof(tinygraph)
     + sizeof(uint32_t) * graph->offsets_len
