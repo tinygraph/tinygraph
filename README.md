@@ -53,13 +53,25 @@ Then
 
 # Development
 
-Use the self-contained and reproducible docker environment in the `tinygraph` directory
+We provide a self-contained and reproducible docker environment for development with a tried and tested compiler and make setup.
+
+In the `tinygraph` directory run
 
 ```bash
-make dev
+make sh
 ```
 
-watching file modification events, re-compiling automatically.
+In the self-contained and reproducible environment you can then compile with
+
+```bash
+make
+```
+
+or for watching file modification events, re-compiling automatically
+
+```bash
+make watch
+```
 
 
 ## License

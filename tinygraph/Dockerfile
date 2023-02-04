@@ -6,5 +6,3 @@ RUN microdnf install -y --nodocs --noplugins epel-release && \
 
 WORKDIR /app
 COPY . .
-
-CMD ["make", "watch"]

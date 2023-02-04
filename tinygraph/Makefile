@@ -40,10 +40,10 @@ watch:
 		make --no-print-directory; \
 	done
 
-.PHONY: dev
-dev: clean
+.PHONY: sh
+sh: clean
 	@docker build -t tinygraph/tinygraph .
-	@docker run -it --rm --pull never --read-only -v $(CURDIR):/app tinygraph/tinygraph make watch
+	@docker run -it --rm --pull never --read-only -v $(CURDIR):/app tinygraph/tinygraph
 
 .PHONY: clean
 clean:
