@@ -221,8 +221,8 @@ void tinygraph_destruct(tinygraph * const graph) {
     return;
   }
 
-  TINYGRAPH_ASSERT(graph->offsets);
-  TINYGRAPH_ASSERT(graph->targets);
+  TINYGRAPH_ASSERT(graph->offsets || graph->offsets_len == 0);
+  TINYGRAPH_ASSERT(graph->targets || graph->targets_len == 0);
 
   free(graph->offsets);
   free(graph->targets);

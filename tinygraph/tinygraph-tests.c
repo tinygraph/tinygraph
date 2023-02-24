@@ -27,6 +27,8 @@ void test1() {
   assert(tinygraph_is_empty(graph));
   assert(tinygraph_get_num_nodes(graph) == 0);
   assert(tinygraph_get_num_edges(graph) == 0);
+
+  tinygraph_destruct(graph);
 }
 
 
@@ -47,6 +49,8 @@ void test2() {
 
   assert(tinygraph_get_out_degree(graph, 0) == 1);
   assert(tinygraph_get_out_degree(graph, 1) == 1);
+
+  tinygraph_destruct(graph);
 }
 
 
@@ -84,6 +88,8 @@ void test4() {
   assert(graph);
   assert(tinygraph_get_num_edges(graph) == 5);
   assert(tinygraph_get_num_nodes(graph) == 10);
+
+  tinygraph_destruct(graph);
 }
 
 
@@ -476,6 +482,8 @@ void test13() {
   assert(dfsout[1] == 2);
   assert(dfsout[2] == 3);
   assert(dfsout[3] == 1);
+
+  tinygraph_destruct(graph);
 }
 
 
@@ -594,6 +602,8 @@ void test19() {
   assert(tinygraph_has_edge_from_to(graph, 0, 2));
   assert(tinygraph_has_edge_from_to(graph, 1, 0));
   assert(tinygraph_has_edge_from_to(graph, 1, 2));
+
+  tinygraph_destruct(graph);
 }
 
 
@@ -613,6 +623,8 @@ void test20() {
   assert(tinygraph_has_edge_from_to(graph, 0, 0));
   assert(tinygraph_has_edge_from_to(graph, 0, 2));
   assert(tinygraph_has_edge_from_to(graph, 1, 0));
+
+  tinygraph_destruct(graph);
 }
 
 
@@ -647,6 +659,9 @@ void test21() {
 
   tinygraph_print(graph);
   tinygraph_print(rgraph);
+
+  tinygraph_destruct(graph);
+  tinygraph_destruct(rgraph);
 }
 
 

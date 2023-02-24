@@ -19,9 +19,13 @@ uint32_t tinygraph_bits_count(uint64_t v) {
 }
 
 uint32_t tinygraph_bits_rank(uint64_t v, uint32_t n) {
-  TINYGRAPH_ASSERT(n <= 64);
+  TINYGRAPH_ASSERT(n <= UINT32_C(64));
 
-  return tinygraph_bits_count(v << (64 - n));
+  if (n == 0) {
+    return 0;
+  }
+
+  return tinygraph_bits_count(v << (UINT32_C(64) - n));
 }
 
 #ifdef TINYGRAPH_HAS_BMI2
