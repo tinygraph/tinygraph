@@ -28,49 +28,33 @@ tinygraph_print(graph);
 tinygraph_destruct(graph);
 ```
 
-See the example in [tinygraph/tinygraph-example.c](./tinygraph/tinygraph-example.c)
+See the example in [src/example/example.c](./tinygraph/tinygraph-example.c)
 
 
 # API
 
-See the documentation in [tinygraph/tinygraph.h](./tinygraph/tinygraph.h) for the interface the library provides.
-
-
-# Building
-
-The tinygraph library requires 64bit Linux (gcc or clang).
-
-To compile the library, its tests, and the example, run in the `tinygraph` directory
-
-```bash
-make
-```
-
-Then
-1. compile your own program against `tinygraph.h`
-2. link your own program against `libtinygraph.so`
+See the documentation in [src/tinygraph/tinygraph.h](./src/tinygraph/tinygraph.h) for the interface the library provides.
 
 
 # Development
 
-We provide a self-contained and reproducible docker environment for development with a tried and tested compiler and make setup.
-
-In the `tinygraph` directory run
+We use bazel for development; to set it up and get started
 
 ```bash
-make sh
+curl --proto 'https' --tlsv1.3 -sSLf https://github.com/bazelbuild/bazelisk/releases/download/v1.16.0/bazelisk-linux-amd64 -o ~/.local/bin/bazel
+chmod a+x ~/.local/bin/bazel
 ```
 
-In the self-contained and reproducible environment you can then compile with
+To build libtinygraph
 
 ```bash
-make
+bazel build //tinygraph/tinygraph
 ```
 
-or for watching file modification events, re-compiling automatically
+To build specific packages and run their tests e.g. for the bitset package
 
 ```bash
-make watch
+bazel test //tinygraph/bitset:all
 ```
 
 
