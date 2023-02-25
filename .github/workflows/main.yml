@@ -17,7 +17,7 @@ jobs:
 
       - name: Sanitize
         run: |
-          docker run -t --rm --pull never --read-only -v $(pwd)/tinygraph:/app tinygraph/tinygraph env CFLAGS='-O0 -g -fsanitize=undefined,address -fno-omit-frame-pointer' LDLIBS='-lasan -lubsan' make
+          docker run -t --rm --pull never --read-only -v $(pwd)/tinygraph:/app tinygraph/tinygraph make sanitize
           docker run -t --rm --pull never --read-only -v $(pwd)/tinygraph:/app tinygraph/tinygraph ./tinygraph-tests
           docker run -t --rm --pull never --read-only -v $(pwd)/tinygraph:/app tinygraph/tinygraph ./tinygraph-example
           docker run -t --rm --pull never --read-only -v $(pwd)/tinygraph:/app tinygraph/tinygraph make clean

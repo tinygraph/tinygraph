@@ -22,7 +22,7 @@ install: libtinygraph.so
 
 -include ${DEP}
 
-libtinygraph.so: LDFLAGS=-shared -Wl,-soname,libtinygraph.so.0
+libtinygraph.so: LDFLAGS+=-shared -Wl,-soname,libtinygraph.so.0
 libtinygraph.so: $(filter-out tinygraph-tests.o tinygraph-example.o, $(OBJ))
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 	@ln -sf libtinygraph.so libtinygraph.so.0
@@ -39,6 +39,11 @@ watch:
 		inotifywait -q -e modify -e create -e delete -e move *.c *.h Makefile; \
 		make --no-print-directory; \
 	done
+
+.PHONY: sanitize
+sanitize: CFLAGS+=-O0 -g -fsanitize=undefined,address -fno-omit-frame-pointer
+sanitize: LDLIBS:=-lasan -lubsan -lm
+sanitize: all
 
 .PHONY: sh
 sh: clean
