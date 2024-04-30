@@ -9,20 +9,24 @@
 
 
 uint32_t tinygraph_quadkey_get_level(uint64_t quadkey) {
+  (void)quadkey;
   return -1;
 }
 
 
 bool tinygraph_quadkey_has_parent(uint64_t quadkey) {
+  (void)quadkey;
   return false;
 }
 
 
 uint64_t tinygraph_quadkey_get_parent(uint64_t quadkey) {
+  (void)quadkey;
   return -1;
 }
 
 
 bool tinygraph_quadkey_is_valid(uint64_t quadkey) {
+  (void)quadkey;
   return false;
 }
