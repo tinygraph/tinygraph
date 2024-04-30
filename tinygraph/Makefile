@@ -47,8 +47,8 @@ sanitize: all
 
 .PHONY: sh
 sh: clean
-	@docker build -t tinygraph/tinygraph .
-	@docker run -it --rm --pull never --read-only -v $(CURDIR):/app tinygraph/tinygraph
+	@docker build -q -t tinygraph/tinygraph .
+	@docker run -it --rm --pull never --read-only --network=none -v $(CURDIR):/app tinygraph/tinygraph
 
 .PHONY: clean
 clean:
