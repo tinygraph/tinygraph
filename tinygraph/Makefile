@@ -2,7 +2,7 @@ CFLAGS+=-std=c99 -O3 -Wall -Wextra -pedantic -fvisibility=hidden -ffunction-sect
 CFLAGS+=-march=native -mavx2 -mfma -mbmi -mbmi2 -mlzcnt -DTINYGRAPH_HAS_BMI2
 LDFLAGS+=-Wl,--gc-sections
 LDLIBS+=-lm
-PREFIX?=/usr
+PREFIX?=/usr/local
 
 SRC:=$(wildcard *.c)
 OBJ:=$(SRC:.c=.o)
