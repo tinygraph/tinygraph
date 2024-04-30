@@ -40,10 +40,16 @@ See the documentation in [tinygraph/tinygraph.h](./tinygraph/tinygraph.h) for th
 
 The tinygraph library requires 64bit Linux (gcc or clang).
 
-To compile the library, its tests, and the example, run in the `tinygraph` directory
+To compile the library, its tests, and the example run
 
 ```bash
 make
+```
+
+To install the library run
+
+```bash
+make install
 ```
 
 Then
@@ -76,6 +82,6 @@ make watch
 
 ## License
 
-Copyright © 2021-2023 Daniel J. Hofmann
+Copyright © 2021-2024 Daniel J. Hofmann
 
 Distributed under the MIT License (MIT).
