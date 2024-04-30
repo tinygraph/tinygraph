@@ -33,6 +33,13 @@ tinygraph-tests: $(filter-out tinygraph-example.o, $(OBJ))  # access to internal
 tinygraph-example: LDFLAGS+=-Wl,-rpath=.
 tinygraph-example: libtinygraph.so  # example only has access to public interface
 
+.PHONY: info
+info:
+	$(info CFLAGS $(CFLAGS))
+	$(info LDFLAGS $(LDFLAGS))
+	$(info LDLIBS $(LDLIBS))
+	$(info PREFIX $(PREFIX))
+
 .PHONY: watch
 watch:
 	@while true; do \
