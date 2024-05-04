@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="user-scalable=yes, width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Tiny Graphs & Co">
     <title>tinygraph</title>
-    <meta name="Description" content="Tiny Graphs & Co">
     <link rel="stylesheet" href="basic.css" type="text/css">
     <style>
       main,footer {
@@ -28,7 +28,8 @@
       <h1>tinygraph</h1>
       <ul>
         <li>Tiny and efficient graph abstractions</li>
-        <li>GitHub <a href="https://github.com/tinygraph/tinygraph">github.com/tinygraph/tinygraph</a></li>
+        <li>tinygraph on GitHub <a href="https://github.com/tinygraph/tinygraph">github.com/tinygraph/tinygraph</a></li>
+        <li>tinygraph I/O GitHub <a href="https://github.com/tinygraph/tinygraphio">github.com/tinygraph/tinygraphio</a></li>
         <li>Mail <a href="mailto:hello@tinygraph.org">hello@tinygraph.org</a></li>
       </ul>
 
@@ -57,10 +58,10 @@
         <article>
           <h2>Modern Hardware</h2>
           <p>
-            Vector instruction sets are widely deployed with AVX2 available for 7+ years by now: we target modern hardware for efficiency gains at no cost.
+            Vector instruction sets are widely deployed with AVX2 available for 10+ years by now: we target modern hardware for efficiency gains at no cost.
           </p>
           <p>
-            We provide scalar fallbacks and base line implementations in case vector instructions are not supported: at the cost of runtime efficiency.
+            We provide scalar fallbacks and baseline implementations in case vector instructions are not supported: at the cost of runtime efficiency.
           </p>
         </article>
         <article>
@@ -70,6 +71,19 @@
           </p>
           <p>
             On top of the stable API and ABI we provide bindings to other languages: they come with their own stability and support guarantees.
+          </p>
+        </article>
+      </section>
+
+      <section>
+        <article>
+          <h2>Graph Interchange File Format</h2>
+          <p>
+            We provide a file format for storing large graphs effectively and efficiently and for sharing graphs in a portable way.
+          </p>
+          <p>
+            The tinygraphio file format stores a directed (or bidirectional) graph in a compressed sparse row format for a compact representation.
+            The on-disk representation of the compressed sparse row graph is based on Protocol Buffers.
           </p>
         </article>
       </section>
