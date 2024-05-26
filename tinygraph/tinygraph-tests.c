@@ -14,6 +14,7 @@
 #include "tinygraph-zorder.h"
 #include "tinygraph-bits.h"
 #include "tinygraph-eliasfano.h"
+#include "tinygraph-align.h"
 
 
 void test1() {
@@ -671,6 +672,23 @@ void test21() {
 }
 
 
+void test22() {
+  void* p = tinygraph_align_malloc(64, 4096);
+
+  assert(p);
+  assert(((uintptr_t)p % 64) == 0);
+
+  tinygraph_align_free(p);
+
+  void* q = tinygraph_align_malloc(4096, 4096);
+
+  assert(q);
+  assert(((uintptr_t)q % 4096) == 0);
+
+  tinygraph_align_free(q);
+}
+
+
 int main() {
   test1();
   test2();
@@ -693,4 +711,5 @@ int main() {
   test19();
   test20();
   test21();
+  test22();
 }
