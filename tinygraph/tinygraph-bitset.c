@@ -107,6 +107,8 @@ bool tinygraph_bitset_get_at(tinygraph_bitset *bitset, uint64_t i) {
 
 
 uint64_t tinygraph_bitset_get_size(tinygraph_bitset_s bitset) {
+  TINYGRAPH_ASSERT(bitset);
+
   return bitset->size;
 }
 
