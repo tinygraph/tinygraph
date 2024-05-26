@@ -170,11 +170,17 @@ void test7() {
   assert(array2);
   tinygraph_array_destruct(array1); // no longer needed
   assert(tinygraph_array_reserve(array2, 8));
+  assert(tinygraph_array_reserve(array2, 8));
+  assert(tinygraph_array_reserve(array2, 0));
+  assert(tinygraph_array_reserve(array2, 0));
+  assert(tinygraph_array_reserve(array2, 8));
+  assert(tinygraph_array_reserve(array2, 8));
+  assert(tinygraph_array_reserve(array2, 9));
   assert(tinygraph_array_get_size(array2) == 0);
-  assert(tinygraph_array_get_capacity(array2) == 8);
+  assert(tinygraph_array_get_capacity(array2) >= 9);
   assert(tinygraph_array_resize(array2, 8));
   assert(tinygraph_array_get_size(array2) == 8);
-  assert(tinygraph_array_get_capacity(array2) == 8);
+  assert(tinygraph_array_get_capacity(array2) >= 8);
   assert(tinygraph_array_get_at(array2, 0) == 0);
   assert(tinygraph_array_get_at(array2, 7) == 0);
   tinygraph_array_set_at(array2, 7, 1);
