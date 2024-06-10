@@ -1,95 +1,246 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
+    <meta name="robots" content="noindex">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
     <meta name="description" content="Tiny Graphs & Co">
     <title>tinygraph</title>
-    <link rel="stylesheet" href="basic.css" type="text/css">
     <style>
-      main,footer {
-        margin: 0 auto;
-        width: 99%;
-        text-align: left;
-        padding: 0 20px;
+      @font-face {
+        font-family: recursive-sans-casual-extra-black-italic;
+        src: url(fonts/RecursiveSansCslSt-XBlkItalic.woff2);
+        font-display: block;
       }
-      section { max-width: 1024px; }
-      @media (max-width: 1024px) {
-        main,footer { width: 99% }
-        section,article { flex: none; width: 100%; margin-left: 0; }
+
+      @font-face {
+        font-family: recursive-sans-linear-regular;
+        src: url(fonts/RecursiveSansLnrSt-Regular.woff2);
+        font-display: block;
       }
-      ul {
-        list-style-type: "⟳ ";
+
+      @font-face {
+        font-family: recursive-sans-casual-italic;
+        src: url(fonts/RecursiveSansCslSt-Italic.woff2);
+        font-display: block;
+      }
+
+      @font-face {
+        font-family: recursive-sans-casual-bold;
+        src: url(fonts/RecursiveSansCslSt-Bold.woff2);
+        font-display: block;
+      }
+
+      @font-face {
+        font-family: recursive-mono-linear-regular;
+        src: url(fonts/RecursiveMonoLnrSt-Regular.woff2);
+        font-display: block;
+      }
+
+      :root {
+        color-scheme: light dark;
+
+        --tg-text: light-dark(#334155, #f1f5f9);
+        --tg-bg: light-dark(#f8fafc, #1e293b);
+        --tg-accent: light-dark(#a5b4fc, #fb7185);
+      }
+
+      *, *::before, *::after {
+        box-sizing: border-box;
+      }
+
+      body,
+      h1,
+      h2,
+      h3,
+      h4,
+      p,
+      figure,
+      blockquote,
+      dl,
+      dd,
+      ul,
+      ol {
+        margin: 0;
+      }
+
+      ul,
+      ol {
+        list-style: none;
+        padding: 0;
+      }
+
+      html {
+        text-size-adjust: none;
+        -moz-text-size-adjust: none;
+        -webkit-text-size-adjust: none;
+
+        accent-color: var(--tg-accent);
+      }
+
+      body {
+        min-height: 100vh;
+
+        font: clamp(1.125rem, 1.05rem + 0.25vw, 1.25rem)/1.65 recursive-sans-linear-regular, sans-serif;
+        text-rendering: optimizeSpeed;
+        -webkit-font-smoothing: antialiased;
+
+        padding: 5vh clamp(0.825rem, 5vw, 5rem);
+
+        background-color: var(--tg-bg);
+        color: var(--tg-text);
+      }
+
+      body strong {
+        font-family: recursive-sans-casual-bold;
+        font-weight: normal;
+      }
+
+      body em {
+        font-family: recursive-sans-casual-italic;
+        font-style: normal;
+      }
+
+      body a {
+        text-underline-offset: 0.15em;
+        text-decoration-thickness: max(0.08em, 1px);
+      }
+
+      body p {
+        margin-top: 1em;
+        text-wrap: pretty;
+        hyphens: auto;
+      }
+
+      body h1, h2, h3 {
+        font-family: recursive-sans-casual-bold;
+        font-style: normal;
+        font-weight: normal;
+        line-height: 1.2;
+        text-wrap: balance;
+        hyphens: manual;
+      }
+
+      body h1 {
+        font: clamp(6rem, 4.8rem + 4vw, 8rem)/1.2 recursive-sans-casual-extra-black-italic;
+        text-shadow: var(--tg-bg) 0.02em 0.02em, var(--tg-accent) 0.08em 0.08em;
+      }
+
+      body h2 {
+        font-size: clamp(1.5rem, 1.275rem + 0.75vw, 1.875rem);
+        margin-top: 6.6rem;
+      }
+
+      body h3 {
+        font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
+        margin-top: 3.3rem;
+      }
+
+      body code, body pre {
+        font-family: recursive-mono-linear-regular, monospace;
+      }
+
+      body blockquote {
+        margin: 0;
+        padding: 0 1em;
+        border-left: 0.25em solid var(--tg-accent);
+      }
+
+      main {
+        width: min(100%, 70ch);
+      }
+
+      h1 a, h3 a {
+        display: none;
+      }
+
+      h2 a {
+        text-decoration: none;
+      }
+
+      h2 a:hover, h2 a:focus {
+        color: var(--tg-text);
+        text-shadow: var(--tg-bg) 0.02em 0.02em, var(--tg-accent) 0.08em 0.08em;
+      }
+
+      ol {
+        padding-left: 1em;
+      }
+
+      li {
+        margin-top: 1em;
+      }
+
+      footer {
+        margin-top: 6.6rem;
       }
     </style>
   </head>
   <body>
+    <header>
+      <h1>tiny&shy;graph</h1>
+    </header>
     <main>
-      <h1>tinygraph</h1>
-      <ul>
-        <li>Tiny and efficient graph abstractions</li>
-        <li>tinygraph on GitHub <a href="https://github.com/tinygraph/tinygraph">github.com/tinygraph/tinygraph</a></li>
-        <li>tinygraph I/O GitHub <a href="https://github.com/tinygraph/tinygraphio">github.com/tinygraph/tinygraphio</a></li>
-        <li>Mail <a href="mailto:hello@tinygraph.org">hello@tinygraph.org</a></li>
-      </ul>
-
       <section>
-        <article>
-          <h2>Graph Format</h2>
-          <p>
-            We use a compressed sparse row format to represent graphs in compact and efficient ways: ideal for large scale and high-performance use-cases.
-          </p>
-          <p>
-            The trade-off is limited support for modification. The use-cases we support: build a graph, work on the graph, and potentially build new graphs from there.
-          </p>
-        </article>
-        <article>
-          <h2>Graph Compression</h2>
-          <p>
-            For compression we use techniques like: succinct data structures, storing deltas in vbyte format, and permuting graphs based on space filling curves.
-          </p>
-          <p>
-            Compressed graphs not only have a much smaller footprint, but we also keep an eye on viability and practicality: this is not a research project.
-          </p>
-        </article>
+        <h2>Tiny and efficient graph abstractions</h2>
+        <ol>
+          <li><a href="https://github.com/tinygraph/tinygraph">github.com/tinygraph/tinygraph</a></li>
+          <li><a href="https://github.com/tinygraph/tinygraphio">github.com/tinygraph/tinygraphio</a></li>
+          <li><a href="mailto:hello@tinygraph.org">hello@tinygraph.org</a></li>
+        </ol>
       </section>
 
       <section>
-        <article>
-          <h2>Modern Hardware</h2>
-          <p>
-            Vector instruction sets are widely deployed with AVX2 available for 10+ years by now: we target modern hardware for efficiency gains at no cost.
-          </p>
-          <p>
-            We provide scalar fallbacks and baseline implementations in case vector instructions are not supported: at the cost of runtime efficiency.
-          </p>
-        </article>
-        <article>
-          <h2>Stable Library</h2>
-          <p>
-            We provide a stable API and ABI using semantic versioning: a stable ABI allows for simple shared library upgrades across minor versions.
-          </p>
-          <p>
-            On top of the stable API and ABI we provide bindings to other languages: they come with their own stability and support guarantees.
-          </p>
-        </article>
+        <h2>Graph Format</h2>
+        <p>
+          We use a compressed sparse row format to represent graphs in compact and efficient ways: ideal for large scale and high-performance use-cases.
+        </p>
+        <p>
+          The trade-off is limited support for modification. The use-cases we support: build a graph, work on the graph, and potentially build new graphs from there.
+        </p>
+
+      <section>
+        <h2>Graph Compression</h2>
+        <p>
+          For compression we use techniques like: succinct data structures, storing deltas in vbyte format, and permuting graphs based on space filling curves.
+        </p>
+        <p>
+          Compressed graphs not only have a much smaller footprint, but we also keep an eye on viability and practicality: this is not a research project.
+        </p>
       </section>
 
       <section>
-        <article>
-          <h2>Graph Interchange File Format</h2>
-          <p>
-            We provide a file format for storing large graphs effectively and efficiently and for sharing graphs in a portable way.
-          </p>
-          <p>
-            The tinygraphio file format stores a directed (or bidirectional) graph in a compressed sparse row format for a compact representation.
-            The on-disk representation of the compressed sparse row graph is based on Protocol Buffers.
-          </p>
-        </article>
+        <h2>Modern Hardware</h2>
+        <p>
+          Vector instruction sets are widely deployed with AVX2 available for 10+ years by now: we target modern hardware for efficiency gains at no cost.
+        </p>
+        <p>
+          We provide scalar fallbacks and baseline implementations in case vector instructions are not supported: at the cost of runtime efficiency.
+        </p>
       </section>
-      <hr>
+
+      <section>
+        <h2>Stable Library</h2>
+        <p>
+          We provide a stable API and ABI using semantic versioning: a stable ABI allows for simple shared library upgrades across minor versions.
+        </p>
+        <p>
+          On top of the stable API and ABI we provide bindings to other languages: they come with their own stability and support guarantees.
+        </p>
+      </section>
+
+      <section>
+        <h2>Graph Interchange File Format</h2>
+        <p>
+          We provide a file format for storing large graphs effectively and efficiently and for sharing graphs in a portable way.
+        </p>
+        <p>
+          The tinygraphio file format stores a directed (or bidirectional) graph in a compressed sparse row format for a compact representation.
+          The on-disk representation of the compressed sparse row graph is based on Protocol Buffers.
+        </p>
+      </section>
     </main>
-
     <footer>
       <p>Made with ♥ in Berlin, Hamburg, Karlsruhe</p>
     </footer>
