@@ -29,7 +29,7 @@
 #endif
 
 #ifndef TINYGRAPH_PREFETCH
-#define TINYGRAPG_PREFETCH(p, ...) __builtin_prefetch(p, __VA_ARGS__)
+#define TINYGRAPH_PREFETCH(p, rw, hint) __builtin_prefetch(p, rw, hint)
 #endif
 
 #endif

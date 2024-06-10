@@ -579,6 +579,29 @@ void test17() {
       == tinygraph_bits_count(UINT64_C(0xd84c8a0)));
   assert(tinygraph_bits_rank(UINT64_C(0xd84c8a0), 6) == 1);
   assert(tinygraph_bits_rank(UINT64_C(0xd84c8a0), 8) == 2);
+
+  assert(tinygraph_bits_rank(UINT64_C(-1), 0) == 0);
+
+  for (uint32_t i = 0; i <= 64; ++i) {
+    assert(tinygraph_bits_rank(UINT64_C(-1), i) == i);
+  }
+
+  // 0x11 = 0b00010001
+  // pos  =   76543210
+  assert(tinygraph_bits_select(UINT64_C(0x11), 0) == 0);
+  assert(tinygraph_bits_select(UINT64_C(0x11), 1) == 4);
+
+  // 0x11 = 0b00010001
+  // pos  =   76543210
+  assert(tinygraph_bits_rank(UINT64_C(0x11), 0) == 0);
+  assert(tinygraph_bits_rank(UINT64_C(0x11), 1) == 1);
+  assert(tinygraph_bits_rank(UINT64_C(0x11), 2) == 1);
+  assert(tinygraph_bits_rank(UINT64_C(0x11), 3) == 1);
+  assert(tinygraph_bits_rank(UINT64_C(0x11), 4) == 1);
+  assert(tinygraph_bits_rank(UINT64_C(0x11), 5) == 2);
+  assert(tinygraph_bits_rank(UINT64_C(0x11), 6) == 2);
+  assert(tinygraph_bits_rank(UINT64_C(0x11), 7) == 2);
+  assert(tinygraph_bits_rank(UINT64_C(0x11), 8) == 2);
 }
 
 
@@ -689,6 +712,186 @@ void test22() {
 }
 
 
+void test23() {
+  uint64_t cacheline0[8] = {
+    UINT64_C(0),
+    UINT64_C(0),
+    UINT64_C(0),
+    UINT64_C(0),
+    UINT64_C(0),
+    UINT64_C(0),
+    UINT64_C(0),
+    UINT64_C(0),
+  };
+
+  assert(tinygraph_bits_count_512(cacheline0) == UINT32_C(0));
+
+  uint64_t cacheline2[8] = {
+    UINT64_C(1),
+    UINT64_C(1),
+    UINT64_C(1),
+    UINT64_C(1),
+    UINT64_C(1),
+    UINT64_C(1),
+    UINT64_C(1),
+    UINT64_C(1),
+  };
+
+  assert(tinygraph_bits_count_512(cacheline2) == UINT32_C(8));
+
+  uint64_t cacheline3[8] = {
+    UINT64_C(-1),
+    UINT64_C(-1),
+    UINT64_C(-1),
+    UINT64_C(-1),
+    UINT64_C(-1),
+    UINT64_C(-1),
+    UINT64_C(-1),
+    UINT64_C(-1),
+  };
+
+  assert(tinygraph_bits_count_512(cacheline3) == UINT32_C(512));
+
+  uint64_t cacheline4[8] = {
+    UINT64_C(0x5555555555555555),
+    UINT64_C(0xaaaaaaaaaaaaaaaa),
+    UINT64_C(0x5555555555555555),
+    UINT64_C(0xaaaaaaaaaaaaaaaa),
+    UINT64_C(0x5555555555555555),
+    UINT64_C(0xaaaaaaaaaaaaaaaa),
+    UINT64_C(0x5555555555555555),
+    UINT64_C(0xaaaaaaaaaaaaaaaa),
+  };
+
+  assert(tinygraph_bits_count_512(cacheline4) == UINT32_C(256));
+}
+
+
+void test24() {
+  uint64_t cacheline0[9] = {
+    UINT64_C(0),
+    UINT64_C(0),
+    UINT64_C(0),
+    UINT64_C(0),
+    UINT64_C(0),
+    UINT64_C(0),
+    UINT64_C(0),
+    UINT64_C(0),
+    UINT64_C(-1),
+  };
+
+  for (uint32_t i = 0; i <= 512; ++i) {
+    assert(tinygraph_bits_rank_512(cacheline0, i) == UINT32_C(0));
+  }
+
+  assert(tinygraph_bits_count_512(cacheline0)
+      == tinygraph_bits_rank_512(cacheline0, 512));
+
+  uint64_t cacheline1[8] = {
+    UINT64_C(-1),
+    UINT64_C(-1),
+    UINT64_C(-1),
+    UINT64_C(-1),
+    UINT64_C(-1),
+    UINT64_C(-1),
+    UINT64_C(-1),
+    UINT64_C(-1),
+  };
+
+  for (uint32_t i = 0; i <= 512; ++i) {
+    assert(tinygraph_bits_rank_512(cacheline1, i) == i);
+  }
+
+  assert(tinygraph_bits_count_512(cacheline1)
+      == tinygraph_bits_rank_512(cacheline1, 512));
+
+  for (uint32_t i = 0; i < 512; ++i) {
+    assert(tinygraph_bits_select_512(cacheline1, i) == i);
+  }
+
+  // 0b..0101
+  // 0b..1010
+  uint64_t cacheline2[8] = {
+    UINT64_C(0x5555555555555555),
+    UINT64_C(0xaaaaaaaaaaaaaaaa),
+    UINT64_C(0x5555555555555555),
+    UINT64_C(0xaaaaaaaaaaaaaaaa),
+    UINT64_C(0x5555555555555555),
+    UINT64_C(0xaaaaaaaaaaaaaaaa),
+    UINT64_C(0x5555555555555555),
+    UINT64_C(0xaaaaaaaaaaaaaaaa),
+  };
+
+  assert(tinygraph_bits_rank(cacheline2[0], 0)
+      == tinygraph_bits_rank_512(cacheline2, 0));
+
+  assert(tinygraph_bits_rank(cacheline2[0], 64)
+      == tinygraph_bits_rank_512(cacheline2, 64));
+
+  assert(tinygraph_bits_rank(cacheline2[0], 32)
+      == tinygraph_bits_rank_512(cacheline2, 32));
+
+  for (uint32_t i = 0; i <= 64; ++i) {
+    assert(tinygraph_bits_rank(cacheline2[4], i)
+        == tinygraph_bits_rank_512(cacheline2, 4 * 64 + i)
+            - tinygraph_bits_rank_512(cacheline2, 4 * 64 + 0));
+  }
+
+  for (uint32_t i = 0; i < 32; ++i) {
+    assert(tinygraph_bits_select_512(cacheline2, i) == i * 2);
+  }
+
+  for (uint32_t i = 32; i < 64; ++i) {
+    assert(tinygraph_bits_select_512(cacheline2, i) == i * 2 + 1);
+  }
+
+  for (uint32_t i = 64; i < 96; ++i) {
+    assert(tinygraph_bits_select_512(cacheline2, i) == i * 2);
+  }
+
+  for (uint32_t i = 96; i < 128; ++i) {
+    assert(tinygraph_bits_select_512(cacheline2, i) == i * 2 + 1);
+  }
+
+  for (uint32_t i = 128; i < 160; ++i) {
+    assert(tinygraph_bits_select_512(cacheline2, i) == i * 2);
+  }
+
+  for (uint32_t i = 160; i < 192; ++i) {
+    assert(tinygraph_bits_select_512(cacheline2, i) == i * 2 + 1);
+  }
+
+  for (uint32_t i = 192; i < 224; ++i) {
+    assert(tinygraph_bits_select_512(cacheline2, i) == i * 2);
+  }
+
+  for (uint32_t i = 224; i < 256; ++i) {
+    assert(tinygraph_bits_select_512(cacheline2, i) == i * 2 + 1);
+  }
+}
+
+
+void test25() {
+  // 0b..0101
+  // 0b..1010
+  uint64_t cacheline0[8] = {
+    UINT64_C(0x5555555555555555),
+    UINT64_C(0xaaaaaaaaaaaaaaaa),
+    UINT64_C(0x5555555555555555),
+    UINT64_C(0xaaaaaaaaaaaaaaaa),
+    UINT64_C(0x5555555555555555),
+    UINT64_C(0xaaaaaaaaaaaaaaaa),
+    UINT64_C(0x5555555555555555),
+    UINT64_C(0xaaaaaaaaaaaaaaaa),
+  };
+
+  for (uint32_t i = 0; i < 256; ++i) {
+    assert(tinygraph_bits_rank_512(cacheline0,
+            tinygraph_bits_select_512(cacheline0, i)) == i);
+  }
+}
+
+
 int main() {
   test1();
   test2();
@@ -712,4 +915,7 @@ int main() {
   test20();
   test21();
   test22();
+  test23();
+  test24();
+  test25();
 }

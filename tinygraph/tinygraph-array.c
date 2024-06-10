@@ -168,6 +168,8 @@ bool tinygraph_array_resize(tinygraph_array *array, uint32_t size) {
     return true;
   }
 
+  TINYGRAPH_UNREACHABLE();
+
   TINYGRAPH_ASSERT(false);
 
   return false;

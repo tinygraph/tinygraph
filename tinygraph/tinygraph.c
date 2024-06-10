@@ -272,6 +272,9 @@ void tinygraph_get_out_edges(
   *first = graph->offsets[source];
   *last = graph->offsets[source + 1];
 
+  // TODO: benchmark if prefetching edge range has an impact
+  // TINYGRAPH_PREFETCH(graph->targets[graph->offsets[source]]);
+
   TINYGRAPH_ASSERT(*first <= *last);
 }
 
@@ -317,6 +320,9 @@ void tinygraph_get_neighbors(
 
   *first = &graph->targets[efirst];
   *last = &graph->targets[elast];
+
+  // TODO: benchmark if prefetching edge range has an impact
+  // TINYGRAPH_PREFETCH(graph->targets[graph->offsets[source]]);
 }
 
 
@@ -347,6 +353,9 @@ bool tinygraph_has_edge_from_to(
   tinygraph_get_neighbors(graph, &it, &last, source);
 
   return tinygraph_find_if_u32(it, last, target) != last;
+
+  // TODO: benchmark if prefetching edge range has an impact
+  // TINYGRAPH_PREFETCH(graph->targets[graph->offsets[source]]);
 }
 
 
