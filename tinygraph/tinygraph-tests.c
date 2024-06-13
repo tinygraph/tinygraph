@@ -892,6 +892,124 @@ void test25() {
 }
 
 
+void test26() {
+  const uint32_t sources[5] = {0, 0, 1, 2, 3};
+  const uint32_t targets[5] = {1, 2, 0, 3, 2};
+
+  const tinygraph_s graph = tinygraph_construct_from_sorted_edges(
+      sources, targets, 5);
+
+  assert(graph);
+
+  tinygraph_dfs_s dfs = tinygraph_dfs_construct(graph);
+  assert(dfs);
+
+  tinygraph_dfs_set_start(dfs, 0);
+  assert(!tinygraph_dfs_is_done(dfs));
+
+  assert(tinygraph_dfs_step(dfs) == 0);
+  assert(!tinygraph_dfs_is_done(dfs));
+
+  assert(tinygraph_dfs_step(dfs) == 2);
+  assert(!tinygraph_dfs_is_done(dfs));
+
+  assert(tinygraph_dfs_step(dfs) == 3);
+  assert(!tinygraph_dfs_is_done(dfs));
+
+  assert(tinygraph_dfs_step(dfs) == 1);
+  assert(tinygraph_dfs_is_done(dfs));
+
+
+  tinygraph_dfs_clear(dfs);
+
+  tinygraph_dfs_set_start(dfs, 3);
+  assert(!tinygraph_dfs_is_done(dfs));
+
+  assert(tinygraph_dfs_step(dfs) == 3);
+  assert(!tinygraph_dfs_is_done(dfs));
+
+  assert(tinygraph_dfs_step(dfs) == 2);
+  assert(tinygraph_dfs_is_done(dfs));
+
+
+  tinygraph_dfs_clear(dfs);
+  assert(tinygraph_dfs_is_done(dfs));
+
+  tinygraph_dfs_set_start(dfs, 0);
+  assert(!tinygraph_dfs_is_done(dfs));
+
+  while (!tinygraph_dfs_is_done(dfs)) {
+    uint32_t v = tinygraph_dfs_step(dfs);
+    (void)v;
+  }
+
+  assert(tinygraph_dfs_is_done(dfs));
+
+
+  tinygraph_dfs_destruct(dfs);
+  tinygraph_destruct(graph);
+}
+
+
+void test27() {
+  const uint32_t sources[5] = {0, 0, 1, 2, 3};
+  const uint32_t targets[5] = {1, 2, 0, 3, 2};
+
+  const tinygraph_s graph = tinygraph_construct_from_sorted_edges(
+      sources, targets, 5);
+
+  assert(graph);
+
+  tinygraph_bfs_s bfs = tinygraph_bfs_construct(graph);
+  assert(bfs);
+
+  tinygraph_bfs_set_start(bfs, 0);
+  assert(!tinygraph_bfs_is_done(bfs));
+
+  assert(tinygraph_bfs_step(bfs) == 0);
+  assert(!tinygraph_bfs_is_done(bfs));
+
+  assert(tinygraph_bfs_step(bfs) == 1);
+  assert(!tinygraph_bfs_is_done(bfs));
+
+  assert(tinygraph_bfs_step(bfs) == 2);
+  assert(!tinygraph_bfs_is_done(bfs));
+
+  assert(tinygraph_bfs_step(bfs) == 3);
+  assert(tinygraph_bfs_is_done(bfs));
+
+
+  tinygraph_bfs_clear(bfs);
+
+  tinygraph_bfs_set_start(bfs, 3);
+  assert(!tinygraph_bfs_is_done(bfs));
+
+  assert(tinygraph_bfs_step(bfs) == 3);
+  assert(!tinygraph_bfs_is_done(bfs));
+
+  assert(tinygraph_bfs_step(bfs) == 2);
+  assert(tinygraph_bfs_is_done(bfs));
+
+
+  tinygraph_bfs_clear(bfs);
+  assert(tinygraph_bfs_is_done(bfs));
+
+  tinygraph_bfs_set_start(bfs, 0);
+  assert(!tinygraph_bfs_is_done(bfs));
+
+  while (!tinygraph_bfs_is_done(bfs)) {
+    uint32_t v = tinygraph_bfs_step(bfs);
+    (void)v;
+  }
+
+  assert(tinygraph_bfs_is_done(bfs));
+
+
+  tinygraph_bfs_destruct(bfs);
+  tinygraph_destruct(graph);
+}
+
+
 int main() {
   test1();
   test2();
@@ -918,4 +1036,6 @@ int main() {
   test23();
   test24();
   test25();
+  test26();
+  test27();
 }
