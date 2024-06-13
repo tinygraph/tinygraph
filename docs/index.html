@@ -21,20 +21,8 @@
       }
 
       @font-face {
-        font-family: recursive-sans-casual-italic;
-        src: url(fonts/RecursiveSansCslSt-Italic.woff2);
-        font-display: block;
-      }
-
-      @font-face {
         font-family: recursive-sans-casual-bold;
         src: url(fonts/RecursiveSansCslSt-Bold.woff2);
-        font-display: block;
-      }
-
-      @font-face {
-        font-family: recursive-mono-linear-regular;
-        src: url(fonts/RecursiveMonoLnrSt-Regular.woff2);
         font-display: block;
       }
 
@@ -92,16 +80,6 @@
         color: var(--tg-text);
       }
 
-      body strong {
-        font-family: recursive-sans-casual-bold;
-        font-weight: normal;
-      }
-
-      body em {
-        font-family: recursive-sans-casual-italic;
-        font-style: normal;
-      }
-
       body a {
         text-underline-offset: 0.15em;
         text-decoration-thickness: max(0.08em, 1px);
@@ -137,42 +115,23 @@
         margin-top: 3.3rem;
       }
 
-      body code, body pre {
-        font-family: recursive-mono-linear-regular, monospace;
-      }
-
-      body blockquote {
-        margin: 0;
-        padding: 0 1em;
-        border-left: 0.25em solid var(--tg-accent);
-      }
-
-      main {
+      body main {
         width: min(100%, 70ch);
       }
 
-      h1 a, h3 a {
-        display: none;
-      }
-
-      h2 a {
-        text-decoration: none;
-      }
-
-      h2 a:hover, h2 a:focus {
-        color: var(--tg-text);
-        text-shadow: var(--tg-bg) 0.02em 0.02em, var(--tg-accent) 0.08em 0.08em;
-      }
-
-      ol {
+      body ol {
         padding-left: 1em;
       }
 
-      li {
+      body li {
         margin-top: 1em;
       }
 
-      footer {
+      body li::before {
+        content: "→ "
+      }
+
+      body footer {
         margin-top: 6.6rem;
       }
     </style>
@@ -184,6 +143,8 @@
     <main>
       <section>
         <h2>Tiny and efficient graph abstractions</h2>
+        <p>tinygraph is a modern approach for working with compact graphs. Imagine the routing graph for continental-scale street networks with street segments, intersections, and turns; or the web graph of websites and how they are interlinked. </p>
+        <p>We work in the open and you can contact us if you want to get involved:</p>
         <ol>
           <li><a href="https://github.com/tinygraph/tinygraph">github.com/tinygraph/tinygraph</a></li>
           <li><a href="https://github.com/tinygraph/tinygraphio">github.com/tinygraph/tinygraphio</a></li>
@@ -199,6 +160,7 @@
         <p>
           The trade-off is limited support for modification. The use-cases we support: build a graph, work on the graph, and potentially build new graphs from there.
         </p>
+      </section>
 
       <section>
         <h2>Graph Compression</h2>
@@ -206,7 +168,7 @@
           For compression we use techniques like: succinct data structures, storing deltas in vbyte format, and permuting graphs based on space filling curves.
         </p>
         <p>
-          Compressed graphs not only have a much smaller footprint, but we also keep an eye on viability and practicality: this is not a research project.
+          Compressed graphs not only have a much smaller footprint, but we also keep an eye on viability and practicality: this is not a pure research project.
         </p>
       </section>
 
@@ -233,7 +195,7 @@
       <section>
         <h2>Graph Interchange File Format</h2>
         <p>
-          We provide a file format for storing large graphs effectively and efficiently and for sharing graphs in a portable way.
+          We provide a file format for storing large graphs effectively and efficiently and for sharing graphs in a portable and compact way.
         </p>
         <p>
           The tinygraphio file format stores a directed (or bidirectional) graph in a compressed sparse row format for a compact representation.
