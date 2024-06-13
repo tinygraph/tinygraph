@@ -11,7 +11,7 @@ typedef struct tinygraph_stack {
 } tinygraph_stack;
 
 
-tinygraph_stack* tinygraph_stack_construct() {
+tinygraph_stack* tinygraph_stack_construct(void) {
   tinygraph_stack *out = malloc(sizeof(tinygraph_stack));
 
   if (!out) {

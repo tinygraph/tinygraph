@@ -76,7 +76,7 @@ void tinygraph_renumber
 */
 
 TINYGRAPH_WARN_UNUSED
-tinygraph* tinygraph_construct_empty();
+tinygraph* tinygraph_construct_empty(void);
 
 TINYGRAPH_WARN_UNUSED
 bool tinygraph_reserve(

@@ -37,7 +37,7 @@ static bool tinygraph_queue_refill(tinygraph_queue *queue) {
 }
 
 
-tinygraph_queue* tinygraph_queue_construct() {
+tinygraph_queue* tinygraph_queue_construct(void) {
   tinygraph_queue *out = malloc(sizeof(tinygraph_queue));
 
   if (!out) {

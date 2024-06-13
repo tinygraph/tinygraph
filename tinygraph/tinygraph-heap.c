@@ -10,7 +10,7 @@ typedef struct tinygraph_heap {
 } tinygraph_heap;
 
 
-tinygraph_heap* tinygraph_heap_construct() {
+tinygraph_heap* tinygraph_heap_construct(void) {
   tinygraph_heap *out = malloc(sizeof(tinygraph_heap));
 
   if (!out) {

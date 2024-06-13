@@ -17,7 +17,7 @@
 #include "tinygraph-align.h"
 
 
-void test1() {
+void test1(void) {
   const uint32_t *sources = NULL;
   const uint32_t *targets = NULL;
 
@@ -33,7 +33,7 @@ void test1() {
 }
 
 
-void test2() {
+void test2(void) {
   const uint32_t sources[2] = {0, 1};
   const uint32_t targets[2] = {0, 2};
 
@@ -55,7 +55,7 @@ void test2() {
 }
 
 
-void test3() {
+void test3(void) {
   uint32_t sources[5];
   uint32_t targets[5];
 
@@ -79,7 +79,7 @@ void test3() {
 }
 
 
-void test4() {
+void test4(void) {
   const uint32_t sources[5] = {0, 1, 2, 3, 4};
   const uint32_t targets[5] = {5, 6, 7, 8, 9};
 
@@ -94,7 +94,7 @@ void test4() {
 }
 
 
-void test5() {
+void test5(void) {
   tinygraph_bitset_s bitset1 = tinygraph_bitset_construct(0);
   assert(bitset1);
   tinygraph_bitset_destruct(bitset1);
@@ -122,7 +122,7 @@ void test5() {
 }
 
 
-void test6() {
+void test6(void) {
   tinygraph_array_s array1 = tinygraph_array_construct(0);
   assert(array1);
   assert(tinygraph_array_is_empty(array1) == true);
@@ -160,7 +160,7 @@ void test6() {
 }
 
 
-void test7() {
+void test7(void) {
   tinygraph_array_s array1 = tinygraph_array_construct(0);
   assert(array1);
   assert(tinygraph_array_is_empty(array1) == true);
@@ -197,7 +197,7 @@ void test7() {
 }
 
 
-void test8() {
+void test8(void) {
   tinygraph_array_s array = tinygraph_array_construct(32);
   assert(array);
 
@@ -209,7 +209,7 @@ void test8() {
 }
 
 
-void test9() {
+void test9(void) {
   tinygraph_bitset_s bitset1 = tinygraph_bitset_construct(9);
   assert(bitset1);
   tinygraph_bitset_s bitset2 = tinygraph_bitset_copy(bitset1);
@@ -265,7 +265,7 @@ void test9() {
 }
 
 
-void test10() {
+void test10(void) {
   const uint32_t original[8] = {1, 2, UINT32_MAX, 0, UINT32_MAX, 0, 1, 2};
 
   uint32_t deltas[8];
@@ -282,7 +282,7 @@ void test10() {
 }
 
 
-void test11() {
+void test11(void) {
   tinygraph_stack_s stack1 = tinygraph_stack_construct();
   assert(stack1);
   assert(tinygraph_stack_is_empty(stack1) == true);
@@ -307,7 +307,7 @@ void test11() {
 }
 
 
-void test12() {
+void test12(void) {
   tinygraph_queue_s queue1 = tinygraph_queue_construct();
   assert(queue1);
 
@@ -465,7 +465,7 @@ bool dfs(tinygraph_s graph, uint32_t *out, uint32_t init) {
   return true;
 }
 
-void test13() {
+void test13(void) {
   const uint32_t sources[5] = {0, 0, 1, 2, 3};
   const uint32_t targets[5] = {1, 2, 0, 3, 2};
 
@@ -494,7 +494,7 @@ void test13() {
 }
 
 
-void test14() {
+void test14(void) {
   const int32_t values[] = {0, -1, 1, -2, 2147483647, -2147483648};
 
   for (uint32_t i = 0; i < 6; ++i) {
@@ -508,7 +508,7 @@ void test14() {
 }
 
 
-void test15() {
+void test15(void) {
   const uint32_t original[5] = {0, 256+1, 65536+1, 16777216+1, 4294967295};
 
   const uint8_t expected[5 * 5] = {
@@ -539,7 +539,7 @@ void test15() {
 }
 
 
-void test16() {
+void test16(void) {
   const uint16_t xs[5] = {0, 2, 800, 7, 123};
   const uint16_t ys[5] = {0, 2, 600, 6, 456};
   const uint32_t zs[5] = {0, 12, 861824, 61, 177605};
@@ -561,7 +561,7 @@ void test16() {
 }
 
 
-void test17() {
+void test17(void) {
   assert(tinygraph_bits_count(UINT64_C(0)) == 0);
   assert(tinygraph_bits_count(UINT64_C(1)) == 1);
   assert(tinygraph_bits_count(UINT64_C(-1)) == 64);
@@ -605,7 +605,7 @@ void test17() {
 }
 
 
-void test18() {
+void test18(void) {
   uint32_t data[] = {1, 2, 10, 19, 147};
 
   tinygraph_bitset_s bits = tinygraph_eliasfano_encode(data, 5);
@@ -616,7 +616,7 @@ void test18() {
 }
 
 
-void test19() {
+void test19(void) {
   const uint32_t sources[4] = {0, 0, 1, 1};
   const uint32_t targets[4] = {0, 2, 0, 2};
 
@@ -637,7 +637,7 @@ void test19() {
 }
 
 
-void test20() {
+void test20(void) {
   const uint32_t sources[4] = {1, 0, 0, 1};
   const uint32_t targets[4] = {2, 0, 2, 0};
 
@@ -658,7 +658,7 @@ void test20() {
 }
 
 
-void test21() {
+void test21(void) {
   const uint32_t sources[4] = {1, 0, 0, 1};
   const uint32_t targets[4] = {2, 0, 2, 0};
 
@@ -695,7 +695,7 @@ void test21() {
 }
 
 
-void test22() {
+void test22(void) {
   void* p = tinygraph_align_malloc(64, 4096);
 
   assert(p);
@@ -712,7 +712,7 @@ void test22() {
 }
 
 
-void test23() {
+void test23(void) {
   uint64_t cacheline0[8] = {
     UINT64_C(0),
     UINT64_C(0),
@@ -767,7 +767,7 @@ void test23() {
 }
 
 
-void test24() {
+void test24(void) {
   uint64_t cacheline0[9] = {
     UINT64_C(0),
     UINT64_C(0),
@@ -871,7 +871,7 @@ void test24() {
 }
 
 
-void test25() {
+void test25(void) {
   // 0b..0101
   // 0b..1010
   uint64_t cacheline0[8] = {
@@ -892,7 +892,7 @@ void test25() {
 }
 
 
-int main() {
+int main(void) {
   test1();
   test2();
   test3();

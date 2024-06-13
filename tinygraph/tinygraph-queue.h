@@ -21,7 +21,7 @@ typedef struct tinygraph_queue* tinygraph_queue_s;
 
 
 TINYGRAPH_WARN_UNUSED
-tinygraph_queue_s tinygraph_queue_construct();
+tinygraph_queue_s tinygraph_queue_construct(void);
 
 TINYGRAPH_WARN_UNUSED
 tinygraph_queue_s tinygraph_queue_copy(tinygraph_queue_s queue);

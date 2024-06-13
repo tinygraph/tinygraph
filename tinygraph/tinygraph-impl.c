@@ -280,7 +280,7 @@ bool tinygraph_sort_sources_targets(
 }
 
 
-tinygraph* tinygraph_construct_empty() {
+tinygraph* tinygraph_construct_empty(void) {
   tinygraph *out = malloc(sizeof(tinygraph));
 
   if (!out) {

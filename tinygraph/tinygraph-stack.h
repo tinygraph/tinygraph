@@ -16,7 +16,7 @@ typedef struct tinygraph_stack* tinygraph_stack_s;
 
 
 TINYGRAPH_WARN_UNUSED
-tinygraph_stack_s tinygraph_stack_construct();
+tinygraph_stack_s tinygraph_stack_construct(void);
 
 TINYGRAPH_WARN_UNUSED
 tinygraph_stack_s tinygraph_stack_copy(tinygraph_stack_s stack);

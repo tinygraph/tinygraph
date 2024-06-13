@@ -5,7 +5,7 @@
 #include "tinygraph.h"
 
 
-int main() {
+int main(void) {
   const uint32_t sources[5] = {0, 0, 1, 1, 2};
   const uint32_t targets[5] = {1, 2, 0, 2, 1};
 
@@ -20,4 +20,6 @@ int main() {
   tinygraph_print(graph);
 
   tinygraph_destruct(graph);
+
+  return EXIT_SUCCESS;
 }
