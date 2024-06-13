@@ -105,10 +105,22 @@ bool tinygraph_array_reserve(tinygraph_array *array, uint32_t capacity) {
 
   TINYGRAPH_ASSERT(capacity > 0);
 
-  uint32_t growth = ceil(array->items_len * 1.5);
-  capacity = capacity < growth ? growth : capacity;
+  uint64_t growth = ceil((uint64_t)array->items_len * 1.5);
 
-  TINYGRAPH_ASSERT(capacity > 0);
+  if (growth >= UINT32_MAX) {
+    growth = UINT32_MAX;
+  }
+
+  if (capacity < (uint32_t)growth) {
+    capacity = (uint32_t)growth;
+  }
+
+  // initially reserve at least a cacheline
+  if (capacity < 16) {
+    capacity = 16;
+  }
+
+  TINYGRAPH_ASSERT(capacity >= 16);
 
   uint32_t *items = calloc(capacity, sizeof(uint32_t));
 
