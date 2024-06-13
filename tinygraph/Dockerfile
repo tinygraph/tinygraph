@@ -1,7 +1,7 @@
-FROM quay.io/almalinuxorg/9-minimal:9
+FROM almalinux:9.4-minimal
 
-RUN microdnf install -y --nodocs --noplugins epel-release && \
-    microdnf install -y --nodocs --noplugins make gcc libubsan libasan inotify-tools && \
+RUN microdnf install -y --refresh --best --nodocs --noplugins --setopt=install_weak_deps=0 epel-release && \
+    microdnf install -y --refresh --best --nodocs --noplugins --setopt=install_weak_deps=0 make clang libubsan libasan inotify-tools && \
     microdnf clean all
 
 WORKDIR /app
