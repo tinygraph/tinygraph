@@ -34,9 +34,9 @@ tinygraph_stack* tinygraph_stack_construct(void) {
 }
 
 
-tinygraph_stack* tinygraph_stack_copy(tinygraph_stack *stack) {
+tinygraph_stack* tinygraph_stack_copy(const tinygraph_stack * const stack) {
   if (!stack) {
-    return stack;
+    return NULL;
   }
 
   tinygraph_stack *copy = tinygraph_stack_construct();
@@ -59,7 +59,7 @@ tinygraph_stack* tinygraph_stack_copy(tinygraph_stack *stack) {
 }
 
 
-void tinygraph_stack_destruct(tinygraph_stack *stack) {
+void tinygraph_stack_destruct(tinygraph_stack * const stack) {
   if (!stack) {
     return;
   }
@@ -72,7 +72,7 @@ void tinygraph_stack_destruct(tinygraph_stack *stack) {
 }
 
 
-bool tinygraph_stack_reserve(tinygraph_stack *stack, uint32_t capacity) {
+bool tinygraph_stack_reserve(tinygraph_stack * const stack, uint32_t capacity) {
   TINYGRAPH_ASSERT(stack);
   TINYGRAPH_ASSERT(stack->array);
 
@@ -80,7 +80,7 @@ bool tinygraph_stack_reserve(tinygraph_stack *stack, uint32_t capacity) {
 }
 
 
-uint32_t tinygraph_stack_get_top(tinygraph_stack *stack) {
+uint32_t tinygraph_stack_get_top(const tinygraph_stack * const stack) {
   TINYGRAPH_ASSERT(stack);
   TINYGRAPH_ASSERT(stack->array);
   TINYGRAPH_ASSERT(!tinygraph_array_is_empty(stack->array));
@@ -92,7 +92,7 @@ uint32_t tinygraph_stack_get_top(tinygraph_stack *stack) {
 }
 
 
-uint32_t tinygraph_stack_get_bottom(tinygraph_stack *stack) {
+uint32_t tinygraph_stack_get_bottom(const tinygraph_stack * const stack) {
   TINYGRAPH_ASSERT(stack);
   TINYGRAPH_ASSERT(stack->array);
   TINYGRAPH_ASSERT(!tinygraph_array_is_empty(stack->array));
@@ -101,7 +101,7 @@ uint32_t tinygraph_stack_get_bottom(tinygraph_stack *stack) {
 }
 
 
-uint32_t tinygraph_stack_get_size(tinygraph_stack *stack) {
+uint32_t tinygraph_stack_get_size(const tinygraph_stack * const stack) {
   TINYGRAPH_ASSERT(stack);
   TINYGRAPH_ASSERT(stack->array);
 
@@ -109,7 +109,7 @@ uint32_t tinygraph_stack_get_size(tinygraph_stack *stack) {
 }
 
 
-uint32_t tinygraph_stack_get_capacity(tinygraph_stack *stack) {
+uint32_t tinygraph_stack_get_capacity(const tinygraph_stack * const stack) {
   TINYGRAPH_ASSERT(stack);
   TINYGRAPH_ASSERT(stack->array);
 
@@ -117,7 +117,7 @@ uint32_t tinygraph_stack_get_capacity(tinygraph_stack *stack) {
 }
 
 
-bool tinygraph_stack_is_empty(tinygraph_stack *stack) {
+bool tinygraph_stack_is_empty(const tinygraph_stack * const stack) {
   TINYGRAPH_ASSERT(stack);
   TINYGRAPH_ASSERT(stack->array);
 
@@ -125,7 +125,7 @@ bool tinygraph_stack_is_empty(tinygraph_stack *stack) {
 }
 
 
-void tinygraph_stack_clear(tinygraph_stack *stack) {
+void tinygraph_stack_clear(tinygraph_stack * const stack) {
   TINYGRAPH_ASSERT(stack);
   TINYGRAPH_ASSERT(stack->array);
 
@@ -133,7 +133,7 @@ void tinygraph_stack_clear(tinygraph_stack *stack) {
 }
 
 
-bool tinygraph_stack_push(tinygraph_stack *stack, uint32_t value) {
+bool tinygraph_stack_push(tinygraph_stack * const stack, uint32_t value) {
   TINYGRAPH_ASSERT(stack);
   TINYGRAPH_ASSERT(stack->array);
 
@@ -141,7 +141,7 @@ bool tinygraph_stack_push(tinygraph_stack *stack, uint32_t value) {
 }
 
 
-uint32_t tinygraph_stack_pop(tinygraph_stack *stack) {
+uint32_t tinygraph_stack_pop(tinygraph_stack * const stack) {
   TINYGRAPH_ASSERT(stack);
   TINYGRAPH_ASSERT(stack->array);
   TINYGRAPH_ASSERT(!tinygraph_array_is_empty(stack->array));
@@ -150,7 +150,7 @@ uint32_t tinygraph_stack_pop(tinygraph_stack *stack) {
 }
 
 
-void tinygraph_stack_print_internal(tinygraph_stack *stack) {
+void tinygraph_stack_print_internal(const tinygraph_stack * const stack) {
   TINYGRAPH_ASSERT(stack);
   TINYGRAPH_ASSERT(stack->array);
 

@@ -13,13 +13,14 @@
  */
 
 typedef struct tinygraph_stack* tinygraph_stack_s;
+typedef const struct tinygraph_stack* tinygraph_stack_const_s;
 
 
 TINYGRAPH_WARN_UNUSED
 tinygraph_stack_s tinygraph_stack_construct(void);
 
 TINYGRAPH_WARN_UNUSED
-tinygraph_stack_s tinygraph_stack_copy(tinygraph_stack_s stack);
+tinygraph_stack_s tinygraph_stack_copy(tinygraph_stack_const_s stack);
 
 void tinygraph_stack_destruct(tinygraph_stack_s stack);
 
@@ -27,19 +28,19 @@ TINYGRAPH_WARN_UNUSED
 bool tinygraph_stack_reserve(tinygraph_stack_s stack, uint32_t capacity);
 
 TINYGRAPH_WARN_UNUSED
-uint32_t tinygraph_stack_get_top(tinygraph_stack_s stack);
+uint32_t tinygraph_stack_get_top(tinygraph_stack_const_s stack);
 
 TINYGRAPH_WARN_UNUSED
-uint32_t tinygraph_stack_get_bottom(tinygraph_stack_s stack);
+uint32_t tinygraph_stack_get_bottom(tinygraph_stack_const_s stack);
 
 TINYGRAPH_WARN_UNUSED
-uint32_t tinygraph_stack_get_size(tinygraph_stack_s stack);
+uint32_t tinygraph_stack_get_size(tinygraph_stack_const_s stack);
 
 TINYGRAPH_WARN_UNUSED
-uint32_t tinygraph_stack_get_capacity(tinygraph_stack_s stack);
+uint32_t tinygraph_stack_get_capacity(tinygraph_stack_const_s stack);
 
 TINYGRAPH_WARN_UNUSED
-bool tinygraph_stack_is_empty(tinygraph_stack_s stack);
+bool tinygraph_stack_is_empty(tinygraph_stack_const_s stack);
 
 void tinygraph_stack_clear(tinygraph_stack_s stack);
 
@@ -49,7 +50,7 @@ bool tinygraph_stack_push(tinygraph_stack_s stack, uint32_t value);
 TINYGRAPH_WARN_UNUSED
 uint32_t tinygraph_stack_pop(tinygraph_stack_s stack);
 
-void tinygraph_stack_print_internal(tinygraph_stack_s stack);
+void tinygraph_stack_print_internal(tinygraph_stack_const_s stack);
 
 
 #endif

@@ -11,6 +11,7 @@
  */
 
 typedef struct tinygraph_heap* tinygraph_heap_s;
+typedef const struct tinygraph_heap* tinygraph_heap_const_s;
 
 
 TINYGRAPH_WARN_UNUSED

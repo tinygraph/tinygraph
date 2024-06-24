@@ -47,9 +47,9 @@ tinygraph_array* tinygraph_array_construct(uint32_t size) {
 }
 
 
-tinygraph_array* tinygraph_array_copy(tinygraph_array *array) {
+tinygraph_array* tinygraph_array_copy(const tinygraph_array * const array) {
   if (!array) {
-    return array;
+    return NULL;
   }
 
   TINYGRAPH_ASSERT(array->size <= array->items_len);
@@ -76,7 +76,7 @@ tinygraph_array* tinygraph_array_copy(tinygraph_array *array) {
 }
 
 
-void tinygraph_array_destruct(tinygraph_array *array) {
+void tinygraph_array_destruct(tinygraph_array * const array) {
   if (!array) {
     return;
   }
@@ -95,7 +95,7 @@ void tinygraph_array_destruct(tinygraph_array *array) {
 }
 
 
-bool tinygraph_array_reserve(tinygraph_array *array, uint32_t capacity) {
+bool tinygraph_array_reserve(tinygraph_array * const array, uint32_t capacity) {
   TINYGRAPH_ASSERT(array);
   TINYGRAPH_ASSERT(array->size <= array->items_len);
 
@@ -148,7 +148,7 @@ bool tinygraph_array_reserve(tinygraph_array *array, uint32_t capacity) {
 }
 
 
-bool tinygraph_array_resize(tinygraph_array *array, uint32_t size) {
+bool tinygraph_array_resize(tinygraph_array * const array, uint32_t size) {
   TINYGRAPH_ASSERT(array);
   TINYGRAPH_ASSERT(array->size <= array->items_len);
 
@@ -188,7 +188,7 @@ bool tinygraph_array_resize(tinygraph_array *array, uint32_t size) {
 }
 
 
-uint32_t tinygraph_array_get_at(tinygraph_array *array, uint32_t i) {
+uint32_t tinygraph_array_get_at(const tinygraph_array * const array, uint32_t i) {
   TINYGRAPH_ASSERT(array);
   TINYGRAPH_ASSERT(i < array->size);
   TINYGRAPH_ASSERT(array->size <= array->items_len);
@@ -197,7 +197,7 @@ uint32_t tinygraph_array_get_at(tinygraph_array *array, uint32_t i) {
 }
 
 
-void tinygraph_array_set_at(tinygraph_array *array, uint32_t i, uint32_t value) {
+void tinygraph_array_set_at(tinygraph_array * const array, uint32_t i, uint32_t value) {
   TINYGRAPH_ASSERT(array);
   TINYGRAPH_ASSERT(i < array->size);
   TINYGRAPH_ASSERT(array->size <= array->items_len);
@@ -206,7 +206,7 @@ void tinygraph_array_set_at(tinygraph_array *array, uint32_t i, uint32_t value) 
 }
 
 
-uint32_t tinygraph_array_get_size(tinygraph_array *array) {
+uint32_t tinygraph_array_get_size(const tinygraph_array * const array) {
   TINYGRAPH_ASSERT(array);
   TINYGRAPH_ASSERT(array->size <= array->items_len);
 
@@ -214,7 +214,7 @@ uint32_t tinygraph_array_get_size(tinygraph_array *array) {
 }
 
 
-uint32_t tinygraph_array_get_capacity(tinygraph_array *array) {
+uint32_t tinygraph_array_get_capacity(const tinygraph_array * const array) {
   TINYGRAPH_ASSERT(array);
   TINYGRAPH_ASSERT(array->size <= array->items_len);
 
@@ -222,7 +222,7 @@ uint32_t tinygraph_array_get_capacity(tinygraph_array *array) {
 }
 
 
-bool tinygraph_array_is_empty(tinygraph_array *array) {
+bool tinygraph_array_is_empty(const tinygraph_array * const array) {
   TINYGRAPH_ASSERT(array);
   TINYGRAPH_ASSERT(array->size <= array->items_len);
 
@@ -230,7 +230,7 @@ bool tinygraph_array_is_empty(tinygraph_array *array) {
 }
 
 
-void tinygraph_array_clear(tinygraph_array *array) {
+void tinygraph_array_clear(tinygraph_array * const array) {
   TINYGRAPH_ASSERT(array);
   TINYGRAPH_ASSERT(array->size <= array->items_len);
 
@@ -240,7 +240,7 @@ void tinygraph_array_clear(tinygraph_array *array) {
 }
 
 
-bool tinygraph_array_push(tinygraph_array *array, uint32_t value) {
+bool tinygraph_array_push(tinygraph_array * const array, uint32_t value) {
   TINYGRAPH_ASSERT(array);
   TINYGRAPH_ASSERT(array->size <= array->items_len);
 
@@ -264,7 +264,7 @@ bool tinygraph_array_push(tinygraph_array *array, uint32_t value) {
 }
 
 
-uint32_t tinygraph_array_pop(tinygraph_array *array) {
+uint32_t tinygraph_array_pop(tinygraph_array * const array) {
   TINYGRAPH_ASSERT(array);
   TINYGRAPH_ASSERT(array->size > 0);
   TINYGRAPH_ASSERT(array->size <= array->items_len);
@@ -280,7 +280,7 @@ uint32_t tinygraph_array_pop(tinygraph_array *array) {
 }
 
 
-void tinygraph_array_print_internal(tinygraph_array *array) {
+void tinygraph_array_print_internal(const tinygraph_array * const array) {
   TINYGRAPH_ASSERT(array);
   TINYGRAPH_ASSERT(array->size <= array->items_len);
 

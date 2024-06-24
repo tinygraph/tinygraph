@@ -13,7 +13,7 @@ typedef struct tinygraph_queue {
 
 
 TINYGRAPH_WARN_UNUSED
-static bool tinygraph_queue_refill(tinygraph_queue *queue) {
+static bool tinygraph_queue_refill(tinygraph_queue * const queue) {
   TINYGRAPH_ASSERT(queue);
   TINYGRAPH_ASSERT(queue->lhs);
   TINYGRAPH_ASSERT(queue->rhs);
@@ -71,9 +71,9 @@ tinygraph_queue* tinygraph_queue_construct(void) {
 }
 
 
-tinygraph_queue* tinygraph_queue_copy(tinygraph_queue *queue) {
+tinygraph_queue* tinygraph_queue_copy(const tinygraph_queue * const queue) {
   if (!queue) {
-    return queue;
+    return NULL;
   }
 
   tinygraph_queue *copy = tinygraph_queue_construct();
@@ -107,7 +107,7 @@ tinygraph_queue* tinygraph_queue_copy(tinygraph_queue *queue) {
 }
 
 
-void tinygraph_queue_destruct(tinygraph_queue *queue) {
+void tinygraph_queue_destruct(tinygraph_queue * const queue) {
   if (!queue) {
     return;
   }
@@ -122,7 +122,7 @@ void tinygraph_queue_destruct(tinygraph_queue *queue) {
 }
 
 
-bool tinygraph_queue_reserve(tinygraph_queue *queue, uint32_t capacity) {
+bool tinygraph_queue_reserve(tinygraph_queue * const queue, uint32_t capacity) {
   TINYGRAPH_ASSERT(queue);
   TINYGRAPH_ASSERT(queue->lhs);
   TINYGRAPH_ASSERT(queue->rhs);
@@ -139,7 +139,7 @@ bool tinygraph_queue_reserve(tinygraph_queue *queue, uint32_t capacity) {
 }
 
 
-uint32_t tinygraph_queue_get_front(tinygraph_queue *queue) {
+uint32_t tinygraph_queue_get_front(const tinygraph_queue * const queue) {
   TINYGRAPH_ASSERT(queue);
   TINYGRAPH_ASSERT(queue->lhs);
   TINYGRAPH_ASSERT(queue->rhs);
@@ -154,7 +154,7 @@ uint32_t tinygraph_queue_get_front(tinygraph_queue *queue) {
 }
 
 
-uint32_t tinygraph_queue_get_back(tinygraph_queue *queue) {
+uint32_t tinygraph_queue_get_back(const tinygraph_queue * const queue) {
   TINYGRAPH_ASSERT(queue);
   TINYGRAPH_ASSERT(queue->lhs);
   TINYGRAPH_ASSERT(queue->rhs);
@@ -169,7 +169,7 @@ uint32_t tinygraph_queue_get_back(tinygraph_queue *queue) {
 }
 
 
-uint32_t tinygraph_queue_get_size(tinygraph_queue *queue) {
+uint32_t tinygraph_queue_get_size(const tinygraph_queue * const queue) {
   TINYGRAPH_ASSERT(queue);
   TINYGRAPH_ASSERT(queue->lhs);
   TINYGRAPH_ASSERT(queue->rhs);
@@ -181,7 +181,7 @@ uint32_t tinygraph_queue_get_size(tinygraph_queue *queue) {
 }
 
 
-uint32_t tinygraph_queue_get_capacity(tinygraph_queue *queue) {
+uint32_t tinygraph_queue_get_capacity(const tinygraph_queue * const queue) {
   TINYGRAPH_ASSERT(queue);
   TINYGRAPH_ASSERT(queue->lhs);
   TINYGRAPH_ASSERT(queue->rhs);
@@ -193,7 +193,7 @@ uint32_t tinygraph_queue_get_capacity(tinygraph_queue *queue) {
 }
 
 
-bool tinygraph_queue_is_empty(tinygraph_queue *queue) {
+bool tinygraph_queue_is_empty(const tinygraph_queue * const queue) {
   TINYGRAPH_ASSERT(queue);
   TINYGRAPH_ASSERT(queue->lhs);
   TINYGRAPH_ASSERT(queue->rhs);
@@ -210,7 +210,7 @@ bool tinygraph_queue_is_empty(tinygraph_queue *queue) {
 }
 
 
-void tinygraph_queue_clear(tinygraph_queue *queue) {
+void tinygraph_queue_clear(tinygraph_queue * const queue) {
   TINYGRAPH_ASSERT(queue);
   TINYGRAPH_ASSERT(queue->lhs);
   TINYGRAPH_ASSERT(queue->rhs);
@@ -220,7 +220,7 @@ void tinygraph_queue_clear(tinygraph_queue *queue) {
 }
 
 
-bool tinygraph_queue_push(tinygraph_queue *queue, uint32_t value) {
+bool tinygraph_queue_push(tinygraph_queue * const queue, uint32_t value) {
   TINYGRAPH_ASSERT(queue);
   TINYGRAPH_ASSERT(queue->lhs);
   TINYGRAPH_ASSERT(queue->rhs);
@@ -229,7 +229,7 @@ bool tinygraph_queue_push(tinygraph_queue *queue, uint32_t value) {
 }
 
 
-uint32_t tinygraph_queue_pop(tinygraph_queue *queue) {
+uint32_t tinygraph_queue_pop(tinygraph_queue * const queue) {
   TINYGRAPH_ASSERT(queue);
   TINYGRAPH_ASSERT(queue->lhs);
   TINYGRAPH_ASSERT(queue->rhs);
@@ -248,7 +248,7 @@ uint32_t tinygraph_queue_pop(tinygraph_queue *queue) {
 }
 
 
-void tinygraph_queue_print_internal(tinygraph_queue *queue) {
+void tinygraph_queue_print_internal(const tinygraph_queue * const queue) {
   TINYGRAPH_ASSERT(queue);
   TINYGRAPH_ASSERT(queue->lhs);
   TINYGRAPH_ASSERT(queue->rhs);
