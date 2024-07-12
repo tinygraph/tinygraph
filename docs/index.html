@@ -38,25 +38,9 @@
         box-sizing: border-box;
       }
 
-      body,
-      h1,
-      h2,
-      h3,
-      h4,
-      p,
-      figure,
-      blockquote,
-      dl,
-      dd,
-      ul,
-      ol {
-        margin: 0;
-      }
-
-      ul,
-      ol {
-        list-style: none;
+      * {
         padding: 0;
+        margin: 0;
       }
 
       html {
@@ -70,25 +54,17 @@
       body {
         min-height: 100vh;
 
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 13.2rem;
+
         font: clamp(1.125rem, 1.05rem + 0.25vw, 1.25rem)/1.65 recursive-sans-linear-regular, sans-serif;
-        text-rendering: optimizeSpeed;
-        -webkit-font-smoothing: antialiased;
 
         padding: 5vh clamp(0.825rem, 5vw, 5rem);
 
         background-color: var(--tg-bg);
         color: var(--tg-text);
-      }
-
-      body a {
-        text-underline-offset: 0.15em;
-        text-decoration-thickness: max(0.08em, 1px);
-      }
-
-      body p {
-        margin-top: 1em;
-        text-wrap: pretty;
-        hyphens: auto;
       }
 
       body h1, h2, h3 {
@@ -107,32 +83,47 @@
 
       body h2 {
         font-size: clamp(1.5rem, 1.275rem + 0.75vw, 1.875rem);
-        margin-top: 6.6rem;
       }
 
       body h3 {
         font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
-        margin-top: 3.3rem;
+      }
+
+      body p {
+        text-wrap: pretty;
+        hyphens: auto;
+      }
+
+      body a {
+        text-underline-offset: 0.15em;
+        text-decoration-thickness: max(0.08em, 1px);
       }
 
       body main {
+        display: flex;
+        flex-direction: column;
+        gap: 6.6rem;
+
         width: min(100%, 70ch);
       }
 
       body ol {
+        display: flex;
+        flex-direction: column;
+        gap: 0.825rem;
+
+        list-style: none;
         padding-left: 1em;
       }
 
-      body li {
-        margin-top: 1em;
+      body section {
+        display: flex;
+        flex-direction: column;
+        gap: 0.825rem;
       }
 
       body li::before {
         content: "→ "
-      }
-
-      body footer {
-        margin-top: 6.6rem;
       }
     </style>
   </head>
