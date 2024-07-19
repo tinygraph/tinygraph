@@ -15,6 +15,7 @@
 #include "tinygraph-bits.h"
 #include "tinygraph-eliasfano.h"
 #include "tinygraph-align.h"
+#include "tinygraph-rs.h"
 
 
 void test1(void) {
@@ -891,6 +892,73 @@ void test25(void) {
   }
 }
 
+void test26(void) {
+  tinygraph_bitset_s bits = tinygraph_bitset_construct(4096);  // zeros
+  assert(bits);
+
+
+  tinygraph_rs_s rs1 = tinygraph_rs_construct(bits);
+  assert(rs1);
+
+  for (uint32_t i = 0; i <= 4096; ++i) {
+    assert(tinygraph_rs_rank(rs1, i) == 0);
+  }
+
+  tinygraph_rs_destruct(rs1);
+
+
+  tinygraph_bitset_not(bits);  // ones
+
+
+  tinygraph_rs_s rs2 = tinygraph_rs_construct(bits);
+  assert(rs2);
+
+  for (uint32_t i = 0; i <= 4096; ++i) {
+    assert(tinygraph_rs_rank(rs2, i) == i);
+  }
+
+  tinygraph_rs_destruct(rs2);
+
+
+  tinygraph_bitset_destruct(bits);
+}
+
+
+void test27(void) {
+  tinygraph_bitset_s bits = tinygraph_bitset_construct(UINT32_C(1) << 15);  // zeros
+  assert(bits);
+
+  tinygraph_bitset_not(bits);  // ones
+
+  tinygraph_rs_s rs1 = tinygraph_rs_construct(bits);
+  assert(rs1);
+
+  for (uint32_t i = 0; i < (UINT32_C(1) << 15); ++i) {
+    assert(tinygraph_rs_select(rs1, i) == i);
+  }
+
+  tinygraph_rs_destruct(rs1);
+  tinygraph_bitset_destruct(bits);
+}
+
+
+void test28(void) {
+  tinygraph_bitset_s bits = tinygraph_bitset_construct(UINT32_C(4294966784));
+  assert(bits);
+
+  tinygraph_bitset_set_at(bits, 0);
+  tinygraph_bitset_set_at(bits, UINT32_C(4294966783));
+
+  tinygraph_rs_s rs1 = tinygraph_rs_construct(bits);
+  assert(rs1);
+
+  assert(tinygraph_rs_select(rs1, 0) == 0);
+  assert(tinygraph_rs_select(rs1, 1) == UINT32_C(4294966783));
+
+  tinygraph_rs_destruct(rs1);
+  tinygraph_bitset_destruct(bits);
+}
+
 
 int main(void) {
   test1();
@@ -918,4 +986,7 @@ int main(void) {
   test23();
   test24();
   test25();
+  test26();
+  test27();
+  test28();
 }
