@@ -36,6 +36,9 @@ uint64_t tinygraph_bitset_get_size(tinygraph_bitset_const_s bitset);
 
 void tinygraph_bitset_clear(tinygraph_bitset_s bitset);
 
+TINYGRAPH_WARN_UNUSED
+const uint64_t * tinygraph_bitset_get_data(tinygraph_bitset_const_s bitset);
+
 void tinygraph_bitset_not(tinygraph_bitset_s bitset);
 void tinygraph_bitset_and(tinygraph_bitset_s bitset, tinygraph_bitset_const_s other);
 void tinygraph_bitset_or(tinygraph_bitset_s bitset, tinygraph_bitset_const_s other);

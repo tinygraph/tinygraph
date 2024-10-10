@@ -192,7 +192,7 @@ uint32_t tinygraph_bits_select_512(const uint64_t *p, uint32_t n) {
   uint32_t count = 0;
 
   for (uint32_t i = 0; i < 7; ++i) {
-    uint32_t block = tinygraph_bits_count(p[i]);
+    const uint32_t block = tinygraph_bits_count(p[i]);
 
     if ((count + block) > n) {
       return i * 64 + tinygraph_bits_select(p[i], n - count);
