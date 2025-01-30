@@ -15,6 +15,7 @@
 #include "tinygraph-bits.h"
 #include "tinygraph-eliasfano.h"
 #include "tinygraph-align.h"
+#include "tinygraph-heap.h"
 
 
 void test1(void) {
@@ -892,6 +893,60 @@ void test25(void) {
 }
 
 
+void test26(void) {
+  tinygraph_heap_s heap1 = tinygraph_heap_construct();
+  assert(heap1);
+  assert(tinygraph_heap_is_empty(heap1) == true);
+  assert(tinygraph_heap_get_size(heap1) == 0);
+
+  tinygraph_heap_s heap2 = tinygraph_heap_copy(heap1);
+  assert(heap2);
+  assert(tinygraph_heap_is_empty(heap2) == true);
+  assert(tinygraph_heap_get_size(heap2) == 0);
+
+  tinygraph_heap_destruct(heap1); // no longer needed
+
+  // push {value, priority} tuple, min-heap on priority
+  assert(tinygraph_heap_push(heap2, 100, 3));
+  assert(tinygraph_heap_push(heap2, 200, 1));
+  assert(tinygraph_heap_push(heap2, 300, 2));
+
+  assert(tinygraph_heap_is_empty(heap2) == false);
+  assert(tinygraph_heap_get_size(heap2) == 3);
+  assert(tinygraph_heap_get_capacity(heap2) >= 3);
+
+  assert(tinygraph_heap_pop(heap2) == 200);
+  assert(tinygraph_heap_pop(heap2) == 300);
+  assert(tinygraph_heap_pop(heap2) == 100);
+
+  tinygraph_heap_destruct(heap2);
+}
+
+
+void test27(void) {
+  tinygraph_heap_s heap = tinygraph_heap_construct();
+  assert(heap);
+
+  for (uint32_t i = 2000; i < 3000; ++i) {
+    assert(tinygraph_heap_push(heap, i, i));
+  }
+
+  for (uint32_t i = 0; i < 2000; ++i) {
+    assert(tinygraph_heap_push(heap, i, i));
+  }
+
+  for (uint32_t i = 3000; i < 4000; ++i) {
+    assert(tinygraph_heap_push(heap, i, i));
+  }
+
+  for (uint32_t i = 0; i < 4000; ++i) {
+    assert(tinygraph_heap_pop(heap) == i);
+  }
+
+  assert(tinygraph_heap_is_empty(heap));
+}
+
+
 int main(void) {
   test1();
   test2();
@@ -918,4 +973,6 @@ int main(void) {
   test23();
   test24();
   test25();
+  test26();
+  test27();
 }
