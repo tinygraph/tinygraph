@@ -60,6 +60,7 @@ typedef struct tinygraph_heap_item {
   uint32_t priority;
 } tinygraph_heap_item;
 
+TINYGRAPH_WARN_UNUSED
 static inline bool tinygraph_heap_item_comp(
     const tinygraph_heap_item lhs,
     const tinygraph_heap_item rhs)
@@ -80,6 +81,7 @@ static inline void tinygraph_heap_item_swap(
   *rhs = tmp;
 }
 
+TINYGRAPH_WARN_UNUSED
 static inline uint32_t tinygraph_heap_item_parent(uint32_t i) {
   TINYGRAPH_ASSERT(i > 0); // root has no parent
 
@@ -90,6 +92,7 @@ static inline uint32_t tinygraph_heap_item_parent(uint32_t i) {
   return rv;
 }
 
+TINYGRAPH_WARN_UNUSED
 static inline uint32_t tinygraph_heap_item_left(uint32_t i) {
   const uint32_t rv = 2 * i + 1;
   TINYGRAPH_ASSERT(rv > i);
@@ -97,6 +100,7 @@ static inline uint32_t tinygraph_heap_item_left(uint32_t i) {
   return rv;
 }
 
+TINYGRAPH_WARN_UNUSED
 static inline uint32_t tinygraph_heap_item_right(uint32_t i) {
   const uint32_t rv = 2 * i + 2;
   TINYGRAPH_ASSERT(rv > i);
