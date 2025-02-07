@@ -139,7 +139,7 @@ uint32_t tinygraph_get_out_degree(tinygraph_const_s graph, uint32_t v);
  * [first, last) into `first` and `last`.
  *
  * This function is a shortcut for the common use case of
- * - retrieving a node' edge `e` with `tinygraph_get_edges()`,
+ * - retrieving a node's out edges `e` with `tinygraph_get_out_edges()`,
  * - iterating over all targets for `e` with `tinygraph_get_edge_target()`
  */
 TINYGRAPH_API
