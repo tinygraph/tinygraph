@@ -16,6 +16,7 @@
 #include "tinygraph-eliasfano.h"
 #include "tinygraph-align.h"
 #include "tinygraph-heap.h"
+#include "tinygraph-hash.h"
 
 
 void test1(void) {
@@ -947,6 +948,15 @@ void test27(void) {
 }
 
 
+void test28(void) {
+  uint32_t h = 0;
+
+  h = tinygraph_hash_combine_u32(h, 0);
+
+  assert(h != 0);
+}
+
+
 int main(void) {
   test1();
   test2();
@@ -975,4 +985,5 @@ int main(void) {
   test25();
   test26();
   test27();
+  test28();
 }
