@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
 #include <assert.h>
 
 #include "tinygraph.h"
@@ -364,7 +367,7 @@ void test12(void) {
 
 
 TINYGRAPH_WARN_UNUSED
-bool bfs(tinygraph_s graph, uint32_t *out, uint32_t init) {
+static inline bool bfs(tinygraph_const_s graph, uint32_t *out, uint32_t init) {
   const uint32_t n = tinygraph_get_num_nodes(graph);
 
   tinygraph_bitset_s seen = tinygraph_bitset_construct(n);
@@ -425,7 +428,7 @@ bool bfs(tinygraph_s graph, uint32_t *out, uint32_t init) {
 
 
 TINYGRAPH_WARN_UNUSED
-bool dfs(tinygraph_s graph, uint32_t *out, uint32_t init) {
+static inline bool dfs(tinygraph_const_s graph, uint32_t *out, uint32_t init) {
   const uint32_t n = tinygraph_get_num_nodes(graph);
 
   tinygraph_bitset_s seen = tinygraph_bitset_construct(n);
@@ -1381,6 +1384,30 @@ void test36(void) {
 }
 
 
+void test37(void) {
+  const uint32_t sources[5] = {0, 0, 1, 2, 3};
+  const uint32_t targets[5] = {1, 2, 0, 3, 2};
+  const uint16_t weights[5] = {4, 1, 1, 9, 1};
+
+  const tinygraph_s graph = tinygraph_construct_from_sorted_edges(
+      sources, targets, 5);
+
+  tinygraph_dijkstra_s ctx = tinygraph_dijkstra_construct(graph, weights);
+
+  const bool ok = tinygraph_dijkstra_shortest_path_simple(ctx, 0, 3);
+  assert(ok);
+
+  // TODO: design and implement the distance and path extraction
+  // functionality; how do we do this best e.g. inversing the path?
+
+  assert(tinygraph_dijkstra_get_distance(ctx) == 10);
+
+  tinygraph_dijkstra_destruct(ctx);
+
+  tinygraph_destruct(graph);
+}
+
+
 int main(void) {
   test1();
   test2();
@@ -1418,4 +1445,5 @@ int main(void) {
   test34();
   test35();
   test36();
+  test37();
 }

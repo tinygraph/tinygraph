@@ -231,6 +231,58 @@ bool tinygraph_reorder(
   for (uint32_t item = 0; item < tinygraph_get_num_edges(graph); ++item)
 
 
+/**
+ * Single-source shortest-path search context, caching
+ * internal state between multiple runs for efficiency.
+ */
+typedef struct tinygraph_dijkstra* tinygraph_dijkstra_s;
+typedef const struct tinygraph_dijkstra* tinygraph_dijkstra_const_s;
+
+/**
+ * Creates a single-source shortest-path context for
+ * `graph` with edge weights `weights`.
+ *
+ * The use case is to create a context for a graph
+ * and then run searches caching internal state.
+ *
+ * Note: during the lifetime of the context, the
+ * graph it was bound to must not change.
+ *
+ * Note: the weights must be non-negative and
+ * the graph must not contain zero-weighted loops,
+ * `weights` must contain `num_edges` weights.
+ *
+ * The caller is responsible to destruct the
+ * returned object with `tinygraph_dijkstra_destruct`.
+ */
+TINYGRAPH_API
+TINYGRAPH_WARN_UNUSED
+tinygraph_dijkstra_s tinygraph_dijkstra_construct(
+    tinygraph_const_s graph,
+    const uint16_t* weights);
+
+/**
+ * Destructs `ctx` releasing resources.
+ */
+TINYGRAPH_API
+void tinygraph_dijkstra_destruct(tinygraph_dijkstra_s ctx);
+
+/**
+ *
+ */
+TINYGRAPH_API
+bool tinygraph_dijkstra_shortest_path_simple(
+    tinygraph_dijkstra_s ctx,
+    uint32_t s,
+    uint32_t t);
+
+/**
+ *
+ */
+TINYGRAPH_API
+uint32_t tinygraph_dijkstra_get_distance(tinygraph_dijkstra_s ctx);
+
+
 #ifdef __cplusplus
 }
 #endif

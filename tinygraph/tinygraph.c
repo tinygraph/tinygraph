@@ -7,6 +7,8 @@
 #include "tinygraph-zorder.h"
 #include "tinygraph-sort.h"
 #include "tinygraph-impl.h"
+#include "tinygraph-bitset.h"
+#include "tinygraph-heap.h"
 
 
 
@@ -505,4 +507,233 @@ bool tinygraph_reorder(
   // to be able to communicate to users failure e.g. in
   // allocation. For now this is always returning true.
   return true;
+}
+
+
+// The purpose of the dijkstra context is to cache state
+// such as the distance array and parents array, so that
+// we don't have to allocate memory for every new s-t
+// search. In the future we can also extend the context
+// such that we re-use the distances and the heap when
+// the start node is the same and only the target changes.
+typedef struct tinygraph_dijkstra {
+  uint32_t s;
+  uint32_t t;
+
+  uint32_t* dist;
+  uint32_t* parent;
+
+  const uint16_t* weight;
+
+  tinygraph_const_s graph;
+  tinygraph_bitset_s seen;
+  tinygraph_heap_s heap;
+} tinygraph_dijkstra;
+
+
+static inline void tinygraph_dijkstra_clear(tinygraph_dijkstra_s ctx) {
+  // Note that we clear all internal state here but we
+  // still cache allocations between searches. In the
+  // future we might want to not clear the distances
+  // and the heap and parents for example if we want
+  // to provide an API where the user can keep the
+  // source node fixed and run repeated searches
+  // with different target nodes.
+
+  ctx->s = UINT32_MAX;
+  ctx->t = UINT32_MAX;
+
+  const uint32_t n = tinygraph_get_num_nodes(ctx->graph);
+
+  // dist[i] = inf, init
+  memset(ctx->dist, UINT32_MAX, n * sizeof(uint32_t));
+
+  // parent[i] = i, self-loop init
+  tinygraph_iota_u32(ctx->parent, n, 0);
+
+  tinygraph_bitset_clear(ctx->seen);
+  tinygraph_heap_clear(ctx->heap);
+}
+
+
+tinygraph_dijkstra_s tinygraph_dijkstra_construct(tinygraph_const_s graph, const uint16_t* weights) {
+  TINYGRAPH_ASSERT(graph);
+  TINYGRAPH_ASSERT(!tinygraph_is_empty(graph));
+
+  tinygraph_dijkstra *out = malloc(sizeof(tinygraph_dijkstra));
+
+  if (!out) {
+    return NULL;
+  }
+
+  const uint32_t n = tinygraph_get_num_nodes(graph);
+
+  tinygraph_bitset_s seen = tinygraph_bitset_construct(n);
+
+  if (!seen) {
+    free(out);
+
+    return NULL;
+  }
+
+  tinygraph_heap_s heap = tinygraph_heap_construct();
+
+  if (!heap) {
+    tinygraph_bitset_destruct(seen);
+    free(out);
+
+    return NULL;
+  }
+
+  uint32_t* dist = malloc(n * sizeof(uint32_t));
+
+  if (!dist) {
+    tinygraph_heap_destruct(heap);
+    tinygraph_bitset_destruct(seen);
+    free(out);
+
+    return NULL;
+  }
+
+  uint32_t* parent = malloc(n * sizeof(uint32_t));
+
+  if (!parent) {
+    free(dist);
+    tinygraph_heap_destruct(heap);
+    tinygraph_bitset_destruct(seen);
+    free(out);
+
+    return NULL;
+  }
+
+  *out = (tinygraph_dijkstra){
+    .s = UINT32_MAX,
+    .t = UINT32_MAX,
+    .dist = dist,
+    .parent = parent,
+    .weight = weights,
+    .graph = graph,
+    .seen = seen,
+    .heap = heap,
+  };
+
+  // Resets the internal state e.g. sets
+  // self-loops for the parents array
+  tinygraph_dijkstra_clear(out);
+
+  return out;
+}
+
+
+void tinygraph_dijkstra_destruct(tinygraph_dijkstra * const ctx) {
+  if (!ctx) {
+    return;
+  }
+
+  ctx->s = UINT32_MAX;
+  ctx->t = UINT32_MAX;
+
+  free(ctx->parent);
+  free(ctx->dist);
+
+  tinygraph_heap_destruct(ctx->heap);
+  tinygraph_bitset_destruct(ctx->seen);
+
+  free(ctx);
+}
+
+
+bool tinygraph_dijkstra_shortest_path_simple(
+    tinygraph_dijkstra_s ctx,
+    uint32_t s,
+    uint32_t t
+) {
+  TINYGRAPH_ASSERT(ctx);
+  TINYGRAPH_ASSERT(tinygraph_has_node(ctx->graph, s));
+  TINYGRAPH_ASSERT(tinygraph_has_node(ctx->graph, t));
+  TINYGRAPH_ASSERT(ctx->heap);
+  TINYGRAPH_ASSERT(ctx->seen);
+  TINYGRAPH_ASSERT(ctx->dist);
+  TINYGRAPH_ASSERT(ctx->parent);
+  TINYGRAPH_ASSERT(ctx->weight);
+
+  // The simple search clears the state before every search.
+  // In the future we want to provide advanced functions to
+  // allow e.g. for repeated queries where the source is
+  // fixed and only the target node changes.
+  tinygraph_dijkstra_clear(ctx);
+
+  TINYGRAPH_ASSERT(tinygraph_heap_is_empty(ctx->heap));
+
+  ctx->s = s;
+  ctx->t = t;
+
+  ctx->dist[s] = 0;
+  ctx->parent[s] = s;
+  ctx->parent[t] = t;
+
+  if (s == t) {
+    return true;
+  }
+
+  if (!tinygraph_heap_push(ctx->heap, s, 0)) {
+    return false;
+  }
+
+  while (!tinygraph_heap_is_empty(ctx->heap)) {
+    const uint32_t u = tinygraph_heap_pop(ctx->heap);
+
+    if (tinygraph_bitset_get_at(ctx->seen, u)) {
+      continue;
+    } else {
+      tinygraph_bitset_set_at(ctx->seen, u);
+    }
+
+    if (u == t) {
+      return true;
+    }
+
+    uint32_t it, last;
+
+    tinygraph_get_out_edges(ctx->graph, u, &it, &last);
+
+    for (; it != last; ++it) {
+      const uint32_t v = tinygraph_get_edge_target(ctx->graph, it);
+
+      // Note: there is a possibility here that the addition
+      // can overflow, at the moment we won't detect it, should
+      // we instead do a saturating add here or ignore for now?
+
+      const uint32_t alt = ctx->dist[u] + (uint32_t)ctx->weight[it];
+
+      if (alt < ctx->dist[v]) {
+        ctx->dist[v] = alt;
+        ctx->parent[v] = u;
+
+        if (!tinygraph_heap_push(ctx->heap, v, alt)) {
+          return false;
+        }
+      }
+    }
+  }
+
+  return false;
+}
+
+
+uint32_t tinygraph_dijkstra_get_distance(tinygraph_dijkstra_s ctx) {
+  TINYGRAPH_ASSERT(ctx);
+  TINYGRAPH_ASSERT(ctx->dist);
+
+  // TODO: where do we unpack? design and implement
+  //
+  //uint32_t p = ctx->t;
+
+  //while (p != ctx->parent[p]) {
+  //  fprintf(stderr, "%ju\n", (uintmax_t)p);
+
+  //  p = ctx->parent[p];
+  //}
+
+  return ctx->dist[ctx->t];
 }
