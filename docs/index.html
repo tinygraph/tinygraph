@@ -62,7 +62,7 @@
         align-items: center;
         gap: 6.6rem;
 
-        font: clamp(1.125rem, 1.05rem + 0.25vw, 1.25rem)/1.65 recursive-sans-linear-med, sans-serif;
+        font: clamp(1rem, 0.925rem + 0.25vw, 1.125rem)/1.65 recursive-sans-linear-med, sans-serif;
         font-feature-settings: "ss01" on, "ss02" on, "ss08" on;
 
         padding: 5vh clamp(0.825rem, 2.5vw, 6.6rem);
@@ -81,12 +81,12 @@
       }
 
       body h1 {
-        font: clamp(6rem, 4.8rem + 4vw, 8rem)/1.2 recursive-sans-casual-extra-black-italic;
+        font: clamp(4.5rem, 3.6rem + 3vw, 6rem)/1.2 recursive-sans-casual-extra-black-italic;
         text-shadow: var(--tg-bg) 0.02em 0.02em, var(--tg-accent) 0.08em 0.08em;
       }
 
       body h2 {
-        font-size: clamp(1.5rem, 1.275rem + 0.75vw, 1.875rem);
+        font-size: clamp(1.125rem, 1.05rem + 0.25vw, 1.25rem);
         letter-spacing: -0.02em;
       }
 
@@ -142,7 +142,6 @@
     </header>
     <main>
       <section>
-        <h2>Tiny and Efficient Graph Abstractions</h2>
         <p>tinygraph is a modern approach for working with compact graphs. Imagine the routing graph for continental-scale street networks with street segments, intersections, and turns; or the web graph of websites and how they are interlinked. </p>
         <p>We work in the open and you can contact us if you want to get involved:</p>
         <ol>
@@ -153,7 +152,7 @@
       </section>
 
       <section>
-        <h2>Graph Abstractions for High Performance Use-Cases</h2>
+        <h2>High Performance</h2>
         <p>
           We use a compressed sparse row format to represent graphs in compact and efficient ways: ideal for large scale and high-performance use-cases.
         </p>
@@ -163,7 +162,7 @@
       </section>
 
       <section>
-        <h2>Graph Compression makes Graphs Small and Compact</h2>
+        <h2>Graph Compression</h2>
         <p>
           For compression we use techniques like: succinct data structures, storing deltas in vbyte format, and permuting graphs based on space filling curves.
         </p>
@@ -173,7 +172,7 @@
       </section>
 
       <section>
-        <h2>Built for Modern Hardware and Instruction Sets</h2>
+        <h2>Modern Hardware</h2>
         <p>
           Vector instruction sets are widely deployed with AVX2 available for 10+ years by now: we target modern hardware for efficiency gains at no cost.
         </p>
@@ -183,7 +182,7 @@
       </section>
 
       <section>
-        <h2>Stable Library allows for Language Bindings</h2>
+        <h2>Stable Library</h2>
         <p>
           We provide a stable API and ABI using semantic versioning: a stable ABI allows for simple shared library upgrades across minor versions.
         </p>
@@ -193,13 +192,13 @@
       </section>
 
       <section>
-        <h2>Compact Graph File Format for Portable Graphs</h2>
+        <h2>File Format</h2>
         <p>
           We provide a file format for storing large graphs effectively and efficiently and for sharing graphs in a portable and compact way.
         </p>
         <p>
-          The tinygraphio file format stores a directed (or bidirectional) graph in a compressed sparse row format for a compact representation.
-          The on-disk representation of the compressed sparse row graph is based on Protocol Buffers.
+          The tinygraphio file format stores graph in a compressed sparse row format for a compact representation.
+          The on-disk representation is based on Protocol Buffers.
         </p>
       </section>
     </main>
