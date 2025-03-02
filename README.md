@@ -82,6 +82,6 @@ make watch
 
 ## License
 
-Copyright © 2021-2024 Daniel J. Hofmann
+Copyright © 2021-2025 Daniel J. Hofmann
 
 Distributed under the MIT License (MIT).
