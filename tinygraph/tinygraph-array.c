@@ -103,8 +103,6 @@ bool tinygraph_array_reserve(tinygraph_array * const array, uint32_t capacity) {
     return true;
   }
 
-  TINYGRAPH_ASSERT(capacity > 0);
-
   uint64_t growth = ceil((uint64_t)array->items_len * 1.5);
 
   if (growth >= UINT32_MAX) {
@@ -208,7 +206,6 @@ void tinygraph_array_set_at(tinygraph_array * const array, uint32_t i, uint32_t 
 
 uint32_t tinygraph_array_get_size(const tinygraph_array * const array) {
   TINYGRAPH_ASSERT(array);
-  TINYGRAPH_ASSERT(array->size <= array->items_len);
 
   return array->size;
 }

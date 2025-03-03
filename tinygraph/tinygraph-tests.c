@@ -17,6 +17,7 @@
 #include "tinygraph-align.h"
 #include "tinygraph-heap.h"
 #include "tinygraph-hash.h"
+#include "tinygraph-hashtable.h"
 
 
 void test1(void) {
@@ -957,6 +958,20 @@ void test28(void) {
 }
 
 
+void test29(void) {
+  // Note: we make use of h(0)!=0 in the hash table
+  // implementation to mark a tombstone as a pair of
+  // (hash=0, key=0, ..) to save space on flags for
+  // indicating that an item is no longer in use.
+  // In case we change the hash function so that
+  // h(0)=0 we will need to change the hash table
+  // implementation accordingly. Check this here:
+  assert(tinygraph_hash_u32(0) != 0);
+
+  tinygraph_hashtable_s ht0 = tinygraph_hashtable_construct();
+}
+
+
 int main(void) {
   test1();
   test2();
@@ -986,4 +1001,5 @@ int main(void) {
   test26();
   test27();
   test28();
+  test29();
 }
