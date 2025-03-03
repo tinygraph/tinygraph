@@ -1,5 +1,5 @@
 CFLAGS+=-std=c99 -O3 -Wall -Wextra -pedantic -fvisibility=hidden -ffunction-sections -fPIC -flto -pipe -MMD
-CFLAGS+=-march=native -mavx2 -mfma -mbmi -mbmi2 -mlzcnt -mpopcnt -DTINYGRAPH_HAS_BMI2
+CFLAGS+=-march=x86-64-v3 -DTINYGRAPH_HAS_BMI2
 LDFLAGS+=-Wl,--gc-sections
 LDLIBS+=-lm
 PREFIX?=/usr/local
