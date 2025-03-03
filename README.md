@@ -12,33 +12,25 @@ See our website at [tinygraph.org](https://tinygraph.org)
 
 # Usage
 
-```c
-const uint32_t sources[5] = {0, 0, 1, 1, 2};
-const uint32_t targets[5] = {1, 2, 0, 2, 1};
-
-tinygraph_s graph = tinygraph_construct_from_sorted_edges(sources, targets, 5);
-
-if (!graph) {
-  fprintf(stderr, "error: unable to construct graph\n");
-  return EXIT_FAILURE;
-}
-
-tinygraph_print(graph);
-
-tinygraph_destruct(graph);
-```
-
 See the example in [tinygraph/tinygraph-example.c](./tinygraph/tinygraph-example.c)
 
 
 # API
 
-See the documentation in [tinygraph/tinygraph.h](./tinygraph/tinygraph.h) for the interface the library provides.
+See the documentation in [tinygraph/tinygraph.h](./tinygraph/tinygraph.h) for the library interface.
+
+
+# Requirements
+
+The tinygraph library requires 64bit Linux (gcc or clang).
+
+By default we compile for the `x86-64-v3` microarchitecture which allows us to target hardware instruction sets such as `POPCNT`, `BMI2`, and the `AVX2` vector instruction set.
+If you want to compile the library for your specific hardware you can pass `-march=native` instead in the `Makefile`.
+
+On AMD CPUs before Zen 3 (released 2020) the `PDEP` instruction we rely on is implemented in microcode and you will notice a performance penalty.
 
 
 # Building
-
-The tinygraph library requires 64bit Linux (gcc or clang).
 
 To compile the library, its tests, and the example run
 
