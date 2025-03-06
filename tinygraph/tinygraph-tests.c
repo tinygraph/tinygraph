@@ -945,6 +945,8 @@ void test27(void) {
   }
 
   assert(tinygraph_heap_is_empty(heap));
+
+  tinygraph_heap_destruct(heap);
 }
 
 
