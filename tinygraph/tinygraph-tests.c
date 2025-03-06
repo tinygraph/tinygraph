@@ -17,6 +17,7 @@
 #include "tinygraph-align.h"
 #include "tinygraph-heap.h"
 #include "tinygraph-hash.h"
+#include "tinygraph-rng.h"
 
 
 void test1(void) {
@@ -959,6 +960,42 @@ void test28(void) {
 }
 
 
+void test29(void) {
+  tinygraph_rng_s rng = tinygraph_rng_construct();
+
+  uint32_t v1 = tinygraph_rng_random(rng);
+  uint32_t v2 = tinygraph_rng_random(rng);
+
+  assert(v1 != 0);
+  assert(v2 != 0);
+  assert(v1 != v2);
+
+  for (uint32_t i = 0; i < 100; ++i) {
+    assert(tinygraph_rng_bounded(rng, 10) <= 10);
+  }
+
+  tinygraph_rng_destruct(rng);
+}
+
+
+void test30(void) {
+  tinygraph_rng_s rng1 = tinygraph_rng_construct();
+  tinygraph_rng_s rng2 = tinygraph_rng_construct_from_seed(1);
+  tinygraph_rng_s rng3 = tinygraph_rng_construct_from_seed(2);
+
+  const uint32_t v1 = tinygraph_rng_random(rng1);
+  const uint32_t v2 = tinygraph_rng_random(rng2);
+  const uint32_t v3 = tinygraph_rng_random(rng3);
+
+  assert(v1 != v2);
+  assert(v2 != v3);
+
+  tinygraph_rng_destruct(rng1);
+  tinygraph_rng_destruct(rng2);
+  tinygraph_rng_destruct(rng3);
+}
+
+
 int main(void) {
   test1();
   test2();
@@ -988,4 +1025,6 @@ int main(void) {
   test26();
   test27();
   test28();
+  test29();
+  test30();
 }
