@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
 #include <assert.h>
 
 #include "tinygraph.h"
@@ -348,7 +351,7 @@ void test12(void) {
 }
 
 
-bool bfs(tinygraph_s graph, uint32_t *out, uint32_t init) {
+static inline bool bfs(tinygraph_const_s graph, uint32_t *out, uint32_t init) {
   const uint32_t n = tinygraph_get_num_nodes(graph);
 
   tinygraph_bitset_s seen = tinygraph_bitset_construct(n);
@@ -408,7 +411,7 @@ bool bfs(tinygraph_s graph, uint32_t *out, uint32_t init) {
 }
 
 
-bool dfs(tinygraph_s graph, uint32_t *out, uint32_t init) {
+static inline bool dfs(tinygraph_const_s graph, uint32_t *out, uint32_t init) {
   const uint32_t n = tinygraph_get_num_nodes(graph);
 
   tinygraph_bitset_s seen = tinygraph_bitset_construct(n);
@@ -956,6 +959,123 @@ void test28(void) {
   h = tinygraph_hash_combine_u32(h, 0);
 
   assert(h != 0);
+}
+
+
+// TODO: issues/44
+// - Check pre-conditions such as no zero-weight (self)-loops?
+// - Do we implement (s,t)-queries for now only or (s-all)?
+// - In addition to distance(s) also return path (parents array?)
+static inline bool dijkstra(
+    tinygraph_const_s graph,
+    const uint32_t* weights,
+    uint32_t s,
+    uint32_t t,
+    uint64_t* dist)
+{
+  assert(graph);
+
+  const uint32_t n = tinygraph_get_num_nodes(graph);
+
+  assert(s < n);
+  assert(t < n);
+
+  assert(dist);
+
+  if (s == t) {
+    *dist = UINT64_C(0);
+    return true;
+  }
+
+  assert(weights);
+
+  tinygraph_bitset_s seen = tinygraph_bitset_construct(n);
+
+  if (!seen) {
+    return false;
+  }
+
+  tinygraph_heap_s heap = tinygraph_heap_construct();
+
+  if (!heap) {
+    tinygraph_bitset_destruct(seen);
+    return false;
+  }
+
+  uint64_t* dists = calloc(n, sizeof(uint64_t));
+
+  if (!dists) {
+    tinygraph_bitset_destruct(seen);
+    tinygraph_heap_destruct(heap);
+    return false;
+  }
+
+  memset(dists, -1, n * sizeof(uint64_t));
+
+  dists[s] = 0;
+  assert(tinygraph_heap_push(heap, s, 0));
+
+  while (!tinygraph_heap_is_empty(heap)) {
+    const uint32_t u = tinygraph_heap_pop(heap);
+
+    if (tinygraph_bitset_get_at(seen, u)) {
+      continue;
+    } else {
+      tinygraph_bitset_set_at(seen, u);
+    }
+
+    if (u == t) {
+      *dist = dists[u];
+
+      tinygraph_bitset_destruct(seen);
+      tinygraph_heap_destruct(heap);
+      free(dists);
+
+      return true;
+    }
+
+    uint32_t efirst;
+    uint32_t elast;
+
+    tinygraph_get_out_edges(graph, u, &efirst, &elast);
+
+    for (uint32_t e = efirst; e != elast; ++e) {
+      const uint32_t v = tinygraph_get_edge_target(graph, e);
+
+      const uint64_t alt = dists[u] + (uint64_t)weights[e];
+
+      if (alt < dists[v]) {
+        dists[v] = alt;
+        assert(tinygraph_heap_push(heap, v, alt));
+      }
+    }
+  }
+
+  *dist = dists[t];
+
+  tinygraph_bitset_destruct(seen);
+  tinygraph_heap_destruct(heap);
+  free(dists);
+
+  return false;
+}
+
+void test28(void) {
+  const uint32_t sources[5] = {0, 0, 1, 2, 3};
+  const uint32_t targets[5] = {1, 2, 0, 3, 2};
+  const uint32_t weights[5] = {1, 1, 1, 1, 1};
+
+  const tinygraph_s graph = tinygraph_construct_from_sorted_edges(
+      sources, targets, 5);
+
+  assert(graph);
+
+  uint64_t dist = UINT64_C(-1);
+
+  const bool ok = dijkstra(graph, weights, 0, 3, &dist);
+  assert(ok);
+
+  fprintf(stderr, "dijkstra: dist=%ju\n", (uintmax_t)dist);
 }
 
 
