@@ -143,10 +143,6 @@ static inline void tinygraph_heap_bubble_up(
       i = p;
     }
   }
-  // TODO: benchmark if prefetching the parent items
-  // upfront on the way up makes a difference since
-  // there is only a single path up the tree
-  // TINYGRAPH_PREFETCH();
 }
 
 static inline void tinygraph_heap_bubble_down(
@@ -197,11 +193,6 @@ static inline void tinygraph_heap_bubble_down(
       i = s;
     }
   }
-  // TODO: benchmark if prefetching the child items
-  // upfront on the way down makes a difference but
-  // because there is not a single path down the
-  // tree we'll have to be careful how we do it.
-  // TINYGRAPH_PREFETCH();
 }
 
 tinygraph_heap* tinygraph_heap_construct(void) {
@@ -218,7 +209,7 @@ tinygraph_heap* tinygraph_heap_construct(void) {
   // in all our other datastructures, too, for consistency
   // (e.g. in the array impl)
 
-  tinygraph_heap_item *items = calloc(capacity, sizeof(tinygraph_heap_item));
+  tinygraph_heap_item *items = malloc(capacity * sizeof(tinygraph_heap_item));
 
   if (!items) {
     return NULL;
@@ -286,7 +277,7 @@ bool tinygraph_heap_reserve(tinygraph_heap * const heap, uint32_t capacity) {
   }
 
   // TODO: realloc
-  tinygraph_heap_item *items = calloc(capacity, sizeof(tinygraph_heap_item));
+  tinygraph_heap_item *items = malloc(capacity * sizeof(tinygraph_heap_item));
 
   if (!items) {
     return false;
@@ -327,8 +318,6 @@ bool tinygraph_heap_is_empty(const tinygraph_heap * const heap) {
 
 void tinygraph_heap_clear(tinygraph_heap * const heap) {
   TINYGRAPH_ASSERT(heap);
-
-  memset(heap->items, 0, heap->size * sizeof(tinygraph_heap_item));
 
   heap->size = 0;
 }
