@@ -5,9 +5,11 @@ Tiny and efficient graph abstractions
 
 # Overview
 
-The tinygraph library is a modern approach for working with compact graphs.
+tinygraph is a modern and idiomatic library optimized for compact and efficient graphs using succinct data structures.
 
 See our website at [tinygraph.org](https://tinygraph.org)
+
+See our [technical design document](./DESIGN.md) for the technical background and design decisions for tinygraph.
 
 
 # Usage
