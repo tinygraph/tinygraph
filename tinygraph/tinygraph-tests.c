@@ -168,7 +168,6 @@ void test7(void) {
   assert(array1);
   assert(tinygraph_array_is_empty(array1) == true);
   assert(tinygraph_array_get_size(array1) == 0);
-  assert(tinygraph_array_get_capacity(array1) == 0);
 
   tinygraph_array_s array2 = tinygraph_array_copy(array1);
   assert(array2);
@@ -197,6 +196,24 @@ void test7(void) {
   assert(tinygraph_array_get_at(array2, 0) == 1);
   assert(tinygraph_array_get_at(array2, 7) == 0);
   tinygraph_array_destruct(array2);
+
+  tinygraph_array_s array3 = tinygraph_array_construct(8);
+  assert(array3);
+  assert(tinygraph_array_reserve(array3, 0));
+  assert(tinygraph_array_reserve(array3, 16));
+  assert(tinygraph_array_get_capacity(array3) >= 16);
+  assert(tinygraph_array_reserve(array3, 17));
+  assert(tinygraph_array_get_capacity(array3) >= 17);
+  assert(tinygraph_array_reserve(array3, 0));
+  assert(tinygraph_array_resize(array3, 0));
+  assert(tinygraph_array_get_size(array3) == 0);
+  assert(tinygraph_array_resize(array3, 16));
+  assert(tinygraph_array_get_size(array3) == 16);
+  assert(tinygraph_array_get_capacity(array3) >= 16);
+  assert(tinygraph_array_resize(array3, 17));
+  assert(tinygraph_array_get_size(array3) == 17);
+  assert(tinygraph_array_get_capacity(array3) >= 17);
+  tinygraph_array_destruct(array3);
 }
 
 

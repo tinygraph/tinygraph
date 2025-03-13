@@ -21,17 +21,14 @@ tinygraph_array* tinygraph_array_construct(uint32_t size) {
     return NULL;
   }
 
-  *out = (tinygraph_array) {
-    .items = NULL,
-    .items_len = size,
-    .size = size,
-  };
+  // initially reserve a cacheline (64 bytes / 4 bytes = 16)
+  uint32_t capacity = 16;
 
-  if (size == 0) {
-    return out;
+  if (size > capacity) {
+    capacity = size;
   }
 
-  uint32_t *items = calloc(size, sizeof(uint32_t));
+  uint32_t *items = calloc(capacity, sizeof(uint32_t));
 
   if (!items) {
     free(out);
@@ -39,7 +36,11 @@ tinygraph_array* tinygraph_array_construct(uint32_t size) {
     return NULL;
   }
 
-  out->items = items;
+  *out = (tinygraph_array) {
+    .items = items,
+    .items_len = capacity,
+    .size = size,
+  };
 
   TINYGRAPH_ASSERT(out->size <= out->items_len);
 
@@ -99,50 +100,21 @@ bool tinygraph_array_reserve(tinygraph_array * const array, uint32_t capacity) {
   TINYGRAPH_ASSERT(array);
   TINYGRAPH_ASSERT(array->size <= array->items_len);
 
+  // already enough capacity
   if (capacity <= array->items_len) {
     return true;
   }
 
   TINYGRAPH_ASSERT(capacity > 0);
 
-  uint64_t growth = ceil((uint64_t)array->items_len * 1.5);
-
-  if (growth >= UINT32_MAX) {
-    growth = UINT32_MAX;
-  }
-
-  if (capacity < (uint32_t)growth) {
-    capacity = (uint32_t)growth;
-  }
-
-  // initially reserve at least a cacheline
-  if (capacity < 16) {
-    capacity = 16;
-  }
-
-  TINYGRAPH_ASSERT(capacity >= 16);
-
-  uint32_t *items = calloc(capacity, sizeof(uint32_t));
+  uint32_t *items = realloc(array->items, capacity * sizeof(uint32_t));
 
   if (!items) {
     return false;
   }
 
-  TINYGRAPH_ASSERT(array->items_len >= array->size);
-
-  if (array->size > 0) {
-    TINYGRAPH_ASSERT(items);
-    TINYGRAPH_ASSERT(array->items);
-
-    memcpy(items, array->items, array->size * sizeof(uint32_t));
-  }
-
-  free(array->items);
-
   array->items = items;
   array->items_len = capacity;
-
-  TINYGRAPH_ASSERT(array->size <= array->items_len);
 
   return true;
 }
@@ -165,13 +137,21 @@ bool tinygraph_array_resize(tinygraph_array * const array, uint32_t size) {
   } else if (size > array->size) {
     TINYGRAPH_ASSERT(size > array->size);
 
-    bool ok = tinygraph_array_reserve(array, size);
+    uint64_t growth = ceil((uint64_t)array->items_len * 1.5);
+
+    if (growth >= UINT32_MAX) {
+      growth = UINT32_MAX;
+    }
+
+    const bool ok = tinygraph_array_reserve(array, (uint32_t)growth);
 
     if (!ok) {
       return false;
     }
 
     TINYGRAPH_ASSERT(size <= array->items_len);
+
+    memset(array->items + array->size, 0, (size - array->size) * sizeof(uint32_t));
 
     array->size = size;
 

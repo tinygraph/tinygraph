@@ -205,10 +205,6 @@ tinygraph_heap* tinygraph_heap_construct(void) {
   // initially reserve a cacheline (64 bytes / 8 bytes struct = 8)
   const uint32_t capacity = 8;
 
-  // TODO: we should make an initial capacity the standard
-  // in all our other datastructures, too, for consistency
-  // (e.g. in the array impl)
-
   tinygraph_heap_item *items = malloc(capacity * sizeof(tinygraph_heap_item));
 
   if (!items) {
@@ -266,28 +262,18 @@ void tinygraph_heap_destruct(tinygraph_heap * const heap) {
 bool tinygraph_heap_reserve(tinygraph_heap * const heap, uint32_t capacity) {
   TINYGRAPH_ASSERT(heap);
 
-  // reserve can't resize down
-  if (capacity < heap->size) {
-    return false;
-  }
-
   // already enough capacity
   if (capacity <= heap->items_len) {
     return true;
   }
 
-  // TODO: realloc
-  tinygraph_heap_item *items = malloc(capacity * sizeof(tinygraph_heap_item));
+  TINYGRAPH_ASSERT(capacity > 0);
+
+  tinygraph_heap_item *items = realloc(heap->items, capacity * sizeof(tinygraph_heap_item));
 
   if (!items) {
     return false;
   }
-
-  if (heap->size > 0) {
-    memcpy(items, heap->items, heap->size * sizeof(tinygraph_heap_item));
-  }
-
-  free(heap->items);
 
   heap->items = items;
   heap->items_len = capacity;
