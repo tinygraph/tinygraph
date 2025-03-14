@@ -18,6 +18,7 @@
 #include "tinygraph-heap.h"
 #include "tinygraph-hash.h"
 #include "tinygraph-rng.h"
+#include "tinygraph-sort.h"
 
 
 void test1(void) {
@@ -1013,6 +1014,52 @@ void test30(void) {
 }
 
 
+int32_t cmpu32less(const void* l, const void* r, void* arg) {
+  (void)arg;
+
+  const uint32_t lhs = *(const uint32_t *)l;
+  const uint32_t rhs = *(const uint32_t *)r;
+
+  if (lhs < rhs) {
+    return -1;
+  } else if (lhs > rhs) {
+    return +1;
+  } else {
+    return 0;
+  }
+}
+
+void test31(void) {
+  uint32_t a0[1];
+  uint32_t a1[32];
+  uint32_t a2[64];
+
+  tinygraph_rng_s rng = tinygraph_rng_construct();
+
+  for (uint32_t i = 0; i < sizeof(a0) / sizeof(a0[0]); ++i) {
+    a0[i] = tinygraph_rng_random(rng);
+  }
+
+  for (uint32_t i = 0; i < sizeof(a1) / sizeof(a1[0]); ++i) {
+    a1[i] = tinygraph_rng_random(rng);
+  }
+
+  for (uint32_t i = 0; i < sizeof(a2) / sizeof(a2[0]); ++i) {
+    a2[i] = tinygraph_rng_random(rng);
+  }
+
+  tinygraph_rng_destruct(rng);
+
+  tinygraph_sort_u32(a0, sizeof(a0) / sizeof(a0[0]), cmpu32less, NULL);
+  tinygraph_sort_u32(a1, sizeof(a1) / sizeof(a1[0]), cmpu32less, NULL);
+  tinygraph_sort_u32(a2, sizeof(a2) / sizeof(a2[0]), cmpu32less, NULL);
+
+  assert(tinygraph_is_sorted_u32(a0, sizeof(a0) / sizeof(a0[0])));
+  assert(tinygraph_is_sorted_u32(a1, sizeof(a1) / sizeof(a1[0])));
+  assert(tinygraph_is_sorted_u32(a2, sizeof(a2) / sizeof(a2[0])));
+}
+
+
 int main(void) {
   test1();
   test2();
@@ -1044,4 +1091,5 @@ int main(void) {
   test28();
   test29();
   test30();
+  test31();
 }
