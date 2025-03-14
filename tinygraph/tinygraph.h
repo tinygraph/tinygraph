@@ -196,6 +196,27 @@ TINYGRAPH_API
 TINYGRAPH_WARN_UNUSED
 uint32_t tinygraph_size_in_bytes(tinygraph_const_s graph);
 
+/**
+ * Reorders graph nodes based on their spatial embedding
+ * in the `n` sized `lngs` and `lats` parallel arrays:
+ *
+ * - `nodes[i]` the node i's id (can be the identity)
+ * - `lngs[i]` the longitude fixed-point for node i
+ * - `lats[i]` the latitude fixed-point for node i
+ *
+ * The caller is responsible for providing the n sized
+ * `nodes` array which will get spatially sorted inplace.
+ *
+ * It is recommended to reorder graph nodes spatially
+ * for better memory locality and reduced cache misses.
+ */
+TINYGRAPH_API
+TINYGRAPH_WARN_UNUSED
+bool tinygraph_reorder(
+    uint32_t* nodes,
+    const uint16_t* lngs,
+    const uint16_t* lats,
+    uint32_t n);
 
 /**
  * Iterates over all nodes in `graph`.

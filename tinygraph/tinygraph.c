@@ -4,6 +4,8 @@
 
 #include "tinygraph.h"
 #include "tinygraph-utils.h"
+#include "tinygraph-zorder.h"
+#include "tinygraph-sort.h"
 #include "tinygraph-impl.h"
 
 
@@ -448,4 +450,59 @@ uint32_t tinygraph_size_in_bytes(const tinygraph * const graph) {
   return sizeof(tinygraph)
     + sizeof(uint32_t) * graph->offsets_len
     + sizeof(uint32_t) * graph->targets_len;
+}
+
+
+typedef struct tinygraph_reorder_ctx {
+  const uint16_t* lngs;
+  const uint16_t* lats;
+} tinygraph_reorder_ctx;
+
+TINYGRAPH_WARN_UNUSED
+static inline int32_t tinygraph_reorder_cmp(
+    const uint32_t* lhs,
+    const uint32_t* rhs,
+    void* arg)
+{
+  const tinygraph_reorder_ctx* ctx = (const tinygraph_reorder_ctx*)arg;
+
+  const uint32_t lhs_idx = *lhs;
+  const uint32_t rhs_idx = *rhs;
+
+  const uint32_t lhs_z = tinygraph_zorder_encode32(ctx->lngs[lhs_idx], ctx->lats[lhs_idx]);
+  const uint32_t rhs_z = tinygraph_zorder_encode32(ctx->lngs[rhs_idx], ctx->lats[rhs_idx]);
+
+  if (lhs_z < rhs_z) {
+    return -1;
+  } else if (lhs_z > rhs_z) {
+    return +1;
+  } else {
+    return 0;
+  }
+}
+
+bool tinygraph_reorder(
+    uint32_t* nodes,
+    const uint16_t* lngs,
+    const uint16_t* lats,
+    uint32_t n)
+{
+  // Reorder graph nodes spatially based on a z-order
+  // space filling curve to improve memory locality
+
+  // Note that we don't really need a precise sorting
+  // down to every pair of numbers. We could do e.g.
+  // with an ordering that stops at e.g. the 4k page
+  // size and keeps them unsorted. We can use this
+  // as a trade-off between run-time and quality.
+  // The second idea is to use radix sort on the
+  // z-order keyed nodes.
+
+  tinygraph_sort_u32(nodes, n, tinygraph_reorder_cmp,
+      &(tinygraph_reorder_ctx){ .lngs = lngs, .lats = lats });
+
+  // In case we want to change the sorting impl. and need
+  // to be able to communicate to users failure e.g. in
+  // allocation. For now this is always returning true.
+  return true;
 }

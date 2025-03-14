@@ -13,6 +13,7 @@ typedef struct tinygraph_edge {
   uint32_t target;
 } tinygraph_edge;
 
+TINYGRAPH_WARN_UNUSED
 static inline int tinygraph_edge_comp(const void* lhs, const void *rhs) {
   const tinygraph_edge elhs = *(const tinygraph_edge *)lhs;
   const tinygraph_edge erhs = *(const tinygraph_edge *)rhs;
@@ -356,7 +357,6 @@ void tinygraph_print_internal(tinygraph *graph) {
 
 
 uint8_t tinygraph_requires_num_bytes_u32(uint32_t value) {
-
   if (value < (1 << 7)) return 1;
   else if (value < (1 << 14)) return 2;
   else if (value < (1 << 21)) return 3;

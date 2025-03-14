@@ -1,9 +1,11 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdbool.h>
 #include <assert.h>
 
 #include "tinygraph.h"
 #include "tinygraph-impl.h"
+#include "tinygraph-utils.h"
 #include "tinygraph-array.h"
 #include "tinygraph-stack.h"
 #include "tinygraph-queue.h"
@@ -18,6 +20,7 @@
 #include "tinygraph-heap.h"
 #include "tinygraph-hash.h"
 #include "tinygraph-rng.h"
+#include "tinygraph-sort.h"
 
 
 void test1(void) {
@@ -366,6 +369,7 @@ void test12(void) {
 }
 
 
+TINYGRAPH_WARN_UNUSED
 bool bfs(tinygraph_s graph, uint32_t *out, uint32_t init) {
   const uint32_t n = tinygraph_get_num_nodes(graph);
 
@@ -426,6 +430,7 @@ bool bfs(tinygraph_s graph, uint32_t *out, uint32_t init) {
 }
 
 
+TINYGRAPH_WARN_UNUSED
 bool dfs(tinygraph_s graph, uint32_t *out, uint32_t init) {
   const uint32_t n = tinygraph_get_num_nodes(graph);
 
@@ -1013,6 +1018,113 @@ void test30(void) {
 }
 
 
+TINYGRAPH_WARN_UNUSED
+int32_t less_u32(const uint32_t* l, const uint32_t* r, void* arg) {
+  (void)arg;
+
+  const uint32_t lhs = *l;
+  const uint32_t rhs = *r;
+
+  if (lhs < rhs) {
+    return -1;
+  } else if (lhs > rhs) {
+    return +1;
+  } else {
+    return 0;
+  }
+}
+
+
+void test31(void) {
+  uint32_t a0[1];
+  uint32_t a1[32];
+  uint32_t a2[64];
+
+  tinygraph_rng_s rng = tinygraph_rng_construct();
+
+  for (uint32_t i = 0; i < sizeof(a0) / sizeof(a0[0]); ++i) {
+    a0[i] = tinygraph_rng_random(rng);
+  }
+
+  for (uint32_t i = 0; i < sizeof(a1) / sizeof(a1[0]); ++i) {
+    a1[i] = tinygraph_rng_random(rng);
+  }
+
+  for (uint32_t i = 0; i < sizeof(a2) / sizeof(a2[0]); ++i) {
+    a2[i] = tinygraph_rng_random(rng);
+  }
+
+  tinygraph_rng_destruct(rng);
+
+  tinygraph_sort_u32(a0, sizeof(a0) / sizeof(a0[0]), less_u32, NULL);
+  tinygraph_sort_u32(a1, sizeof(a1) / sizeof(a1[0]), less_u32, NULL);
+  tinygraph_sort_u32(a2, sizeof(a2) / sizeof(a2[0]), less_u32, NULL);
+
+  assert(tinygraph_is_sorted_u32(a0, sizeof(a0) / sizeof(a0[0])));
+  assert(tinygraph_is_sorted_u32(a1, sizeof(a1) / sizeof(a1[0])));
+  assert(tinygraph_is_sorted_u32(a2, sizeof(a2) / sizeof(a2[0])));
+}
+
+
+void test32(void) {
+  const uint16_t lngs[] = {0, 12, 13, 11, 1, 2};
+  const uint16_t lats[] = {0, 49, 47, 49, 1, 3};
+
+  uint32_t nodes[] = {2,  1,  0,  3, 4, 5};
+
+  assert(sizeof(lngs) / sizeof(lngs[0]) == sizeof(lats) / sizeof(lats[0]));
+  assert(sizeof(lats) / sizeof(lats[0]) == sizeof(nodes) / sizeof(nodes[0]));
+  assert(sizeof(nodes) / sizeof(nodes[0]) == 6);
+
+  const bool ok = tinygraph_reorder(nodes, lngs, lats, 6);
+  assert(ok);
+
+  for (uint32_t i = 1; i < 6; ++i) {
+    const uint32_t l = tinygraph_zorder_encode32(lngs[nodes[i - 1]], lats[nodes[i - 1]]);
+    const uint32_t r = tinygraph_zorder_encode32(lngs[nodes[i]], lats[nodes[i]]);
+
+    assert(l <= r);
+  }
+}
+
+TINYGRAPH_WARN_UNUSED
+uint32_t deref_u32(const uint32_t* item, void* arg) {
+  (void)arg;
+
+  return *item;
+}
+
+void test33(void) {
+  uint32_t a0[1];
+  uint32_t a1[32];
+  uint32_t a2[64];
+
+  tinygraph_rng_s rng = tinygraph_rng_construct();
+
+  for (uint32_t i = 0; i < sizeof(a0) / sizeof(a0[0]); ++i) {
+    a0[i] = tinygraph_rng_random(rng);
+  }
+
+  for (uint32_t i = 0; i < sizeof(a1) / sizeof(a1[0]); ++i) {
+    a1[i] = tinygraph_rng_random(rng);
+  }
+
+  for (uint32_t i = 0; i < sizeof(a2) / sizeof(a2[0]); ++i) {
+    a2[i] = tinygraph_rng_random(rng);
+  }
+
+  tinygraph_rng_destruct(rng);
+
+  assert(tinygraph_radix_sort_u32(a0, sizeof(a0) / sizeof(a0[0]), deref_u32, NULL));
+  assert(tinygraph_radix_sort_u32(a1, sizeof(a1) / sizeof(a1[0]), deref_u32, NULL));
+  assert(tinygraph_radix_sort_u32(a2, sizeof(a2) / sizeof(a2[0]), deref_u32, NULL));
+
+  assert(tinygraph_is_sorted_u32(a0, sizeof(a0) / sizeof(a0[0])));
+  assert(tinygraph_is_sorted_u32(a1, sizeof(a1) / sizeof(a1[0])));
+  assert(tinygraph_is_sorted_u32(a2, sizeof(a2) / sizeof(a2[0])));
+}
+
+
 int main(void) {
   test1();
   test2();
@@ -1044,4 +1156,7 @@ int main(void) {
   test28();
   test29();
   test30();
+  test31();
+  test32();
+  test33();
 }
