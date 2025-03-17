@@ -12,7 +12,7 @@
 
 
 TINYGRAPH_WARN_UNUSED
-tinygraph_bitset_s tinygraph_eliasfano_encode(const uint32_t *data, uint32_t n);
+tinygraph_bitset_s tinygraph_eliasfano_encode(const uint32_t * restrict data, uint32_t n);
 
 
 #endif

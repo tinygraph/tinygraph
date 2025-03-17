@@ -120,7 +120,7 @@ uint32_t tinygraph_bits_trailing0_u64(uint64_t v) {
   return __builtin_ctzll(v);
 }
 
-uint32_t tinygraph_bits_count_512(const uint64_t *p) {
+uint32_t tinygraph_bits_count_512(const uint64_t * restrict p) {
   TINYGRAPH_STATIC_ASSERT(sizeof(uint64_t) == sizeof(unsigned long long));
   TINYGRAPH_ASSERT(p);
 
@@ -145,7 +145,7 @@ uint32_t tinygraph_bits_count_512(const uint64_t *p) {
   return count[0] + count[1] + count[2] + count[3];
 }
 
-uint32_t tinygraph_bits_rank_512(const uint64_t *p, uint32_t n) {
+uint32_t tinygraph_bits_rank_512(const uint64_t * restrict p, uint32_t n) {
   TINYGRAPH_STATIC_ASSERT(sizeof(uint64_t) == sizeof(unsigned long long));
   TINYGRAPH_ASSERT(n <= UINT32_C(512));
   TINYGRAPH_ASSERT(p);
@@ -175,7 +175,7 @@ uint32_t tinygraph_bits_rank_512(const uint64_t *p, uint32_t n) {
   return count;
 }
 
-uint32_t tinygraph_bits_select_512(const uint64_t *p, uint32_t n) {
+uint32_t tinygraph_bits_select_512(const uint64_t * restrict p, uint32_t n) {
   TINYGRAPH_STATIC_ASSERT(sizeof(uint64_t) == sizeof(unsigned long long));
   TINYGRAPH_ASSERT(n < tinygraph_bits_count_512(p));
   TINYGRAPH_ASSERT(p);

@@ -40,13 +40,13 @@ TINYGRAPH_WARN_UNUSED
 uint32_t tinygraph_bits_trailing0_u64(uint64_t v);
 
 TINYGRAPH_WARN_UNUSED
-uint32_t tinygraph_bits_count_512(const uint64_t *p);
+uint32_t tinygraph_bits_count_512(const uint64_t * restrict p);
 
 TINYGRAPH_WARN_UNUSED
-uint32_t tinygraph_bits_rank_512(const uint64_t *p, uint32_t n);
+uint32_t tinygraph_bits_rank_512(const uint64_t * restrict p, uint32_t n);
 
 TINYGRAPH_WARN_UNUSED
-uint32_t tinygraph_bits_select_512(const uint64_t *p, uint32_t n);
+uint32_t tinygraph_bits_select_512(const uint64_t * restrict p, uint32_t n);
 
 
 #endif

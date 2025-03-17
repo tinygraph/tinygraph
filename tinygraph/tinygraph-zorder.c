@@ -33,14 +33,14 @@ uint64_t tinygraph_zorder_encode64(uint32_t x, uint32_t y) {
   return _pdep_u64(y, UINT64_C(0xaaaaaaaaaaaaaaaa)) | _pdep_u64(x, UINT64_C(0x5555555555555555));
 }
 
-void tinygraph_zorder_decode32(uint32_t z, uint16_t *x, uint16_t *y) {
+void tinygraph_zorder_decode32(uint32_t z, uint16_t * restrict x, uint16_t * restrict y) {
   TINYGRAPH_STATIC_ASSERT(sizeof(uint32_t) == sizeof(unsigned int));
 
   *y = _pext_u32(z, UINT32_C(0xaaaaaaaa));
   *x = _pext_u32(z, UINT32_C(0x55555555));
 }
 
-void tinygraph_zorder_decode64(uint64_t z, uint32_t *x, uint32_t *y) {
+void tinygraph_zorder_decode64(uint64_t z, uint32_t * restrict x, uint32_t * restrict y) {
   TINYGRAPH_STATIC_ASSERT(sizeof(uint64_t) == sizeof(unsigned long long));
 
   *y = _pext_u64(z, UINT64_C(0xaaaaaaaaaaaaaaaa));
@@ -55,7 +55,7 @@ static const uint8_t tinygraph_bitblast4[16] = {
 };
 
 TINYGRAPH_WARN_UNUSED
-static uint16_t tinygraph_bitblast8(uint8_t x) {
+static inline uint16_t tinygraph_bitblast8(uint8_t x) {
   uint16_t v = 0;
 
   v |= (uint16_t)tinygraph_bitblast4[(x >> 0) & 0xf] << 0;
@@ -65,7 +65,7 @@ static uint16_t tinygraph_bitblast8(uint8_t x) {
 }
 
 TINYGRAPH_WARN_UNUSED
-static uint32_t tinygraph_bitblast16(uint16_t x) {
+static inline uint32_t tinygraph_bitblast16(uint16_t x) {
   uint32_t v = 0;
 
   v |= (uint32_t)tinygraph_bitblast8((x >> 0) & 0xff) << 0;
@@ -75,7 +75,7 @@ static uint32_t tinygraph_bitblast16(uint16_t x) {
 }
 
 TINYGRAPH_WARN_UNUSED
-static uint64_t tinygraph_bitblast32(uint32_t x) {
+static inline uint64_t tinygraph_bitblast32(uint32_t x) {
   uint64_t v = 0;
 
   v |= (uint64_t)tinygraph_bitblast16((x >> 0) & 0xffff) << 0;
@@ -105,7 +105,7 @@ static const uint8_t tinygraph_bitpack8[] = {
 };
 
 TINYGRAPH_WARN_UNUSED
-static uint8_t tinygraph_bitpack16(uint16_t x) {
+static inline uint8_t tinygraph_bitpack16(uint16_t x) {
   uint8_t v = 0;
 
   v |= tinygraph_bitpack8[(x & 0x00ff) >> 0] << 0;
@@ -115,7 +115,7 @@ static uint8_t tinygraph_bitpack16(uint16_t x) {
 }
 
 TINYGRAPH_WARN_UNUSED
-static uint16_t tinygraph_bitpack32(uint32_t x) {
+static inline uint16_t tinygraph_bitpack32(uint32_t x) {
   uint16_t v = 0;
 
   v |= tinygraph_bitpack16((x & UINT32_C(0x0000ffff)) >> 0) << 0;
@@ -125,7 +125,7 @@ static uint16_t tinygraph_bitpack32(uint32_t x) {
 }
 
 TINYGRAPH_WARN_UNUSED
-static uint32_t tinygraph_bitpack64(uint64_t x) {
+static inline uint32_t tinygraph_bitpack64(uint64_t x) {
   uint32_t v = 0;
 
   v |= tinygraph_bitpack32((x & UINT64_C(0x00000000ffffffff)) >> 0) << 0;
@@ -135,7 +135,7 @@ static uint32_t tinygraph_bitpack64(uint64_t x) {
 }
 
 
-void tinygraph_zorder_decode32(uint32_t z, uint16_t *x, uint16_t *y) {
+void tinygraph_zorder_decode32(uint32_t z, uint16_t * restrict x, uint16_t * restrict y) {
   TINYGRAPH_ASSERT(y);
   TINYGRAPH_ASSERT(x);
 
@@ -144,7 +144,7 @@ void tinygraph_zorder_decode32(uint32_t z, uint16_t *x, uint16_t *y) {
 }
 
 
-void tinygraph_zorder_decode64(uint64_t z, uint32_t *x, uint32_t *y) {
+void tinygraph_zorder_decode64(uint64_t z, uint32_t * restrict x, uint32_t * restrict y) {
   TINYGRAPH_ASSERT(y);
   TINYGRAPH_ASSERT(x);
 

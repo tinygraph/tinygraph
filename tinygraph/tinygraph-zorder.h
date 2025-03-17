@@ -17,9 +17,9 @@ TINYGRAPH_WARN_UNUSED
 uint64_t tinygraph_zorder_encode64(uint32_t x, uint32_t y);
 
 
-void tinygraph_zorder_decode32(uint32_t z, uint16_t *x, uint16_t *y);
+void tinygraph_zorder_decode32(uint32_t z, uint16_t * restrict x, uint16_t * restrict y);
 
-void tinygraph_zorder_decode64(uint64_t z, uint32_t *x, uint32_t *y);
+void tinygraph_zorder_decode64(uint64_t z, uint32_t * restrict x, uint32_t * restrict y);
 
 
 #endif

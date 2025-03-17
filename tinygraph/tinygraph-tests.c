@@ -541,7 +541,7 @@ void test15(void) {
 
   uint8_t encoded[5 * 5];
 
-  const uint32_t n = tinygraph_vbyte_encode(original, 5, encoded);
+  const uint32_t n = tinygraph_vbyte_encode(original, encoded, 5);
   assert(n == 15);
 
   for (uint32_t i = 0; i < n; ++i) {
@@ -550,7 +550,7 @@ void test15(void) {
 
   uint32_t decoded[5];
 
-  const uint32_t m = tinygraph_vbyte_decode(expected, 5, decoded);
+  const uint32_t m = tinygraph_vbyte_decode(expected, decoded, 5);
   assert(m == n);
 
   for (uint32_t i = 0; i < 5; ++i) {

@@ -4,7 +4,7 @@
 
 
 TINYGRAPH_WARN_UNUSED
-static uint32_t tinygraph_vbyte_encode_one(uint8_t *out, uint32_t value) {
+static inline uint32_t tinygraph_vbyte_encode_one(uint8_t * restrict out, uint32_t value) {
   TINYGRAPH_ASSERT(out);
 
   uint32_t i = 0;
@@ -25,7 +25,7 @@ static uint32_t tinygraph_vbyte_encode_one(uint8_t *out, uint32_t value) {
 }
 
 TINYGRAPH_WARN_UNUSED
-static uint32_t tinygraph_vbyte_decode_one(const uint8_t *data, uint32_t *out) {
+static inline uint32_t tinygraph_vbyte_decode_one(const uint8_t * restrict data, uint32_t * restrict out) {
   TINYGRAPH_ASSERT(data);
   TINYGRAPH_ASSERT(out);
 
@@ -48,7 +48,7 @@ static uint32_t tinygraph_vbyte_decode_one(const uint8_t *data, uint32_t *out) {
 }
 
 
-uint32_t tinygraph_vbyte_encode(const uint32_t *data, uint32_t n, uint8_t *out) {
+uint32_t tinygraph_vbyte_encode(const uint32_t * restrict data, uint8_t * restrict out, uint32_t n) {
   if (n == 0) {
     return 0;
   }
@@ -70,7 +70,7 @@ uint32_t tinygraph_vbyte_encode(const uint32_t *data, uint32_t n, uint8_t *out) 
 }
 
 
-uint32_t tinygraph_vbyte_decode(const uint8_t *data, uint32_t n, uint32_t *out) {
+uint32_t tinygraph_vbyte_decode(const uint8_t * restrict data, uint32_t * restrict out, uint32_t n) {
   if (n == 0) {
     return 0;
   }

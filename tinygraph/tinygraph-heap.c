@@ -69,8 +69,8 @@ static inline bool tinygraph_heap_item_comp(
 }
 
 static inline void tinygraph_heap_item_swap(
-    tinygraph_heap_item * const lhs,
-    tinygraph_heap_item * const rhs)
+    tinygraph_heap_item * restrict const lhs,
+    tinygraph_heap_item * restrict const rhs)
 {
   TINYGRAPH_ASSERT(lhs);
   TINYGRAPH_ASSERT(rhs);

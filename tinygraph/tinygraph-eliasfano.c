@@ -42,7 +42,7 @@ static uint32_t tinygraph_eliasfano_delta_num_bits(uint32_t value) {
 }
 
 
-tinygraph_bitset_s tinygraph_eliasfano_encode(const uint32_t *data, uint32_t n) {
+tinygraph_bitset_s tinygraph_eliasfano_encode(const uint32_t * restrict data, uint32_t n) {
   uint64_t nbits = 0;
 
   for (uint32_t i = 0; i < n; ++i) {
