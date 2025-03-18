@@ -1,7 +1,7 @@
 #include "tinygraph-utils.h"
 #include "tinygraph-bits.h"
 
-#ifdef TINYGRAPH_HAS_BMI2
+#ifdef __BMI2__
 #include <x86intrin.h>
 #endif
 
@@ -35,7 +35,7 @@ uint32_t tinygraph_bits_rank(uint64_t v, uint32_t n) {
   return tinygraph_bits_count(v << (UINT32_C(64) - n));
 }
 
-#ifdef TINYGRAPH_HAS_BMI2
+#ifdef __BMI2__
 
 uint32_t tinygraph_bits_select(uint64_t v, uint32_t n) {
   TINYGRAPH_STATIC_ASSERT(sizeof(uint64_t) == sizeof(unsigned long long));
@@ -50,7 +50,7 @@ uint32_t tinygraph_bits_select(uint64_t v, uint32_t n) {
   return tinygraph_bits_trailing0_u64(_pdep_u64(UINT64_C(1) << n, v));
 }
 
-#else // TINYGRAPH_HAS_BMI2
+#else // __BMI2__
 
 // TODO: this non-BMI2 fallback is pretty slow; can we do better?
 // use select impl. idea from https://vigna.di.unimi.it/ftp/papers/Broadword.pdf
@@ -77,7 +77,7 @@ uint32_t tinygraph_bits_select(uint64_t v, uint32_t n) {
   return 64;
 }
 
-#endif // TINYGRAPH_HAS_BMI2
+#endif // __BMI2__
 
 
 uint32_t tinygraph_bits_leading0_u32(uint32_t v) {

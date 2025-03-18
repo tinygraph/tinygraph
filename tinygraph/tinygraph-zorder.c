@@ -1,6 +1,6 @@
 #include "tinygraph-zorder.h"
 
-#ifdef TINYGRAPH_HAS_BMI2
+#ifdef __BMI2__
 #include <x86intrin.h>
 #endif
 
@@ -19,7 +19,7 @@
  * from the four bit look up table bottom to top.
  */
 
-#ifdef TINYGRAPH_HAS_BMI2
+#ifdef __BMI2__
 
 uint32_t tinygraph_zorder_encode32(uint16_t x, uint16_t y) {
   TINYGRAPH_STATIC_ASSERT(sizeof(uint32_t) == sizeof(unsigned int));
@@ -47,7 +47,7 @@ void tinygraph_zorder_decode64(uint64_t z, uint32_t * restrict x, uint32_t * res
   *x = _pext_u64(z, UINT64_C(0x5555555555555555));
 }
 
-#else // TINYGRAPH_HAS_BMI2
+#else // __BMI2__
 
 static const uint8_t tinygraph_bitblast4[16] = {
    0x0,  0x1,  0x4,  0x5, 0x10, 0x11, 0x14, 0x15,
@@ -152,4 +152,4 @@ void tinygraph_zorder_decode64(uint64_t z, uint32_t * restrict x, uint32_t * res
   *y = tinygraph_bitpack64((z >> 1) & UINT64_C(0x5555555555555555));
 }
 
-#endif // TINYGRAPH_HAS_BMI2
+#endif // __BMI2__
