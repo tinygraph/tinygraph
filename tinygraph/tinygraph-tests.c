@@ -993,7 +993,7 @@ void test29(void) {
   assert(v1 != v2);
 
   for (uint32_t i = 0; i < 100; ++i) {
-    assert(tinygraph_rng_bounded(rng, 10) <= 10);
+    assert(tinygraph_rng_bounded(rng, 10) < 10);
   }
 
   tinygraph_rng_destruct(rng);
@@ -1124,6 +1124,239 @@ void test33(void) {
   assert(tinygraph_is_sorted_u32(a2, sizeof(a2) / sizeof(a2[0])));
 }
 
+void test34(void) {
+  tinygraph_rng_s rng = tinygraph_rng_construct();
+
+  const uint32_t n = 1000;
+
+  uint32_t * const nodes = malloc(n * sizeof(uint32_t));
+  uint16_t * const lngs = malloc(n * sizeof(uint16_t));
+  uint16_t * const lats = malloc(n * sizeof(uint16_t));
+
+  assert(nodes);
+  assert(lngs);
+  assert(lats);
+
+  tinygraph_iota_u32(nodes, n, 0);
+
+  for (uint32_t i = 0; i < n; ++i) {
+    lngs[i] = tinygraph_rng_random(rng);
+    lats[i] = tinygraph_rng_random(rng);
+  }
+
+  const bool ok = tinygraph_reorder(nodes, lngs, lats, n);
+  assert(ok);
+
+  free(nodes);
+  free(lngs);
+  free(lats);
+
+  tinygraph_rng_destruct(rng);
+}
+
+
+TINYGRAPH_WARN_UNUSED
+tinygraph_s construct_random_graph(tinygraph_rng_s rng, uint32_t nodes, uint32_t degree) {
+  assert(rng);
+  assert(nodes > 0);
+  assert(degree > 1);
+
+  const uint32_t edges = nodes * degree;
+
+  uint32_t * const sources = malloc(edges * sizeof(uint32_t));
+
+  if (!sources) {
+    return NULL;
+  }
+
+  uint32_t * const targets = malloc(edges * sizeof(uint32_t));
+
+  if (!targets) {
+    free(sources);
+    return NULL;
+  }
+
+  for (uint32_t i = 0; i < nodes; ++i) {
+    for (uint32_t j = 0; j < degree; ++j) {
+      const uint32_t source = i;
+
+      const uint32_t target = tinygraph_rng_bounded(rng, nodes);
+
+      sources[i * degree + j] = source;
+      targets[i * degree + j] = target;
+    }
+  }
+
+  tinygraph_s graph = tinygraph_construct_from_unsorted_edges(
+      sources, targets, edges);
+
+  free(sources);
+  free(targets);
+
+  return graph;
+}
+
+TINYGRAPH_WARN_UNUSED
+tinygraph_s construct_embedded_graph(tinygraph_rng_s rng, uint32_t nodes, uint32_t degree) {
+  assert(rng);
+  assert(nodes > 0);
+  assert(degree > 1);
+
+  const uint32_t edges = nodes * degree;
+
+  uint32_t * const sources = malloc(edges * sizeof(uint32_t));
+
+  if (!sources) {
+    return NULL;
+  }
+
+  uint32_t * const targets = malloc(edges * sizeof(uint32_t));
+
+  if (!targets) {
+    free(sources);
+    return NULL;
+  }
+
+  // Simulate what we will get with a reordering based on a
+  // spatial embedding: edges (s, t) where: |s-t| is min.
+
+  for (uint32_t i = 0; i < nodes; ++i) {
+    for (uint32_t j = 0; j < degree; ++j) {
+      const uint32_t source = i;
+
+      uint32_t f = tinygraph_rng_bounded(rng, degree * 2);
+      uint32_t b = tinygraph_rng_bounded(rng, degree * 2);
+
+      uint32_t target = i - f + b;
+      target = target >= nodes ? i : target;
+
+      sources[i * degree + j] = source;
+      targets[i * degree + j] = target;
+    }
+  }
+
+  tinygraph_s graph = tinygraph_construct_from_unsorted_edges(
+      sources, targets, edges);
+
+  free(sources);
+  free(targets);
+
+  return graph;
+}
+
+TINYGRAPH_WARN_UNUSED
+tinygraph_s construct_path_graph(uint32_t nodes) {
+  assert(nodes > 1);
+
+  const uint32_t edges = nodes - 1;
+
+  uint32_t * const sources = malloc(edges * sizeof(uint32_t));
+
+  if (!sources) {
+    return NULL;
+  }
+
+  uint32_t * const targets = malloc(edges * sizeof(uint32_t));
+
+  if (!targets) {
+    free(sources);
+    return NULL;
+  }
+
+  for (uint32_t i = 0; i < edges; ++i) {
+    sources[i] = i;
+    targets[i] = i + 1;
+  }
+
+  tinygraph_s graph = tinygraph_construct_from_sorted_edges(
+      sources, targets, edges);
+
+  free(sources);
+  free(targets);
+
+  return graph;
+}
+
+TINYGRAPH_WARN_UNUSED
+tinygraph_s construct_dense_graph(uint32_t nodes) {
+  assert(nodes > 1);
+  assert(nodes < (1u << 16u));
+
+  const uint32_t edges = nodes * nodes;
+
+  uint32_t * const sources = malloc(edges * sizeof(uint32_t));
+
+  if (!sources) {
+    return NULL;
+  }
+
+  uint32_t * const targets = malloc(edges * sizeof(uint32_t));
+
+  if (!targets) {
+    free(sources);
+    return NULL;
+  }
+
+  for (uint32_t i = 0; i < nodes; ++i) {
+    for (uint32_t j = 0; j < nodes; ++j) {
+      sources[i * nodes + j] = i;
+      targets[i * nodes + j] = j;
+    }
+  }
+
+  tinygraph_s graph = tinygraph_construct_from_sorted_edges(
+      sources, targets, edges);
+
+  free(sources);
+  free(targets);
+
+  return graph;
+}
+
+
+// Note: with sanitizers enabled (e.g.
+// `make sanitize`) traversing large
+// graphs becomes noticable slower.
+//
+// This is an address sanitizer bug
+// I haven't been able to look into.
+void test35(void) {
+  tinygraph_rng_s rng = tinygraph_rng_construct();
+
+  // Note: the synthetic graphs can contain
+  // self-loops and multi-edges and might be
+  // disconnected into separate (strongly)
+  // connected components.
+  const uint32_t n = 10;
+
+  tinygraph_s graph = construct_random_graph(rng, n, 3);
+  //tinygraph_s graph = construct_embedded_graph(rng, n, 3);
+  //tinygraph_s graph = construct_dense_graph(n);
+  //tinygraph_s graph = construct_path_graph(n);
+
+  //tinygraph_print(graph);
+
+  // note that number of edges depends on the graph
+  // type above e.g. quadratic for dense, etc.
+  assert(tinygraph_get_num_nodes(graph) == n);
+  assert(tinygraph_get_num_edges(graph) == n * 3);
+
+  // don't care about a path, just check reachability
+  uint32_t * path = calloc(n, sizeof(uint32_t));
+
+  // note that this might fail for the random and
+  // embedded graphs above since they use rngs for
+  // edges and there is a chance the graph is not
+  // fully connected. For path graph and dense we
+  // can guarantee a path by their definition.
+  assert(dfs(graph, path, 0) == 1);
+
+  free(path);
+
+  tinygraph_destruct(graph);
+  tinygraph_rng_destruct(rng);
+}
+
 
 int main(void) {
   test1();
@@ -1159,4 +1392,6 @@ int main(void) {
   test31();
   test32();
   test33();
+  test34();
+  test35();
 }
