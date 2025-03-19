@@ -14,6 +14,7 @@ all: libtinygraph.so tinygraph-example
 install: libtinygraph.so
 	mkdir -p $(PREFIX)/include/tinygraph
 	install -m 0644 tinygraph.h $(PREFIX)/include/tinygraph
+	install -m 0644 tinygraph.hpp $(PREFIX)/include/tinygraph
 	mkdir -p $(PREFIX)/lib
 	install -m 0644 libtinygraph.so $(PREFIX)/lib
 	ln -sf $(PREFIX)/lib/libtinygraph.so $(PREFIX)/lib/libtinygraph.so.0
