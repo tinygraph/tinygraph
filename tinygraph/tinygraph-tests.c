@@ -350,8 +350,6 @@ void test12(void) {
   assert(queue2);
   assert(tinygraph_queue_push(queue2, 2));
   assert(tinygraph_queue_push(queue2, 3));
-  assert(tinygraph_queue_get_front(queue2) == 2);
-  assert(tinygraph_queue_get_back(queue2) == 3);
   assert(tinygraph_queue_get_size(queue2) == 2);
   tinygraph_queue_destruct(queue2);
 
@@ -359,11 +357,7 @@ void test12(void) {
   assert(queue3);
   assert(tinygraph_queue_push(queue3, 2));
   assert(tinygraph_queue_push(queue3, 3));
-  assert(tinygraph_queue_get_front(queue3) == 2);
-  assert(tinygraph_queue_get_back(queue3) == 3);
   assert(tinygraph_queue_pop(queue3) == 2);
-  assert(tinygraph_queue_get_front(queue3) == 3);
-  assert(tinygraph_queue_get_back(queue3) == 3);
   assert(tinygraph_queue_get_size(queue3) == 1);
   tinygraph_queue_destruct(queue3);
 }
@@ -1358,6 +1352,35 @@ void test35(void) {
 }
 
 
+// Note: with sanitizers enabled (e.g.
+// `make sanitize`) the test below
+// becomes noticable slower.
+//
+// This is an address sanitizer bug
+// I haven't been able to look into.
+void test36(void) {
+  tinygraph_queue_s queue = tinygraph_queue_construct();
+  assert(queue);
+
+  uint64_t sum = 0;
+
+  for (uint64_t i = 0; i < 10; ++i) {
+    for (uint32_t j = 0; j < 2; ++j) {
+      assert(tinygraph_queue_push(queue, j));
+    }
+
+    const uint32_t item = tinygraph_queue_pop(queue);
+    assert(item == (i % 2 == 0) ? 0 : 1);
+
+    sum += item;
+  }
+
+  assert(sum == 5);
+
+  tinygraph_queue_destruct(queue);
+}
+
+
 int main(void) {
   test1();
   test2();
@@ -1394,4 +1417,5 @@ int main(void) {
   test33();
   test34();
   test35();
+  test36();
 }

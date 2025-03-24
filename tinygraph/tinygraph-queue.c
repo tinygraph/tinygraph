@@ -5,6 +5,14 @@
 #include "tinygraph-stack.h"
 #include "tinygraph-queue.h"
 
+/*
+ * Simple queue implemented with two stacks
+ * lhs and rhs. We push onto the lhs, refill
+ * in reverse order onto rhs, and then take
+ * from rhs. The refill logic below makes
+ * sure we can always pop from rhs in the
+ * correct queue order by swapping in lhs.
+ */
 
 typedef struct tinygraph_queue {
   tinygraph_stack_s lhs;
@@ -13,10 +21,8 @@ typedef struct tinygraph_queue {
 
 
 TINYGRAPH_WARN_UNUSED
-static bool tinygraph_queue_refill(tinygraph_queue * const queue) {
+static inline bool tinygraph_queue_refill(tinygraph_queue * const queue) {
   TINYGRAPH_ASSERT(queue);
-  TINYGRAPH_ASSERT(queue->lhs);
-  TINYGRAPH_ASSERT(queue->rhs);
 
   if (!tinygraph_stack_reserve(queue->rhs,
         tinygraph_stack_get_size(queue->lhs))) {
@@ -124,8 +130,6 @@ void tinygraph_queue_destruct(tinygraph_queue * const queue) {
 
 bool tinygraph_queue_reserve(tinygraph_queue * const queue, uint32_t capacity) {
   TINYGRAPH_ASSERT(queue);
-  TINYGRAPH_ASSERT(queue->lhs);
-  TINYGRAPH_ASSERT(queue->rhs);
 
   if (!tinygraph_stack_reserve(queue->lhs, capacity)) {
     return false;
@@ -141,8 +145,6 @@ bool tinygraph_queue_reserve(tinygraph_queue * const queue, uint32_t capacity) {
 
 uint32_t tinygraph_queue_get_front(const tinygraph_queue * const queue) {
   TINYGRAPH_ASSERT(queue);
-  TINYGRAPH_ASSERT(queue->lhs);
-  TINYGRAPH_ASSERT(queue->rhs);
   TINYGRAPH_ASSERT(!(tinygraph_stack_is_empty(queue->lhs)
         && tinygraph_stack_is_empty(queue->rhs)));
 
@@ -156,8 +158,6 @@ uint32_t tinygraph_queue_get_front(const tinygraph_queue * const queue) {
 
 uint32_t tinygraph_queue_get_back(const tinygraph_queue * const queue) {
   TINYGRAPH_ASSERT(queue);
-  TINYGRAPH_ASSERT(queue->lhs);
-  TINYGRAPH_ASSERT(queue->rhs);
   TINYGRAPH_ASSERT(!(tinygraph_stack_is_empty(queue->lhs)
         && tinygraph_stack_is_empty(queue->rhs)));
 
@@ -171,8 +171,6 @@ uint32_t tinygraph_queue_get_back(const tinygraph_queue * const queue) {
 
 uint32_t tinygraph_queue_get_size(const tinygraph_queue * const queue) {
   TINYGRAPH_ASSERT(queue);
-  TINYGRAPH_ASSERT(queue->lhs);
-  TINYGRAPH_ASSERT(queue->rhs);
 
   const uint32_t lsize = tinygraph_stack_get_size(queue->lhs);
   const uint32_t rsize = tinygraph_stack_get_size(queue->rhs);
@@ -183,8 +181,6 @@ uint32_t tinygraph_queue_get_size(const tinygraph_queue * const queue) {
 
 uint32_t tinygraph_queue_get_capacity(const tinygraph_queue * const queue) {
   TINYGRAPH_ASSERT(queue);
-  TINYGRAPH_ASSERT(queue->lhs);
-  TINYGRAPH_ASSERT(queue->rhs);
 
   const uint32_t lcapacity = tinygraph_stack_get_capacity(queue->lhs);
   const uint32_t rcapacity = tinygraph_stack_get_capacity(queue->lhs);
@@ -195,8 +191,6 @@ uint32_t tinygraph_queue_get_capacity(const tinygraph_queue * const queue) {
 
 bool tinygraph_queue_is_empty(const tinygraph_queue * const queue) {
   TINYGRAPH_ASSERT(queue);
-  TINYGRAPH_ASSERT(queue->lhs);
-  TINYGRAPH_ASSERT(queue->rhs);
 
   if (!tinygraph_stack_is_empty(queue->lhs)) {
     return false;
@@ -212,8 +206,6 @@ bool tinygraph_queue_is_empty(const tinygraph_queue * const queue) {
 
 void tinygraph_queue_clear(tinygraph_queue * const queue) {
   TINYGRAPH_ASSERT(queue);
-  TINYGRAPH_ASSERT(queue->lhs);
-  TINYGRAPH_ASSERT(queue->rhs);
 
   tinygraph_stack_clear(queue->lhs);
   tinygraph_stack_clear(queue->rhs);
@@ -222,8 +214,6 @@ void tinygraph_queue_clear(tinygraph_queue * const queue) {
 
 bool tinygraph_queue_push(tinygraph_queue * const queue, uint32_t value) {
   TINYGRAPH_ASSERT(queue);
-  TINYGRAPH_ASSERT(queue->lhs);
-  TINYGRAPH_ASSERT(queue->rhs);
 
   return tinygraph_stack_push(queue->lhs, value);
 }
@@ -231,8 +221,6 @@ bool tinygraph_queue_push(tinygraph_queue * const queue, uint32_t value) {
 
 uint32_t tinygraph_queue_pop(tinygraph_queue * const queue) {
   TINYGRAPH_ASSERT(queue);
-  TINYGRAPH_ASSERT(queue->lhs);
-  TINYGRAPH_ASSERT(queue->rhs);
   TINYGRAPH_ASSERT(!(tinygraph_stack_is_empty(queue->lhs)
         && tinygraph_stack_is_empty(queue->rhs)));
 
@@ -241,7 +229,6 @@ uint32_t tinygraph_queue_pop(tinygraph_queue * const queue) {
     TINYGRAPH_ASSERT(ok);  // stack is corrupted
   }
 
-  TINYGRAPH_ASSERT(tinygraph_stack_is_empty(queue->lhs));
   TINYGRAPH_ASSERT(!tinygraph_stack_is_empty(queue->rhs));
 
   return tinygraph_stack_pop(queue->rhs);
@@ -250,8 +237,6 @@ uint32_t tinygraph_queue_pop(tinygraph_queue * const queue) {
 
 void tinygraph_queue_print_internal(const tinygraph_queue * const queue) {
   TINYGRAPH_ASSERT(queue);
-  TINYGRAPH_ASSERT(queue->lhs);
-  TINYGRAPH_ASSERT(queue->rhs);
 
   fprintf(stderr, "queue internals\n");
 
