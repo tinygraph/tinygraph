@@ -7,6 +7,9 @@
 #include "tinygraph-zorder.h"
 #include "tinygraph-sort.h"
 #include "tinygraph-impl.h"
+#include "tinygraph-bitset.h"
+#include "tinygraph-stack.h"
+#include "tinygraph-queue.h"
 
 
 
@@ -504,5 +507,236 @@ bool tinygraph_reorder(
   // In case we want to change the sorting impl. and need
   // to be able to communicate to users failure e.g. in
   // allocation. For now this is always returning true.
+  return true;
+}
+
+typedef struct tinygraph_dfs {
+  tinygraph_const_s graph;
+  tinygraph_bitset_s seen;
+  tinygraph_stack_s stack;
+} tinygraph_dfs;
+
+tinygraph_dfs_s tinygraph_dfs_construct(tinygraph_const_s graph) {
+  TINYGRAPH_ASSERT(graph);
+  TINYGRAPH_ASSERT(!tinygraph_is_empty(graph));
+
+  tinygraph_dfs *out = malloc(sizeof(tinygraph_dfs));
+
+  if (!out) {
+    return NULL;
+  }
+
+  tinygraph_bitset_s seen = tinygraph_bitset_construct(
+      tinygraph_get_num_nodes(graph));
+
+  if (!seen) {
+    free(out);
+
+    return NULL;
+  }
+
+  tinygraph_stack_s stack = tinygraph_stack_construct();
+
+  if (!stack) {
+    free(out);
+    tinygraph_bitset_destruct(seen);
+
+    return NULL;
+  }
+
+  *out = (tinygraph_dfs){
+    .graph = graph,
+    .seen = seen,
+    .stack = stack,
+  };
+
+  return out;
+}
+
+void tinygraph_dfs_destruct(tinygraph_dfs * const ctx) {
+  if (!ctx) {
+    return;
+  }
+
+  TINYGRAPH_ASSERT(ctx->seen);
+  TINYGRAPH_ASSERT(ctx->stack);
+
+  tinygraph_bitset_destruct(ctx->seen);
+  tinygraph_stack_destruct(ctx->stack);
+
+  free(ctx);
+}
+
+void tinygraph_dfs_clear(tinygraph_dfs_s ctx) {
+  TINYGRAPH_ASSERT(ctx->seen);
+  TINYGRAPH_ASSERT(ctx->stack);
+
+  tinygraph_bitset_clear(ctx->seen);
+  tinygraph_stack_clear(ctx->stack);
+}
+
+bool tinygraph_dfs_set_start(tinygraph_dfs_s ctx, uint32_t v) {
+  TINYGRAPH_ASSERT(ctx->seen);
+  TINYGRAPH_ASSERT(ctx->stack);
+  TINYGRAPH_ASSERT(tinygraph_stack_is_empty(ctx->stack));
+  TINYGRAPH_ASSERT(tinygraph_has_node(ctx->graph, v));
+
+  tinygraph_bitset_set_at(ctx->seen, v);
+
+  return tinygraph_stack_push(ctx->stack, v);
+}
+
+bool tinygraph_dfs_is_done(tinygraph_dfs_const_s ctx) {
+  TINYGRAPH_ASSERT(ctx->seen);
+  TINYGRAPH_ASSERT(ctx->stack);
+
+  return tinygraph_stack_is_empty(ctx->stack);
+}
+
+bool tinygraph_dfs_step(tinygraph_dfs_s ctx, uint32_t* v) {
+  TINYGRAPH_ASSERT(ctx->seen);
+  TINYGRAPH_ASSERT(ctx->stack);
+  TINYGRAPH_ASSERT(ctx->graph);
+
+  TINYGRAPH_ASSERT(!tinygraph_stack_is_empty(ctx->stack));
+
+  const uint32_t s = tinygraph_stack_pop(ctx->stack);
+
+  *v = s;
+
+  const uint32_t *it, *last;
+
+  tinygraph_get_neighbors(ctx->graph, &it, &last, s);
+
+  for (; it != last; ++it) {
+    const uint32_t t = *it;
+
+    if (!tinygraph_bitset_get_at(ctx->seen, t)) {
+      const bool ok = tinygraph_stack_push(ctx->stack, t);
+
+      if (!ok) {
+        return false;
+      }
+
+      tinygraph_bitset_set_at(ctx->seen, t);
+    }
+  }
+
+  return true;
+}
+
+
+typedef struct tinygraph_bfs {
+  tinygraph_const_s graph;
+  tinygraph_bitset_s seen;
+  tinygraph_queue_s queue;
+} tinygraph_bfs;
+
+tinygraph_bfs_s tinygraph_bfs_construct(tinygraph_const_s graph) {
+  TINYGRAPH_ASSERT(graph);
+  TINYGRAPH_ASSERT(!tinygraph_is_empty(graph));
+
+  tinygraph_bfs *out = malloc(sizeof(tinygraph_bfs));
+
+  if (!out) {
+    return NULL;
+  }
+
+  tinygraph_bitset_s seen = tinygraph_bitset_construct(
+      tinygraph_get_num_nodes(graph));
+
+  if (!seen) {
+    free(out);
+
+    return NULL;
+  }
+
+  tinygraph_queue_s queue = tinygraph_queue_construct();
+
+  if (!queue) {
+    free(out);
+    tinygraph_bitset_destruct(seen);
+
+    return NULL;
+  }
+
+  *out = (tinygraph_bfs){
+    .graph = graph,
+    .seen = seen,
+    .queue = queue,
+  };
+
+  return out;
+}
+
+void tinygraph_bfs_destruct(tinygraph_bfs * const ctx) {
+  if (!ctx) {
+    return;
+  }
+
+  TINYGRAPH_ASSERT(ctx->seen);
+  TINYGRAPH_ASSERT(ctx->queue);
+
+  tinygraph_bitset_destruct(ctx->seen);
+  tinygraph_queue_destruct(ctx->queue);
+
+  free(ctx);
+}
+
+void tinygraph_bfs_clear(tinygraph_bfs_s ctx) {
+  TINYGRAPH_ASSERT(ctx->seen);
+  TINYGRAPH_ASSERT(ctx->queue);
+
+  tinygraph_bitset_clear(ctx->seen);
+  tinygraph_queue_clear(ctx->queue);
+}
+
+bool tinygraph_bfs_set_start(tinygraph_bfs_s ctx, uint32_t v) {
+  TINYGRAPH_ASSERT(ctx->seen);
+  TINYGRAPH_ASSERT(ctx->queue);
+  TINYGRAPH_ASSERT(tinygraph_queue_is_empty(ctx->queue));
+  TINYGRAPH_ASSERT(tinygraph_has_node(ctx->graph, v));
+
+  tinygraph_bitset_set_at(ctx->seen, v);
+
+  return tinygraph_queue_push(ctx->queue, v);
+}
+
+bool tinygraph_bfs_is_done(tinygraph_bfs_const_s ctx) {
+  TINYGRAPH_ASSERT(ctx->seen);
+  TINYGRAPH_ASSERT(ctx->queue);
+
+  return tinygraph_queue_is_empty(ctx->queue);
+}
+
+bool tinygraph_bfs_step(tinygraph_bfs_s ctx, uint32_t* v) {
+  TINYGRAPH_ASSERT(ctx->seen);
+  TINYGRAPH_ASSERT(ctx->queue);
+  TINYGRAPH_ASSERT(ctx->graph);
+
+  TINYGRAPH_ASSERT(!tinygraph_queue_is_empty(ctx->queue));
+
+  const uint32_t s = tinygraph_queue_pop(ctx->queue);
+
+  *v = s;
+
+  const uint32_t *it, *last;
+
+  tinygraph_get_neighbors(ctx->graph, &it, &last, s);
+
+  for (; it != last; ++it) {
+    const uint32_t t = *it;
+
+    if (!tinygraph_bitset_get_at(ctx->seen, t)) {
+      const bool ok = tinygraph_queue_push(ctx->queue, t);
+
+      if (!ok) {
+        return false;
+      }
+
+      tinygraph_bitset_set_at(ctx->seen, t);
+    }
+  }
+
   return true;
 }

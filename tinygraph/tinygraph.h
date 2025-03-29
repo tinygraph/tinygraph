@@ -231,6 +231,160 @@ bool tinygraph_reorder(
   for (uint32_t item = 0; item < tinygraph_get_num_edges(graph); ++item)
 
 
+/**
+ * Depth-first search context, caching internal
+ * state between multiple runs for efficiency.
+ */
+typedef struct tinygraph_dfs* tinygraph_dfs_s;
+typedef const struct tinygraph_dfs* tinygraph_dfs_const_s;
+
+/**
+ * Creates a depth-first search context for `graph`.
+ *
+ * The use case is to create a context for a graph
+ * and then run searches caching internal state.
+ *
+ * The context needs to be reset between multiple
+ * searches with `tinygraph_dfs_clear` and a start
+ * node set with `tinygraph_dfs_set_start`.
+ *
+ * Note: during the lifetime of the context, the
+ * graph it was bound to must not change.
+ *
+ * The caller is responsible to destruct the
+ * returned object with `tinygraph_dfs_destruct`.
+ */
+TINYGRAPH_API
+TINYGRAPH_WARN_UNUSED
+tinygraph_dfs_s tinygraph_dfs_construct(tinygraph_const_s graph);
+
+/**
+ * Destructs `ctx` releasing resources.
+ */
+TINYGRAPH_API
+void tinygraph_dfs_destruct(tinygraph_dfs_s ctx);
+
+/**
+ * Sets the source node to `v` from which the
+ * depth-first search will start at.
+ *
+ * Returns true if the start node could be set.
+ *
+ * Setting a start node must happen exactly once
+ * either after context cunstruction, or after
+ * clearing the context for repeated searches
+ * with `tinygraph_dfs_clear`.
+ */
+TINYGRAPH_API
+bool tinygraph_dfs_set_start(tinygraph_dfs_s ctx, uint32_t v);
+
+/**
+ * Returns true if the depth-first search
+ * on the graph is exhausted.
+ */
+TINYGRAPH_API
+TINYGRAPH_WARN_UNUSED
+bool tinygraph_dfs_is_done(tinygraph_dfs_const_s ctx);
+
+/**
+ * Writes the next node in the depth-first
+ * search context bound to a graph into `v`.
+ *
+ * Returns true if the next node could be set.
+ *
+ * Note: the search must not be exhausted; use
+ * in combination with `tinygraph_dfs_is_done`.
+ */
+TINYGRAPH_API
+TINYGRAPH_WARN_UNUSED
+bool tinygraph_dfs_step(tinygraph_dfs_s ctx, uint32_t* v);
+
+/**
+ * Clears the depth-first search context so that
+ * a new graph search can be performed re-using
+ * the internal state cached by the context.
+ */
+TINYGRAPH_API
+void tinygraph_dfs_clear(tinygraph_dfs_s ctx);
+
+
+/**
+ * Breadth-first search context, caching internal
+ * state between multiple runs for efficiency.
+ */
+typedef struct tinygraph_bfs* tinygraph_bfs_s;
+typedef const struct tinygraph_bfs* tinygraph_bfs_const_s;
+
+/**
+ * Creates a breadth-first search context for `graph`.
+ *
+ * The use case is to create a context for a graph
+ * and then run searches caching internal state.
+ *
+ * The context needs to be reset between multiple
+ * searches with `tinygraph_bfs_clear` and a start
+ * node set with `tinygraph_bfs_set_start`.
+ *
+ * Note: during the lifetime of the context, the
+ * graph it was bound to must not change.
+ *
+ * The caller is responsible to destruct the
+ * returned object with `tinygraph_bfs_destruct`.
+ */
+TINYGRAPH_API
+TINYGRAPH_WARN_UNUSED
+tinygraph_bfs_s tinygraph_bfs_construct(tinygraph_const_s graph);
+
+/**
+ * Destructs `ctx` releasing resources.
+ */
+TINYGRAPH_API
+void tinygraph_bfs_destruct(tinygraph_bfs_s ctx);
+
+/**
+ * Sets the source node to `v` from which the
+ * breadth-first search will start at.
+ *
+ * Returns true if the start node could be set.
+ *
+ * Setting a start node must happen exactly once
+ * either after context cunstruction, or after
+ * clearing the context for repeated searches
+ * with `tinygraph_bfs_clear`.
+ */
+TINYGRAPH_API
+bool tinygraph_bfs_set_start(tinygraph_bfs_s ctx, uint32_t v);
+
+/**
+ * Returns true if the breadth-first search
+ * on the graph is exhausted.
+ */
+TINYGRAPH_API
+TINYGRAPH_WARN_UNUSED
+bool tinygraph_bfs_is_done(tinygraph_bfs_const_s ctx);
+
+/**
+ * Writes the next node in the breadth-first
+ * search context bound to a graph into `v`.
+ *
+ * Returns true if the next node could be set.
+ *
+ * Note: the search must not be exhausted; use
+ * in combination with `tinygraph_bfs_is_done`.
+ */
+TINYGRAPH_API
+TINYGRAPH_WARN_UNUSED
+bool tinygraph_bfs_step(tinygraph_bfs_s ctx, uint32_t* v);
+
+/**
+ * Clears the breadth-first search context so that
+ * a new graph search can be performed re-using
+ * the internal state cached by the context.
+ */
+TINYGRAPH_API
+void tinygraph_bfs_clear(tinygraph_bfs_s ctx);
+
+
 #ifdef __cplusplus
 }
 #endif
