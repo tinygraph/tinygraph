@@ -4,7 +4,11 @@
 #include <assert.h>
 
 #ifndef TINYGRAPH_ASSERT
+#ifndef NDEBUG
 #define TINYGRAPH_ASSERT(x) (assert(x))
+#else
+#define TINYGRAPH_ASSERT(x)
+#endif
 #else
 #endif
 

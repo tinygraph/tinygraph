@@ -8,7 +8,7 @@ OBJ:=$(SRC:.c=.o)
 DEP:=$(SRC:.c=.d)
 
 .PHONY: all
-all: libtinygraph.so tinygraph-example tinygraph-tests
+all: libtinygraph.so tinygraph-example
 
 .PHONY: install
 install: libtinygraph.so
@@ -21,6 +21,7 @@ install: libtinygraph.so
 
 -include ${DEP}
 
+libtinygraph.so: CFLAGS+=-DNDEBUG
 libtinygraph.so: LDFLAGS+=-shared -Wl,-soname,libtinygraph.so.0
 libtinygraph.so: $(filter-out tinygraph-tests.o tinygraph-example.o, $(OBJ))
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LDLIBS)
@@ -49,7 +50,14 @@ watch:
 .PHONY: sanitize
 sanitize: CFLAGS+=-O0 -g -fsanitize=undefined,address -fno-omit-frame-pointer
 sanitize: LDLIBS:=-lasan -lubsan -lm
-sanitize: all
+sanitize: tinygraph-tests
+
+.PHONY: perf
+perf: CFLAGS:=$(filter-out -flto,$(CFLAGS)) -fno-omit-frame-pointer
+perf: clean tinygraph-tests
+	@perf record --freq 1000 -g ./tinygraph-tests
+	@perf script report flamegraph --allow-download
+	@xdg-open flamegraph.html
 
 .PHONY: sh
 sh: clean
@@ -58,4 +66,4 @@ sh: clean
 
 .PHONY: clean
 clean:
-	@rm -f tinygraph*.o tinygraph*.d libtinygraph.so libtinygraph.so.0 tinygraph-example tinygraph-tests
+	@rm -f tinygraph*.o tinygraph*.d libtinygraph.so libtinygraph.so.0 tinygraph-example tinygraph-tests perf.data perf.data.old flamegraph.html

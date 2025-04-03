@@ -227,6 +227,7 @@ uint32_t tinygraph_queue_pop(tinygraph_queue * const queue) {
   if (tinygraph_stack_is_empty(queue->rhs)) {
     const bool ok = tinygraph_queue_refill(queue);
     TINYGRAPH_ASSERT(ok);  // stack is corrupted
+    (void)ok; // oops
   }
 
   TINYGRAPH_ASSERT(!tinygraph_stack_is_empty(queue->rhs));

@@ -1520,6 +1520,40 @@ void test38(void) {
 }
 
 
+void test39(void) {
+  tinygraph_rng_s rng = tinygraph_rng_construct();
+
+  const uint32_t n = 100;
+
+  tinygraph_s graph = construct_random_graph(rng, n, 3);
+
+  uint16_t* weights = malloc(n * 3 * sizeof(uint16_t));
+
+  for (uint32_t i = 0; i < (n * 3); ++i) {
+    weights[i] = tinygraph_rng_bounded(rng, 1u << 16u);
+  }
+
+  tinygraph_dijkstra_s ctx = tinygraph_dijkstra_construct(graph, weights);
+
+  uint32_t c = 0;
+
+  for (uint32_t i = 0; i < 10; ++i) {
+    const uint32_t s = tinygraph_rng_bounded(rng, n);
+    const uint32_t t = tinygraph_rng_bounded(rng, n);
+
+    const bool ok = tinygraph_dijkstra_shortest_path(ctx, s, t);
+
+    c += (int)ok;
+  }
+
+  assert(n > 0 && c <= n);
+
+  tinygraph_dijkstra_destruct(ctx);
+  tinygraph_destruct(graph);
+  tinygraph_rng_destruct(rng);
+}
+
+
 int main(void) {
   test1();
   test2();
@@ -1559,4 +1593,5 @@ int main(void) {
   test36();
   test37();
   test38();
+  test39();
 }

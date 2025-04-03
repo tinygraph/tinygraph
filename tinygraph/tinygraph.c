@@ -44,11 +44,9 @@ tinygraph_s tinygraph_construct_from_sorted_edges(
 
   tinygraph_minmax_u32(targets, n, &min_targets_node, &max_targets_node);
 
-  const uint32_t min_node = tinygraph_min_u32(min_sources_node, min_targets_node);
-  const uint32_t max_node = tinygraph_max_u32(max_sources_node, max_targets_node);
+  TINYGRAPH_ASSERT(tinygraph_min_u32(min_sources_node, min_targets_node) == 0);
 
-  TINYGRAPH_ASSERT(min_node == 0);
-  TINYGRAPH_ASSERT(max_node >= min_node);
+  const uint32_t max_node = tinygraph_max_u32(max_sources_node, max_targets_node);
   TINYGRAPH_ASSERT(max_node != UINT32_MAX);
 
   const uint32_t num_nodes = max_node + 1;

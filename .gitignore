@@ -3,4 +3,5 @@
 *.so*
 tinygraph-example
 tinygraph-tests
-perf.data
+perf.data*
+flamegraph.html

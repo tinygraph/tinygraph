@@ -17,19 +17,22 @@ jobs:
 
       - name: Sanitize
         run: |
-          docker run -t --rm --pull never -v $(pwd)/tinygraph:/app tinygraph/tinygraph make sanitize
+          docker run -t --rm --pull never -v $(pwd)/tinygraph:/app tinygraph/tinygraph make -j8 sanitize
           docker run -t --rm --pull never -v $(pwd)/tinygraph:/app tinygraph/tinygraph ./tinygraph-tests
+          docker run -t --rm --pull never -v $(pwd)/tinygraph:/app tinygraph/tinygraph make clean
+          docker run -t --rm --pull never -v $(pwd)/tinygraph:/app tinygraph/tinygraph make -j8
           docker run -t --rm --pull never -v $(pwd)/tinygraph:/app tinygraph/tinygraph ./tinygraph-example
           docker run -t --rm --pull never -v $(pwd)/tinygraph:/app tinygraph/tinygraph make clean
 
       - name: Compile
-        run: docker run -t --rm --pull never -v $(pwd)/tinygraph:/app tinygraph/tinygraph make
+        run: docker run -t --rm --pull never -v $(pwd)/tinygraph:/app tinygraph/tinygraph make -j8
 
       - name: Install
-        run: docker run -t --rm --pull never -v $(pwd)/tinygraph:/app tinygraph/tinygraph make install PREFIX=/app
+        run: docker run -t --rm --pull never -v $(pwd)/tinygraph:/app tinygraph/tinygraph make -j8 install PREFIX=/app
 
       - name: Test
-        run: docker run -t --rm --pull never -v $(pwd)/tinygraph:/app tinygraph/tinygraph ./tinygraph-tests
-
-      - name: Example
-        run: docker run -t --rm --pull never -v $(pwd)/tinygraph:/app tinygraph/tinygraph ./tinygraph-example
+        run: |
+          docker run -t --rm --pull never -v $(pwd)/tinygraph:/app tinygraph/tinygraph make clean
+          docker run -t --rm --pull never -v $(pwd)/tinygraph:/app tinygraph/tinygraph make -j8 tinygraph-tests tinygraph-example
+          docker run -t --rm --pull never -v $(pwd)/tinygraph:/app tinygraph/tinygraph ./tinygraph-tests
+          docker run -t --rm --pull never -v $(pwd)/tinygraph:/app tinygraph/tinygraph ./tinygraph-example
