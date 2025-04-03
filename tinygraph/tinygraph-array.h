@@ -61,6 +61,11 @@ bool tinygraph_array_push(tinygraph_array_s array, uint32_t value);
 TINYGRAPH_WARN_UNUSED
 uint32_t tinygraph_array_pop(tinygraph_array_s array);
 
+TINYGRAPH_WARN_UNUSED
+const uint32_t* tinygraph_array_get_data(tinygraph_array_const_s array);
+
+void tinygraph_array_reverse(tinygraph_array_s array);
+
 void tinygraph_array_print_internal(tinygraph_array_const_s array);
 
 

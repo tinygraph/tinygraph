@@ -26,10 +26,10 @@ libtinygraph.so: $(filter-out tinygraph-tests.o tinygraph-example.o, $(OBJ))
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 	@ln -sf libtinygraph.so libtinygraph.so.0
 
-tinygraph-tests: LDFLAGS+=-Wl,-rpath=.
+tinygraph-tests: LDFLAGS+=-Wl,-rpath=.:tinygraph
 tinygraph-tests: $(filter-out tinygraph-example.o, $(OBJ))  # access to internals
 
-tinygraph-example: LDFLAGS+=-Wl,-rpath=.
+tinygraph-example: LDFLAGS+=-Wl,-rpath=.:tinygraph
 tinygraph-example: libtinygraph.so  # example only has access to public interface
 
 .PHONY: info

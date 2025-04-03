@@ -268,19 +268,69 @@ TINYGRAPH_API
 void tinygraph_dijkstra_destruct(tinygraph_dijkstra_s ctx);
 
 /**
+ * Runs a single-source shortest path search from
+ * the source node `s` to the target node `t`.
  *
+ * Returns true if a path could be found and the
+ * search context is ready for distance and path
+ * retrieval with `tinygraph_dijkstra_get_distance`
+ * and `tinygraph_dijkstra_get_path`, respectively.
+ *
+ * Note: The single-source shortest path problem
+ * can be extended into a multi-source shortest
+ * path problem by adding a virtual node to start
+ * the search from and connecting it to multiple
+ * source nodes with zero weight.
+ *
+ * Note: When the source node `s` stays the same
+ * between function calls, the internal search
+ * space will get cached, leading to faster
+ * queries compared to re-starting the search
+ * from scratch.
  */
 TINYGRAPH_API
-bool tinygraph_dijkstra_shortest_path_simple(
+TINYGRAPH_WARN_UNUSED
+bool tinygraph_dijkstra_shortest_path(
     tinygraph_dijkstra_s ctx,
     uint32_t s,
     uint32_t t);
 
 /**
+ * Returns the shortest path's distance.
  *
+ * Note: before calling this function,
+ * `tinygraph_dijkstra_shortest_path`
+ * must have been successfull.
  */
 TINYGRAPH_API
+TINYGRAPH_WARN_UNUSED
 uint32_t tinygraph_dijkstra_get_distance(tinygraph_dijkstra_s ctx);
+
+/**
+ * Retrievs a shortest path's sequence of nodes.
+ *
+ * In case of multiple shortest paths, this function
+ * retrievs an arbitrary shortest path that was found.
+ *
+ * Returns true is a path could be retrieved.
+ *
+ * Writes the sequence of nodes delimited by
+ * [first, last) into `first` and `last`.
+ *
+ * Note: before calling this function,
+ * `tinygraph_dijkstra_shortest_path`
+ * must have been successfull.
+ *
+ * Note: `first` and `last` stay valid until
+ * `tinygraph_dijkstra_shortest_path`
+ * gets called again.
+ */
+TINYGRAPH_API
+TINYGRAPH_WARN_UNUSED
+bool tinygraph_dijkstra_get_path(
+    tinygraph_dijkstra_s ctx,
+    const uint32_t **first,
+    const uint32_t **last);
 
 
 #ifdef __cplusplus

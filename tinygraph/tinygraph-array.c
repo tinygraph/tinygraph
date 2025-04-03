@@ -260,6 +260,28 @@ uint32_t tinygraph_array_pop(tinygraph_array * const array) {
 }
 
 
+const uint32_t* tinygraph_array_get_data(tinygraph_array_const_s array) {
+  TINYGRAPH_ASSERT(array);
+
+  return array->items;
+}
+
+
+void tinygraph_array_reverse(tinygraph_array * const array) {
+  TINYGRAPH_ASSERT(array);
+
+  if (array->size < 2) {
+    return;
+  }
+
+  for (uint32_t i = 0, j = array->size - 1; i < j; ++i, --j) {
+    const uint32_t tmp = array->items[i];
+    array->items[i] = array->items[j];
+    array->items[j] = tmp;
+  }
+}
+
+
 void tinygraph_array_print_internal(const tinygraph_array * const array) {
   TINYGRAPH_ASSERT(array);
   TINYGRAPH_ASSERT(array->size <= array->items_len);
