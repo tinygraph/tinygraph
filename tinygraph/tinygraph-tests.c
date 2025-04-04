@@ -1411,8 +1411,10 @@ void test37(void) {
 
   const tinygraph_s graph = tinygraph_construct_from_sorted_edges(
       sources, targets, 5);
+  assert(graph);
 
   tinygraph_dijkstra_s ctx = tinygraph_dijkstra_construct(graph, weights);
+  assert(ctx);
 
   assert(tinygraph_dijkstra_shortest_path(ctx, 0, 1));
   assert(tinygraph_dijkstra_get_distance(ctx) == 4);
@@ -1492,8 +1494,10 @@ void test38(void) {
 
   const tinygraph_s graph = tinygraph_construct_from_sorted_edges(
       sources, targets, 5);
+  assert(graph);
 
   tinygraph_dijkstra_s ctx = tinygraph_dijkstra_construct(graph, weights);
+  assert(ctx);
 
   for (uint32_t i = 0; i < 5; ++i) {
     assert(tinygraph_dijkstra_shortest_path(ctx, i, i));
@@ -1522,18 +1526,22 @@ void test38(void) {
 
 void test39(void) {
   tinygraph_rng_s rng = tinygraph_rng_construct();
+  assert(rng);
 
   const uint32_t n = 100;
 
   tinygraph_s graph = construct_random_graph(rng, n, 3);
+  assert(graph);
 
   uint16_t* weights = malloc(n * 3 * sizeof(uint16_t));
+  assert(weights);
 
   for (uint32_t i = 0; i < (n * 3); ++i) {
     weights[i] = tinygraph_rng_bounded(rng, 1u << 16u);
   }
 
   tinygraph_dijkstra_s ctx = tinygraph_dijkstra_construct(graph, weights);
+  assert(ctx);
 
   uint32_t c = 0;
 
@@ -1549,8 +1557,82 @@ void test39(void) {
   assert(n > 0 && c <= n);
 
   tinygraph_dijkstra_destruct(ctx);
+  free(weights);
   tinygraph_destruct(graph);
   tinygraph_rng_destruct(rng);
+}
+
+
+void test40(void) {
+  const uint32_t nodes = (1u << 16u) + 2;
+  const uint32_t edges = nodes - 1;
+
+  tinygraph_s graph = construct_path_graph(nodes);
+  assert(graph);
+
+  uint16_t* weights = malloc(edges * sizeof(uint16_t));
+  assert(weights);
+
+  for (uint32_t i = 0; i < edges; ++i) {
+    weights[i] = UINT16_MAX;
+  }
+
+  tinygraph_dijkstra_s ctx = tinygraph_dijkstra_construct(graph, weights);
+  assert(ctx);
+
+  assert(!tinygraph_dijkstra_shortest_path(ctx, 0, nodes - 1));
+
+  assert(tinygraph_dijkstra_get_distance(ctx) == UINT32_MAX);
+
+  tinygraph_dijkstra_destruct(ctx);
+  free(weights);
+  tinygraph_destruct(graph);
+}
+
+
+void test41(void) {
+  const uint32_t sources[5] = {0, 1, 2, 3, 4};
+  const uint32_t targets[5] = {1, 0, 3, 2, 4};
+  const uint16_t weights[5] = {1, 1, 1, 1, 1};
+
+  const tinygraph_s graph = tinygraph_construct_from_sorted_edges(
+      sources, targets, 5);
+  assert(graph);
+
+  tinygraph_dijkstra_s ctx = tinygraph_dijkstra_construct(graph, weights);
+  assert(ctx);
+
+  assert(tinygraph_dijkstra_shortest_path(ctx, 0, 1));
+  assert(tinygraph_dijkstra_shortest_path(ctx, 1, 0));
+
+  assert(tinygraph_dijkstra_shortest_path(ctx, 2, 3));
+  assert(tinygraph_dijkstra_shortest_path(ctx, 3, 2));
+
+  assert(tinygraph_dijkstra_shortest_path(ctx, 4, 4));
+
+  assert(!tinygraph_dijkstra_shortest_path(ctx, 0, 2));
+  assert(!tinygraph_dijkstra_shortest_path(ctx, 0, 3));
+  assert(!tinygraph_dijkstra_shortest_path(ctx, 0, 4));
+
+  assert(!tinygraph_dijkstra_shortest_path(ctx, 1, 2));
+  assert(!tinygraph_dijkstra_shortest_path(ctx, 1, 3));
+  assert(!tinygraph_dijkstra_shortest_path(ctx, 1, 4));
+
+  assert(!tinygraph_dijkstra_shortest_path(ctx, 2, 0));
+  assert(!tinygraph_dijkstra_shortest_path(ctx, 2, 1));
+  assert(!tinygraph_dijkstra_shortest_path(ctx, 2, 4));
+
+  assert(!tinygraph_dijkstra_shortest_path(ctx, 3, 0));
+  assert(!tinygraph_dijkstra_shortest_path(ctx, 3, 1));
+  assert(!tinygraph_dijkstra_shortest_path(ctx, 3, 4));
+
+  assert(!tinygraph_dijkstra_shortest_path(ctx, 4, 0));
+  assert(!tinygraph_dijkstra_shortest_path(ctx, 4, 1));
+  assert(!tinygraph_dijkstra_shortest_path(ctx, 4, 2));
+  assert(!tinygraph_dijkstra_shortest_path(ctx, 4, 3));
+
+  tinygraph_dijkstra_destruct(ctx);
+  tinygraph_destruct(graph);
 }
 
 
@@ -1594,4 +1676,6 @@ int main(void) {
   test37();
   test38();
   test39();
+  test40();
+  test41();
 }

@@ -34,7 +34,7 @@ On AMD CPUs before Zen 3 (released 2020) the `PDEP` instruction we rely on is im
 
 # Building
 
-To compile the library, its tests, and the example run
+To compile the library
 
 ```bash
 make
@@ -61,16 +61,11 @@ In the `tinygraph` directory run
 make sh
 ```
 
-In the self-contained and reproducible environment you can then compile with
+In the self-contained and reproducible environment you can then compile the tests with
 
 ```bash
-make
-```
-
-or for watching file modification events, re-compiling automatically
-
-```bash
-make watch
+make tinygraph-tests
+./tinygraph/tinygraph-tests
 ```
 
 
