@@ -534,11 +534,13 @@ static inline void tinygraph_dijkstra_clear(tinygraph_dijkstra_s ctx) {
 
   const uint32_t n = tinygraph_get_num_nodes(ctx->graph);
 
-  // dist[i] = inf, init
-  memset(ctx->dist, UINT32_MAX, n * sizeof(uint32_t));
+  for (uint32_t i = 0; i < n; ++i) {
+    ctx->dist[i] = UINT32_MAX;
+  }
 
-  // parent[i] = i, self-loop init
-  tinygraph_iota_u32(ctx->parent, n, 0);
+  for (uint32_t i = 0; i < n; ++i) {
+    ctx->parent[i] = i;
+  }
 
   tinygraph_bitset_clear(ctx->seen);
   tinygraph_heap_clear(ctx->heap);
@@ -646,6 +648,21 @@ void tinygraph_dijkstra_destruct(tinygraph_dijkstra * const ctx) {
 }
 
 
+static inline uint32_t tinygraph_saturated_add_u32(uint32_t a, uint32_t b) {
+  const uint32_t sum = a + b;
+
+  if (sum < a) {
+    return UINT32_MAX;
+  }
+
+  if (sum < b) {
+    return UINT32_MAX;
+  }
+
+  return sum;
+}
+
+
 bool tinygraph_dijkstra_shortest_path(
     tinygraph_dijkstra_s ctx,
     uint32_t s,
@@ -685,6 +702,8 @@ bool tinygraph_dijkstra_shortest_path(
     ctx->dist[s] = 0;
 
     if (!tinygraph_heap_push(ctx->heap, s, 0)) {
+      tinygraph_dijkstra_clear(ctx);
+      tinygraph_array_clear(ctx->path);
       return false;
     }
   } else {
@@ -722,17 +741,19 @@ bool tinygraph_dijkstra_shortest_path(
     for (; it != last; ++it) {
       const uint32_t v = tinygraph_get_edge_target(ctx->graph, it);
 
-      // Note: there is a possibility here that the addition
-      // can overflow, at the moment we won't detect it, should
-      // we instead do a saturating add here or ignore for now?
+      // Note: the individual uint16_t path distances can sum up here
+      // to overflow the uint32_t aggregator in dist. That's why we
+      // saturate the addition and below special case the check for
+      // UINT32_MAX so that we separate reachability from distance.
+      const uint32_t alt = tinygraph_saturated_add_u32(ctx->dist[u], ctx->weight[it]);
 
-      const uint32_t alt = ctx->dist[u] + (uint32_t)ctx->weight[it];
-
-      if (alt < ctx->dist[v]) {
+      if (alt < ctx->dist[v] || alt == UINT32_MAX) {
         ctx->dist[v] = alt;
         ctx->parent[v] = u;
 
         if (!tinygraph_heap_push(ctx->heap, v, alt)) {
+          tinygraph_dijkstra_clear(ctx);
+          tinygraph_array_clear(ctx->path);
           return false;
         }
       }
@@ -788,10 +809,17 @@ bool tinygraph_dijkstra_get_path(
     return true;
   }
 
+  // Below in case we fail e.g. pushing a node onto
+  // the array for path retrieval, we need to recover
+  // and clear the state. Resizing down never fails
+  // meaning we clear the path so that the user can
+  // continue without unrecoverable ctx corruption.
+
   uint32_t p = ctx->t;
 
   while (p != ctx->parent[p]) {
     if (!tinygraph_array_push(ctx->path, p)) {
+      tinygraph_array_clear(ctx->path);
       return false;
     }
 
@@ -799,6 +827,7 @@ bool tinygraph_dijkstra_get_path(
   }
 
   if (!tinygraph_array_push(ctx->path, ctx->s)) {
+    tinygraph_array_clear(ctx->path);
     return false;
   }
 

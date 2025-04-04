@@ -243,14 +243,24 @@ typedef const struct tinygraph_dijkstra* tinygraph_dijkstra_const_s;
  * `graph` with edge weights `weights`.
  *
  * The use case is to create a context for a graph
- * and then run searches caching internal state.
+ * and then run searches caching internal search
+ * state and graph-dependant allocations.
  *
  * Note: during the lifetime of the context, the
- * graph it was bound to must not change.
+ * graph and weights it was bound to must not change.
  *
  * Note: the weights must be non-negative and
  * the graph must not contain zero-weighted loops,
  * `weights` must contain `num_edges` weights.
+ *
+ * Note: weights are allowed to be UINT16_MAX. The
+ * distance on the shortest path will get aggregated
+ * as uint32_t. In case of a total distance that is
+ * larger than UINT32_MAX a saturating summation is
+ * performed and the distance stays UINT32_MAX. This
+ * can happen if you have UINT16_t weights for all
+ * edges and enough of those edges on the shortest
+ * path to saturate the uint32_t sum.
  *
  * The caller is responsible to destruct the
  * returned object with `tinygraph_dijkstra_destruct`.
@@ -301,6 +311,16 @@ bool tinygraph_dijkstra_shortest_path(
  * Note: before calling this function,
  * `tinygraph_dijkstra_shortest_path`
  * must have been successfull.
+ *
+ * Note: the distance of a search query
+ * where source and target nodes are the
+ * same is zero, no matter if there is a
+ * weighted self-loop.
+ *
+ * In case the sum of the uint16_t edge
+ * weights on the path would overflow
+ * the uint32_t data type, UINT32_MAX
+ * gets returned instead.
  */
 TINYGRAPH_API
 TINYGRAPH_WARN_UNUSED
@@ -312,7 +332,7 @@ uint32_t tinygraph_dijkstra_get_distance(tinygraph_dijkstra_s ctx);
  * In case of multiple shortest paths, this function
  * retrievs an arbitrary shortest path that was found.
  *
- * Returns true is a path could be retrieved.
+ * Returns true if a path could be retrieved.
  *
  * Writes the sequence of nodes delimited by
  * [first, last) into `first` and `last`.
@@ -320,6 +340,11 @@ uint32_t tinygraph_dijkstra_get_distance(tinygraph_dijkstra_s ctx);
  * Note: before calling this function,
  * `tinygraph_dijkstra_shortest_path`
  * must have been successfull.
+ *
+ * Note: the shortest path of a search query
+ * where the source and target nodes are the
+ * same is the empty path, no matter if there
+ * is a weighted self-loop.
  *
  * Note: `first` and `last` stay valid until
  * `tinygraph_dijkstra_shortest_path`
