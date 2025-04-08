@@ -726,6 +726,8 @@ bool tinygraph_dijkstra_shortest_path(
       tinygraph_bitset_set_at(ctx->seen, u);
     }
 
+    const uint32_t distu = ctx->dist[u];
+
     // The following is a bit different to the classical Dijkstra
     // implementation: even if u is the target node, we still want
     // to process its neighbors. This makes sure two cached sub-
@@ -741,7 +743,7 @@ bool tinygraph_dijkstra_shortest_path(
     for (; it != last; ++it) {
       const uint32_t v = tinygraph_get_edge_target(ctx->graph, it);
 
-      const uint32_t alt = tinygraph_saturated_add_u32(ctx->dist[u], ctx->weight[it]);
+      const uint32_t alt = tinygraph_saturated_add_u32(distu, ctx->weight[it]);
 
       if (alt < ctx->dist[v]) {
         ctx->dist[v] = alt;
@@ -761,6 +763,18 @@ bool tinygraph_dijkstra_shortest_path(
     // the same fixed s we will re-use the search state
     if (u == t) {
       return true;
+    }
+
+    // If the smallest distance on the heap is at max and we
+    // haven't reached our target node above, it means we are
+    // on a path that has saturated the uint32_t data type.
+    // In this case we do a saturated addition but it also
+    // means we can not longer distinguish shortest paths
+    // from each other and therefore there is no path found.
+    if (distu == UINT32_MAX) {
+      tinygraph_dijkstra_clear(ctx);
+      tinygraph_array_clear(ctx->path);
+      return false;
     }
   }
 

@@ -261,7 +261,7 @@ typedef const struct tinygraph_dijkstra* tinygraph_dijkstra_const_s;
  * UINT16_MAX weights for all edges and enough of
  * them on the shortest path to saturate the type
  * uint32_t sum. In the case of saturation the search
- * does not continue since shortest path can no
+ * does not continue since shortest paths can no
  * longer be distinguished from any other path.
  *
  * The caller is responsible to destruct the
@@ -318,11 +318,6 @@ bool tinygraph_dijkstra_shortest_path(
  * where source and target nodes are the
  * same is zero, no matter if there is a
  * weighted self-loop.
- *
- * In case the sum of the uint16_t edge
- * weights on the path would overflow
- * the uint32_t data type, UINT32_MAX
- * gets returned instead.
  */
 TINYGRAPH_API
 TINYGRAPH_WARN_UNUSED
