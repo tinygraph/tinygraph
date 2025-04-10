@@ -1,5 +1,5 @@
 CFLAGS+=-std=c99 -O3 -march=x86-64-v3 -Wall -Wextra -pedantic -fvisibility=hidden -ffunction-sections -fPIC -flto -pipe -MMD
-LDFLAGS+=-Wl,--gc-sections
+LDFLAGS+=-Wl,--gc-sections -flto
 LDLIBS+=-lm
 PREFIX?=/usr/local
 
@@ -58,6 +58,16 @@ perf: clean tinygraph-tests
 	@perf record --freq 1000 -g ./tinygraph-tests
 	@perf script report flamegraph --allow-download
 	@xdg-open flamegraph.html
+
+.PHONY: pgo1
+pgo1: CFLAGS+=-fprofile-generate
+pgo1: LDFLAGS+=-fprofile-generate
+pgo1: all tinygraph-tests
+
+.PHONY: pgo2
+pgo2: CFLAGS+=-fprofile-use
+pgo2: LDFLAGS+=-fprofile-use
+pgo2: all tinygraph-tests
 
 .PHONY: sh
 sh: clean
