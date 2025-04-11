@@ -24,6 +24,7 @@
 #include "tinygraph-hash.h"
 #include "tinygraph-rng.h"
 #include "tinygraph-sort.h"
+#include "tinygraph-index.h"
 
 
 void test1(void) {
@@ -1636,7 +1637,72 @@ void test41(void) {
 }
 
 
+void test42(void) {
+  tinygraph_rng_s rng = tinygraph_rng_construct();
+
+  const uint32_t n = 10000;
+
+  uint32_t * const nodes = malloc(n * sizeof(uint32_t));
+  uint32_t * const lngs = malloc(n * sizeof(uint32_t));
+  uint32_t * const lats = malloc(n * sizeof(uint32_t));
+
+  assert(nodes);
+  assert(lngs);
+  assert(lats);
+
+  for (uint32_t i = 0; i < n; ++i) {
+    nodes[i] = i;
+
+    lngs[i] = tinygraph_rng_bounded(rng, 5691629) + 1931634267;
+    lats[i] = tinygraph_rng_bounded(rng, 2723174) + 1423721609;
+  }
+
+  tinygraph_index_s idx = tinygraph_index_construct(nodes, lngs, lats, n);
+  assert(idx);
+
+  tinygraph_index_print_internal(idx);
+
+  uint32_t results[128];
+  uint32_t len = 0;
+
+  fprintf(stderr, "Searching\n");
+
+  uint64_t sum = 0;
+
+  for (uint32_t i = 0; i < 1000; ++i) {
+    const uint32_t lng = tinygraph_rng_bounded(rng, 5691629) + 1931634267;
+    const uint32_t lat = tinygraph_rng_bounded(rng, 2723174) + 1423721609;
+
+    const bool ok = tinygraph_index_search(idx, lng, lat,
+        lng + 10000, lat + 10000, sizeof(results) / sizeof(results[0]),
+        results, &len);
+
+    sum += ok;
+
+    if (ok) {
+      //fprintf(stderr, "  Found %ju nearest neighbors for (%ju, %ju)\n", (uintmax_t)len, (uintmax_t)lng, (uintmax_t)lat);
+
+      //for (uint32_t j = 0; j < len; ++j) {
+        //const uint32_t n = results[j];
+
+        //fprintf(stderr, "    node %ju, (%ju, %ju)\n", (uintmax_t)n, (uintmax_t)lngs[n], (uintmax_t)lats[n]);
+      //}
+    }
+  }
+
+  fprintf(stderr, "sum=%ju\n", (uintmax_t)sum);
+
+  free(lats);
+  free(lngs);
+  free(nodes);
+
+  tinygraph_index_destruct(idx);
+  tinygraph_rng_destruct(rng);
+}
+
+
 int main(void) {
+  /*
   test1();
   test2();
   test3();
@@ -1678,4 +1744,6 @@ int main(void) {
   test39();
   test40();
   test41();
+  */
+  test42();
 }

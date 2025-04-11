@@ -14,7 +14,7 @@ typedef struct tinygraph_edge {
 } tinygraph_edge;
 
 TINYGRAPH_WARN_UNUSED
-static inline int tinygraph_edge_comp(const void* lhs, const void *rhs) {
+static inline int tinygraph_edge_cmp(const void* lhs, const void *rhs) {
   const tinygraph_edge elhs = *(const tinygraph_edge *)lhs;
   const tinygraph_edge erhs = *(const tinygraph_edge *)rhs;
 
@@ -268,7 +268,7 @@ bool tinygraph_sort_sources_targets(
     };
   }
 
-  qsort(edges, n, sizeof(tinygraph_edge), tinygraph_edge_comp);
+  qsort(edges, n, sizeof(tinygraph_edge), tinygraph_edge_cmp);
 
   for (uint32_t i = 0; i < n; ++i) {
     sources[i] = edges[i].source;
