@@ -454,28 +454,19 @@ uint32_t tinygraph_size_in_bytes(const tinygraph * const graph) {
 }
 
 
-typedef struct tinygraph_reorder_ctx {
-  const uint16_t* lngs;
-  const uint16_t* lats;
-} tinygraph_reorder_ctx;
+typedef struct tinygraph_reorder_item {
+  uint32_t node;
+  uint32_t zval;
+} tinygraph_reorder_item;
 
 TINYGRAPH_WARN_UNUSED
-static inline int32_t tinygraph_reorder_cmp(
-    const uint32_t* lhs,
-    const uint32_t* rhs,
-    void* arg)
-{
-  const tinygraph_reorder_ctx* ctx = (const tinygraph_reorder_ctx*)arg;
+static inline int tinygraph_reorder_item_cmp(const void* lhs, const void *rhs) {
+  const tinygraph_reorder_item ilhs = *(const tinygraph_reorder_item *)lhs;
+  const tinygraph_reorder_item irhs = *(const tinygraph_reorder_item *)rhs;
 
-  const uint32_t lhs_idx = *lhs;
-  const uint32_t rhs_idx = *rhs;
-
-  const uint32_t lhs_z = tinygraph_zorder_encode32(ctx->lngs[lhs_idx], ctx->lats[lhs_idx]);
-  const uint32_t rhs_z = tinygraph_zorder_encode32(ctx->lngs[rhs_idx], ctx->lats[rhs_idx]);
-
-  if (lhs_z < rhs_z) {
+  if (ilhs.zval < irhs.zval) {
     return -1;
-  } else if (lhs_z > rhs_z) {
+  } else if (ilhs.zval > irhs.zval) {
     return +1;
   } else {
     return 0;
@@ -488,6 +479,14 @@ bool tinygraph_reorder(
     const uint16_t* lats,
     uint32_t n)
 {
+  if (n == 0) {
+    return true;
+  }
+
+  TINYGRAPH_ASSERT(nodes);
+  TINYGRAPH_ASSERT(lngs);
+  TINYGRAPH_ASSERT(lats);
+
   // Reorder graph nodes spatially based on a z-order
   // space filling curve to improve memory locality
 
@@ -499,12 +498,27 @@ bool tinygraph_reorder(
   // The second idea is to use radix sort on the
   // z-order keyed nodes.
 
-  tinygraph_sort_u32(nodes, n, tinygraph_reorder_cmp,
-      &(tinygraph_reorder_ctx){ .lngs = lngs, .lats = lats });
+  tinygraph_reorder_item* items = malloc(n * sizeof(tinygraph_reorder_item));
 
-  // In case we want to change the sorting impl. and need
-  // to be able to communicate to users failure e.g. in
-  // allocation. For now this is always returning true.
+  if (!items) {
+    return false;
+  }
+
+  for (uint32_t i = 0; i < n; ++i) {
+    items[i] = (tinygraph_reorder_item) {
+      .node = nodes[i],
+      .zval = tinygraph_zorder_encode32(lngs[nodes[i]], lats[nodes[i]]),
+    };
+  }
+
+  qsort(items, n, sizeof(tinygraph_reorder_item), tinygraph_reorder_item_cmp);
+
+  for (uint32_t i = 0; i < n; ++i) {
+    nodes[i] = items[i].node;
+  }
+
+  free(items);
+
   return true;
 }
 
