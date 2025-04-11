@@ -24,6 +24,7 @@
 #include "tinygraph-hash.h"
 #include "tinygraph-rng.h"
 #include "tinygraph-sort.h"
+#include "tinygraph-index.h"
 
 
 void test1(void) {
@@ -1636,6 +1637,132 @@ void test41(void) {
 }
 
 
+void test42(void) {
+  tinygraph_rng_s rng = tinygraph_rng_construct();
+
+  const uint32_t n = 10000;
+
+  uint32_t * const nodes = malloc(n * sizeof(uint32_t));
+  uint32_t * const lngs = malloc(n * sizeof(uint32_t));
+  uint32_t * const lats = malloc(n * sizeof(uint32_t));
+
+  assert(nodes);
+  assert(lngs);
+  assert(lats);
+
+  for (uint32_t i = 0; i < n; ++i) {
+    nodes[i] = i;
+
+    lngs[i] = tinygraph_rng_bounded(rng, 5691629) + 1931634267;
+    lats[i] = tinygraph_rng_bounded(rng, 2723174) + 1423721609;
+  }
+
+  tinygraph_index_s idx = tinygraph_index_construct(nodes, lngs, lats, n);
+  assert(idx);
+
+  uint32_t results[128];
+  uint32_t len = 0;
+
+  uint64_t nok = 0;
+
+  for (uint32_t i = 0; i < 1000; ++i) {
+    const uint32_t lng = tinygraph_rng_bounded(rng, 5691629) + 1931634267;
+    const uint32_t lat = tinygraph_rng_bounded(rng, 2723174) + 1423721609;
+
+    const bool ok = tinygraph_index_search(idx, (tinygraph_index_search_opts) {
+        .lngmin = lng, .latmin = lat, .lngmax = lng + 100000, .latmax = lat + 100000, .n = 128},
+        results, &len);
+
+    nok += ok;
+
+    if (ok) {
+      for (uint32_t j = 0; j < len; ++j) {
+        const uint32_t r = results[j];
+
+        assert(lngs[r] >= lng);
+        assert(lats[r] >= lat);
+
+        assert(lngs[r] <= lng + 100000);
+        assert(lats[r] <= lat + 100000);
+      }
+    }
+  }
+
+  // Some queries might fail based on rng; make sure most work, tho.
+  assert(nok > 1000 * .9);
+
+  free(lats);
+  free(lngs);
+  free(nodes);
+
+  tinygraph_index_destruct(idx);
+  tinygraph_rng_destruct(rng);
+}
+
+
+void test43(void) {
+  const uint32_t nodes[] = {0};
+  const uint32_t lngs [] = {0};
+  const uint32_t lats [] = {0};
+
+  tinygraph_index_s idx = tinygraph_index_construct(nodes, lngs, lats, 1);
+  assert(idx);
+
+  uint32_t results[128];
+  uint32_t len = 0;
+
+  const tinygraph_index_search_opts opts = (tinygraph_index_search_opts) {
+      .lngmin = 0, .latmin = 0, .lngmax = 0, .latmax = 0, .n = 128};
+
+  const bool ok = tinygraph_index_search(idx, opts, results, &len);
+  assert(ok);
+  assert(len == 1);
+  assert(results[0] == 0);
+
+  tinygraph_index_destruct(idx);
+}
+
+
+void test44(void) {
+  const uint32_t nodes[] = {0};
+  const uint32_t lngs [] = {7};
+  const uint32_t lats [] = {7};
+
+  tinygraph_index_s idx = tinygraph_index_construct(nodes, lngs, lats, 1);
+  assert(idx);
+
+  uint32_t results[128];
+  uint32_t len = 0;
+
+  const tinygraph_index_search_opts opts = (tinygraph_index_search_opts) {
+    .lngmin = 7, .latmin = 7, .lngmax = 7, .latmax = 7, .n = 128,
+  };
+
+  const bool ok = tinygraph_index_search(idx, opts, results, &len);
+  assert(ok);
+  assert(len == 1);
+  assert(results[0] == 0);
+
+  for (uint32_t i = 0; i < 32; ++i) {
+    for (uint32_t j = 0; j < 32; ++j) {
+      if (i == 7 || j == 7)
+        continue;
+
+      const tinygraph_index_search_opts opts = (tinygraph_index_search_opts) {
+        .lngmin = i, .latmin = j, .lngmax = i, .latmax = j, .n = 128,
+      };
+
+      assert(!tinygraph_index_search(idx, opts, results, &len));
+      assert(len == 0);
+
+      len = -1;
+    }
+  }
+
+  tinygraph_index_destruct(idx);
+}
+
+
 int main(void) {
   test1();
   test2();
@@ -1678,4 +1805,7 @@ int main(void) {
   test39();
   test40();
   test41();
+  test42();
+  test43();
+  test44();
 }
