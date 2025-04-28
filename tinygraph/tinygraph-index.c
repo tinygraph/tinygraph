@@ -460,6 +460,7 @@ bool tinygraph_index_search(
   // possible that the z-order curve goes outside our bounding
   // box, that's why we need to filter down candidates further.
 
+  uint32_t outside = 0;
   const uint64_t* it = first;
 
   while (it != last) {
@@ -484,6 +485,9 @@ bool tinygraph_index_search(
       // In the case that we are within the bounding box,
       // continue the linear scan through z values.
       it += 1;
+
+      outside = 0;
+
     } else {
       // The z-order curve has left the bounding box. Here we can prune
       // the search space by finding the next z-order value that again
@@ -553,17 +557,23 @@ bool tinygraph_index_search(
       // In the future we could try and special these and
       // similar cases; for now we always run binary search.
 
-      const uint64_t zval = *it;
-      const uint64_t bigmin = tinygraph_index_bigmin(zval, zmin, zmax);
-      TINYGRAPH_ASSERT(bigmin > zval);
-      TINYGRAPH_ASSERT(bigmin > zmin);
-      TINYGRAPH_ASSERT(bigmin <= zmax);
+      outside += 1;
 
-      const uint64_t* skip = tinygraph_index_bsearch_lt(it, last, bigmin);
-      TINYGRAPH_ASSERT(skip >= it);
-      TINYGRAPH_ASSERT(skip <= last);
+      if (outside > 64) {
+        const uint64_t zval = *it;
+        const uint64_t bigmin = tinygraph_index_bigmin(zval, zmin, zmax);
+        TINYGRAPH_ASSERT(bigmin > zval);
+        TINYGRAPH_ASSERT(bigmin > zmin);
+        TINYGRAPH_ASSERT(bigmin <= zmax);
 
-      it = skip;
+        const uint64_t* skip = tinygraph_index_bsearch_lt(it, last, bigmin);
+        TINYGRAPH_ASSERT(skip >= it);
+        TINYGRAPH_ASSERT(skip <= last);
+
+        it = skip;
+      } else {
+        it += 1;
+      }
     }
   }
 
