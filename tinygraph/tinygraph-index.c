@@ -559,8 +559,9 @@ bool tinygraph_index_search(
 
       outside += 1;
 
-      if (outside > 64) {
-        const uint64_t zval = *it;
+      const uint64_t zval = *it;
+
+      if (outside > 64 && zval < zmax) {
         const uint64_t bigmin = tinygraph_index_bigmin(zval, zmin, zmax);
         TINYGRAPH_ASSERT(bigmin > zval);
         TINYGRAPH_ASSERT(bigmin > zmin);
